@@ -11,6 +11,8 @@ module org.example.goldexperience {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires javafx.graphics;
 
+    opens vnu.uet.goldexperience.controller to javafx.fxml;
     exports vnu.uet.goldexperience;
 }

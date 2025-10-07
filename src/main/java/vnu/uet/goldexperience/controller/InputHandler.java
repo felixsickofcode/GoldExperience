@@ -6,18 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class InputHandler {
-    private final Set<KeyCode> pressedKeys = new HashSet<>();
+    private final Set<KeyCode> pressed = new HashSet<>();
 
-    public InputHandler(Scene scene) {
-        scene.setOnKeyPressed(event -> pressedKeys.add(event.getCode()));
-        scene.setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
-    }
-
-    public boolean isRightPressed() {
-        return pressedKeys.contains(KeyCode.RIGHT) || pressedKeys.contains(KeyCode.D);
-    }
-
-    public boolean isLeftPressed() {
-        return pressedKeys.contains(KeyCode.LEFT) || pressedKeys.contains(KeyCode.A);
-    }
+    public void keyPressed(KeyCode code) { pressed.add(code); }
+    public void keyReleased(KeyCode code) { pressed.remove(code); }
+    public boolean isPressed(KeyCode code) { return pressed.contains(code); }
 }
+

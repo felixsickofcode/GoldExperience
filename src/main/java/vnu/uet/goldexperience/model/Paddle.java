@@ -1,23 +1,40 @@
 package vnu.uet.goldexperience.model;
 
-import vnu.uet.goldexperience.core.Constants;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
-public class Paddle extends BaseObject {
-    public double speed = 400;
+public class Paddle extends MovableObject {
 
-    public Paddle(double x, double y) {
-        super(x, y, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT,
-                Paddle.class.getResource("/images/paddle.png").toExternalForm());
+    private final double speed = 300;
+    private int direction = 0; // -1 = left, 1 = right, 0 = stop
+
+    public Paddle(double x, double y, double width, double height) {
+        super(x, y, width, height, 0, 0);
+        try {
+            this.image = new Image(getClass().getResource("/images/paddle.png").toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Paddle image not found, using fallback rectangle.");
+            this.image = null;
+        }
     }
 
-    public void moveLeft(double deltaTime) {
-        x -= speed * deltaTime;
-        if (x < 0) x = 0;
+    public void moveLeft()  { direction = -1; }
+    public void moveRight() { direction = 1; }
+    public void stop()      { direction = 0; }
+
+    @Override
+    public void update(double deltaTime) {
+        dx = direction * speed;
+        move(deltaTime);
     }
 
-    public void moveRight(double deltaTime) {
-        x += speed * deltaTime;
-        if (x + w > Constants.WINDOW_WIDTH)
-            x = Constants.WINDOW_WIDTH - w;
+    @Override
+    public void render(GraphicsContext gc) {
+        if (image != null)
+            gc.drawImage(image, x, y, width, height);
+    }
+
+    public double getSpeed() {
+        return speed;
     }
 }
