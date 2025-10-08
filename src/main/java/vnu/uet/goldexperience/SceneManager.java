@@ -16,17 +16,20 @@ public class SceneManager {
     private final StackPane root;
     protected final Map<String, FXMLLoader> screens;
 
+    //pull all screens
     public SceneManager(StackPane root) {
         this.root = root;
         screens = new HashMap<>();
     }
 
+    //preload screens
     public void PreloadScene(String name, String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.load();
         screens.put(name, loader);
     }
 
+    //tranition effect
     public void switchTo(String name){
         FXMLLoader loader = screens.get(name);
         if (loader == null) {
