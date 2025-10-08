@@ -1,0 +1,48 @@
+@font-face {
+    font-family: "W95FA";
+    src: url("../font/W95FA.otf");
+}
+
+.root {
+    -fx-background-image: url("../images/menu-background.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-font-family: "W95FA";
+}
+
+.text {
+    -fx-font-family: "W95FA";
+}
+
+/* Windows 95 Style Buttons */
+.button {
+    -fx-background-color: #c0c0c0;
+    -fx-border-color: #ffffff #000000 #000000 #ffffff;
+    -fx-border-width: 2px;
+    -fx-font-family: "W95FA";
+    -fx-font-size: 18px;
+    -fx-text-fill: #000000;
+    -fx-cursor: hand;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.button:hover {
+    -fx-background-color: #d0d0d0;
+}
+
+.button:pressed {
+    -fx-border-color: #000000 #ffffff #ffffff #000000;
+    -fx-background-color: #a0a0a0;
+    -fx-translate-x: 2px;
+    -fx-translate-y: 2px;
+}
+
+/* Title Label Styling */
+.title-label {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 8, 0.8, 4, 4);
+    -fx-font-family: "W95FA";
+    -fx-font-weight: bold;
+}
