@@ -3,15 +3,21 @@ package vnu.uet.goldexperience.core;
 public class Constants {
     public static final int WINDOW_WIDTH = 1280;
     public static final int WINDOW_HEIGHT = 720;
-    public static final int GAME_WIDTH = 800;
-    public static final int GAME_HEIGHT = 720;
+    public static final int GAMEPLAYZONE_WIDTH = 600;
+    public static final int GAMEPLAYZONE_HEIGHT = 720;
     public static final int GAME_START = (1280-720)/2;
 
 
-    public static final int PADDLE_WIDTH = 100;
-    public static final int PADDLE_HEIGHT = 30;
-    public static final int BALL_SIZE = 15;
+    public static final double NORMAL_PADDLE_WIDTH = 93;
+    public static final double NORMAL_PADDLE_HEIGHT = 25;
+    public static final double NORMAL_BALL_SIZE = 10;
+    public static final double NORMAL_BRICK_WIDTH = 45;
+    public static final double NORMAL_BRICK_HEIGHT = 20;
 
-    public static final int FPS = 120;
-    public static final double TIME_PER_FRAME = 1_000_000_000 / FPS;
+    public static final double BALL_SPEED = 600;
+    public static final double PADDLE_SPEED = 600;
+    public static final double BALL_MAX_SPEED = 600;
+
+    public static final double BALL_INIT_POSITION = 590;
+    public static final double PADDLE_INIT_POSITION = 420;
 }

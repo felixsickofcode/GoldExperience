@@ -2,6 +2,7 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public class Brick extends GameObject {
     private int hitPoints;
@@ -29,7 +30,7 @@ public class Brick extends GameObject {
     @Override
     public void render(GraphicsContext gc) {
         if (!isDestroyed() && image != null) {
-            gc.drawImage(image, x, y, width, height);
+            gc.drawImage(image, x, y);
         }
     }
 }

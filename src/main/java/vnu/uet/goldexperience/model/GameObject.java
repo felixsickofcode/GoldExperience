@@ -2,6 +2,7 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public abstract class GameObject {
 
@@ -18,6 +19,11 @@ public abstract class GameObject {
     public abstract void update(double deltaTime);
     public abstract void render(GraphicsContext gc);
 
+    public void drawHitBox(GraphicsContext gc, double x, double y, double width, double height) {
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(2);
+        gc.strokeRect(x, y, width, height);
+    }
     /**
      * Getter and Setter
      */
