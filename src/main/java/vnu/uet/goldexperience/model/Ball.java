@@ -2,12 +2,14 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import vnu.uet.goldexperience.core.Constants;
 
 public class Ball extends MovableObject {
-    private double speed = 300; // pixel/giây
-
+    private double speed = Constants.BALL_SPEED; // viết nnay
     private double radius;
     private boolean reset = true;
+    private long lastCollisionTime = 0;
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
@@ -20,32 +22,161 @@ public class Ball extends MovableObject {
     }
 
     public void shoot() {
-        dx = (Math.random() * 2 * speed) - speed;
+        dx = Math.random();
         dy = -speed;
         reset = false;
     }
+
     public void reset(Paddle paddle) {
         reset = true;
         setX(paddle.getX() + paddle.getWidth()/2 - radius); // đặt tâm chính giữa paddle
         setY(paddle.getY() - radius * 2);                   // đặt bóng ngay trên paddle
         dx = 0;
         dy = 0;
+    }
 
+    public void bounceOffWithPaddle(GameObject other, double deltaTime)
+    {
+        long now = System.currentTimeMillis();
+        if (other != null && checkCollision(other) && now - getLastCollisionTime() > 200) {
+
+            double overlapTop = getCenterY() + radius - other.getY();
+            double overlapBottom = other.getY() + other.getHeight() - (getCenterY() - radius);
+            double overlapLeft = getCenterX() + radius - other.getX();
+            double overlapRight = other.getX() + other.getWidth() - (getCenterX() - radius);
+
+            double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
+
+            if (minOverlap == overlapTop && getDy() > 0) {
+                double hit = (getCenterX() - (other.getX() + other.getWidth() / 2)) / (other.getWidth() / 2);
+                double angle = hit * Math.toRadians(70);
+                double s = Math.hypot(getDx(), getDy());
+                setDx(s * Math.sin(angle));
+                setDy(-Math.abs(s * Math.cos(angle)));
+                setY(other.getY() - radius * 2 - 1);
+            }
+            else if (minOverlap == overlapLeft) {
+                setX(other.getX() - 2 * radius - 2);
+                setDx(-Math.abs(getDx() + 500));
+                setDy(Math.max(getDy(), 220));
+            }
+            else if (minOverlap == overlapRight) {
+                setX(other.getX() + other.getWidth() + 2);
+                setDx(Math.abs(getDx()) + 500);
+                setDy(Math.max(getDy(), 220));
+            }
+
+            double s = Math.hypot(getDx(), getDy());
+            if (s > Constants.BALL_SPEED) {
+                setDx(getDx() / s * Constants.BALL_SPEED);
+                setDy(getDy() / s * Constants.BALL_SPEED);
+            }
+            setLastCollisionTime(now);
+        }
+    }
+
+
+    public boolean bounceOffWithBrick(GameObject other, double deltaTime)
+    {
+        if (other != null && checkCollision(other)) {
+
+            double minDy = 80;
+            double overlapTop = getCenterY() + radius - other.getY();
+            double overlapBottom = other.getY() + other.getHeight() - (getCenterY() - radius);
+            double overlapLeft = getCenterX() + radius - other.getX();
+            double overlapRight = other.getX() + other.getWidth() - (getCenterX() - radius);
+
+            double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
+
+            if (minOverlap == overlapTop) {
+                setDy(-Math.abs(getDy()));
+                setY(other.getY() - 2 * radius);
+            }
+            else if (minOverlap == overlapBottom) {
+                setDy(Math.abs(getDy()));
+                setY(other.getY() + other.getHeight());
+            }
+            else if (minOverlap == overlapLeft) {
+                setDx(-Math.abs(getDx()));
+                setX(other.getX() - 2 * radius);
+                if (Math.abs(getDy()) < minDy)
+                    setDy(getDy() >= 0 ? minDy : -minDy);
+            }
+            else if (minOverlap == overlapRight) {
+                setDx(Math.abs(getDx()));
+                setX(other.getX() + other.getWidth());
+                if (Math.abs(getDy()) < minDy)
+                    setDy(getDy() >= 0 ? minDy : -minDy);
+            }
+
+            double s = Math.hypot(getDx(), getDy());
+            if (s > Constants.BALL_MAX_SPEED) {
+                setDx(getDx() / s * Constants.BALL_MAX_SPEED);
+                setDy(getDy() / s * Constants.BALL_MAX_SPEED);
+            }
+            
+            return true;
+        }
+        return false;
+    }
+
+    public void handleBallEdgeCollision() {
+        double minDy = 80;
+        if (x <= 0) {
+            setX(0);
+            setDx(Math.abs(getDx()));
+            if (Math.abs(getDy()) < minDy)
+                setDy(getDy() >= 0 ? minDy : -minDy);
+        }
+        if (x + getRadius() >= Constants.GAMEPLAYZONE_WIDTH) {
+            setX(Constants.GAMEPLAYZONE_WIDTH - 2 * getRadius());
+            setDx(-Math.abs(getDx()));
+            if (Math.abs(getDy()) < minDy)
+                setDy(getDy() >= 0 ? minDy : -minDy);
+        }
+        if (getY() <= 0) {
+            setY(0);
+            setDy(Math.abs(getDy()));
+        }
     }
 
     public boolean checkCollision(GameObject other) {
-        return x + radius > other.x && x - radius < other.x + other.width &&
-                y + radius > other.y && y - radius < other.y + other.height;
+        return getCenterX() + 2 * radius > other.x && getCenterX() - radius < other.x + other.width &&
+                getCenterY() + radius > other.y && getCenterY() - radius < other.y + other.height;
+    }
+
+    public void setLastCollisionTime(long t) { lastCollisionTime = t; }
+    public long getLastCollisionTime() { return lastCollisionTime; }
+
+    public double getCenterX() {
+        return x + radius;
+    }
+
+    public double getCenterY() {
+        return y + radius;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setCenterX(double cx) {
+        x = cx - radius;
+    }
+
+    public void setCenterY(double cy) {
+        y = cy - radius;
     }
 
     @Override
     public void update(double dt) {
-        if (!reset) move(dt); // chỉ di chuyển khi đã shoot
+        if (!reset) move(dt);
+        handleBallEdgeCollision();
     }
 
     @Override
     public void render(GraphicsContext gc) {
         if (image != null)
-            gc.drawImage(image, x, y, width, height);
+            gc.drawImage(image, x, y);
     }
 }

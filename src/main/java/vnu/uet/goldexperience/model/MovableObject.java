@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class MovableObject extends GameObject implements Movable {
 
-
     protected double dx, dy;
 
     public MovableObject(double x, double y, double width, double height, double dx, double dy) {
@@ -33,10 +32,8 @@ public abstract class MovableObject extends GameObject implements Movable {
         return dx;
     }
     @Override
-    public void move(double dt) {
-        x += dx * dt;
-        y += dy * dt;
+    public void move(double deltaTime) {
+        x += dx * deltaTime;
+        y += dy * deltaTime;
     }
-
-
 }
