@@ -23,11 +23,13 @@ public class GameController {
 
         // Khi giao diện hiển thị xong, setup input và start game
         Platform.runLater(() -> {
-            root.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
-            root.setOnKeyReleased(e -> input.keyReleased(e.getCode()));
-            root.requestFocus();
+            canvas.setFocusTraversable(true);
+            canvas.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
+            canvas.setOnKeyReleased(e -> input.keyReleased(e.getCode()));
+            canvas.requestFocus();
             engine.start();
         });
+
     }
 }
 

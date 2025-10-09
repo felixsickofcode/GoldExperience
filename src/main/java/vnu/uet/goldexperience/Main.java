@@ -15,9 +15,9 @@ public class Main extends Application {
         SceneManager sceneManager = new SceneManager(root);
 
         // preload FXML
-        sceneManager.PreloadScene("menu", "/vnu/uet/goldexperience/fxml/menu-view.fxml");
-        sceneManager.PreloadScene("tutorial", "/vnu/uet/goldexperience/fxml/tutorial-view.fxml");
-        sceneManager.PreloadScene("game", "/vnu/uet/goldexperience/fxml/game.fxml");
+        sceneManager.PreloadScene("menu", "/fxml/menu-view.fxml");
+        sceneManager.PreloadScene("tutorial", "/fxml/tutorial-view.fxml");
+        sceneManager.PreloadScene("game", "/fxml/game.fxml");
 
         FXMLLoader menuLoader = sceneManager.screens.get("menu");
         MenuController menuController = menuLoader.getController();
@@ -30,7 +30,7 @@ public class Main extends Application {
         sceneManager.switchTo("menu");
 
         Scene scene = new Scene(root,1280,720);
-        scene.getStylesheets().add(getClass().getResource("/vnu/uet/goldexperience/fxml/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/fxml/style.css").toExternalForm());
 
         stage.setScene(scene);
         stage.show();
