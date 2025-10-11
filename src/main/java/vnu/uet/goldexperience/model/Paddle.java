@@ -15,14 +15,22 @@ public class Paddle extends MovableObject {
         try {
             this.image = new Image(getClass().getResource("/images/paddle.png").toExternalForm());
         } catch (Exception e) {
-            System.err.println("Paddle image not found, using fallback rectangle.");
+            System.err.println("Paddle image not found.");
             this.image = null;
         }
     }
 
-    public void moveLeft()  { direction = -1; }
-    public void moveRight() { direction = 1; }
-    public void stop()      { direction = 0; }
+    public void moveLeft() {
+        direction = -1;
+    }
+
+    public void moveRight() {
+        direction = 1;
+    }
+
+    public void stop() {
+        direction = 0;
+    }
 
     @Override
     public void update(double deltaTime) {
@@ -31,8 +39,7 @@ public class Paddle extends MovableObject {
         handlePaddleEdgeCollision();
     }
 
-    public void handlePaddleEdgeCollision()
-    {
+    public void handlePaddleEdgeCollision() {
         if (x < 0) setX(0);
         if (x + width > Constants.GAMEPLAYZONE_WIDTH)
             setX(Constants.GAMEPLAYZONE_WIDTH - width);

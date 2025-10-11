@@ -5,7 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import vnu.uet.goldexperience.controller.InputHandler;
+import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.model.*;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 public class GameEngine {
     private final Canvas canvas;
     private final GraphicsContext gc;
-    private final InputHandler input;
+    private final InputManager input;
 
     private Paddle paddle;
     private Ball ball;
@@ -23,7 +23,7 @@ public class GameEngine {
     private AnimationTimer loop;
     private long lastTime = 0;
 
-    public GameEngine(Canvas canvas, InputHandler input) {
+    public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.input = input;
@@ -41,7 +41,10 @@ public class GameEngine {
         double brickW = Constants.NORMAL_BRICK_WIDTH, brickH = Constants.NORMAL_BRICK_HEIGHT;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                bricks.add(new Brick(50 + c * (brickW + 5), 50 + r * (brickH + 5), brickW, brickH, 1));
+                if (r == 0)
+                    bricks.add(new UnbreakableBrick(50 + c * (brickW + 5), 50 + r * (brickH + 5), brickW, brickH));
+                else
+                    bricks.add(new Brick(50 + c * (brickW + 5), 50 + r * (brickH + 5), brickW, brickH, 1));
             }
         }
     }
@@ -78,7 +81,7 @@ public class GameEngine {
             ball.shoot();
     }
 
-    private void update(double deltaTime) { 
+    private void update(double deltaTime) {
         //UPDATE PADDLE
         if (paddle != null) {
             paddle.update(deltaTime);
@@ -99,7 +102,6 @@ public class GameEngine {
 
                     if (ball.bounceOffWithBrick(brick, deltaTime)) {
                         brick.takeHit();
-                        System.out.println(1);
                         break;
                     }
                 }
@@ -124,7 +126,6 @@ public class GameEngine {
             brick.render(gc);
             brick.drawHitBox(gc, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
         }
-
         gc.setStroke(Color.RED);
         gc.setLineWidth(5);
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
