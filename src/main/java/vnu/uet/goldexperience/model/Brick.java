@@ -2,11 +2,11 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
+
 
 public class Brick extends GameObject {
-    private int hitPoints;
-    private Image image;
+    protected int hitPoints;
+    protected Image image;
 
     public Brick(double x, double y, double width, double height, int hitPoints) {
         super(x, y, width, height);

@@ -1,11 +1,10 @@
-package vnu.uet.goldexperience.controller;
+package vnu.uet.goldexperience.manager;
 
-import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InputHandler {
+public class InputManager {
     private final Set<KeyCode> pressed = new HashSet<>();
 
     public void keyPressed(KeyCode code) { pressed.add(code); }

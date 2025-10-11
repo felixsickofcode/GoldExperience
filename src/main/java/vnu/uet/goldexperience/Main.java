@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.controller.MenuController;
+import vnu.uet.goldexperience.manager.SceneManager;
 
 public class Main extends Application {
 
@@ -19,11 +20,11 @@ public class Main extends Application {
         sceneManager.PreloadScene("tutorial", "/fxml/tutorial-view.fxml");
         sceneManager.PreloadScene("game", "/fxml/game.fxml");
 
-        FXMLLoader menuLoader = sceneManager.screens.get("menu");
+        FXMLLoader menuLoader = sceneManager.getScreens().get("menu");
         MenuController menuController = menuLoader.getController();
         menuController.setSceneManager(sceneManager);
 
-        FXMLLoader tutorialLoader = sceneManager.screens.get("tutorial");
+        FXMLLoader tutorialLoader = sceneManager.getScreens().get("tutorial");
         MenuController tutorialController = tutorialLoader.getController();
         tutorialController.setSceneManager(sceneManager);
 

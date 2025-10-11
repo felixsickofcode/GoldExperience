@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience;
+package vnu.uet.goldexperience.manager;
 
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +14,11 @@ import java.util.Map;
 
 public class SceneManager {
     private final StackPane root;
+
+    public Map<String, FXMLLoader> getScreens() {
+        return screens;
+    }
+
     protected final Map<String, FXMLLoader> screens;
 
     //pull all screens

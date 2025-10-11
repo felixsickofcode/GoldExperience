@@ -5,23 +5,20 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.core.GameEngine;
-import vnu.uet.goldexperience.model.*;
-
-import java.util.List;
+import vnu.uet.goldexperience.manager.InputManager;
 
 public class GameController {
     @FXML private StackPane root;
     @FXML private Canvas canvas;
 
     private GameEngine engine;
-    private InputHandler input;
+    private InputManager input;
 
     @FXML
     public void initialize() {
-        input = new InputHandler();
+        input = new InputManager();
         engine = new GameEngine(canvas, input);
 
-        // Khi giao diện hiển thị xong, setup input và start game
         Platform.runLater(() -> {
             canvas.setFocusTraversable(true);
             canvas.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
