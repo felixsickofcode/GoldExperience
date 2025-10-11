@@ -16,6 +16,8 @@ module org.example.goldexperience {
     opens vnu.uet.goldexperience.controller to javafx.fxml;
     exports vnu.uet.goldexperience;
     exports vnu.uet.goldexperience.manager;
+    exports vnu.uet.goldexperience.model;
+    exports vnu.uet.goldexperience.core;
     opens vnu.uet.goldexperience.manager to javafx.fxml;
     opens vnu.uet.goldexperience to javafx.fxml;
 }

@@ -1,0 +1,33 @@
+package vnu.uet.goldexperience.model;
+
+import javafx.scene.canvas.GraphicsContext;
+import vnu.uet.goldexperience.core.Constants;
+
+public class Bullet extends MovableObject {
+
+    public Bullet(double x, double y, double width, double height, double dx, double dy) {
+        super(x, y, width, height, 0, Constants.BULLET_SPEED);
+    }
+
+    public boolean isOffScreen() {
+        return getY() + getHeight() < 0;
+    }
+
+    public boolean checkCollide(GameObject other) {
+        return x < other.getX() + other.getWidth() &&
+                x + width > other.getX() &&
+                y < other.getY() + other.getHeight() &&
+                y + height > other.getY();
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        move(deltaTime);
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+        if (image != null)
+            gc.drawImage(image, x, y);
+    }
+}
