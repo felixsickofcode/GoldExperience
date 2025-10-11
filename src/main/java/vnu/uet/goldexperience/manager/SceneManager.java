@@ -20,6 +20,8 @@ public class SceneManager {
     }
 
     protected final Map<String, FXMLLoader> screens;
+    private final Map<String, Object> controllers = new HashMap<>();
+
 
     //pull all screens
     public SceneManager(StackPane root) {
@@ -32,6 +34,7 @@ public class SceneManager {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.load();
         screens.put(name, loader);
+        controllers.put(name, loader.getController());
     }
 
     //tranition effect
@@ -62,5 +65,8 @@ public class SceneManager {
             fadeIn.play();
         });
         fadeOut.play();
+    }
+    public Object getController(String name) {
+        return controllers.get(name);
     }
 }

@@ -54,6 +54,7 @@ public class GameEngine {
         loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                System.out.println(1);
                 if (lastTime == 0) {
                     lastTime = now;
                     return;
@@ -67,6 +68,12 @@ public class GameEngine {
             }
         };
         loop.start();
+    }
+    public void end() {
+        if (loop != null) {
+            loop.stop();
+            loop = null;
+        }
     }
 
     private void handleInput() {
