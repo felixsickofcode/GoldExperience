@@ -14,7 +14,7 @@ public class Ball extends MovableObject {
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
-        this.image = new Image(getClass().getResource("/images/bigball.png").toExternalForm());
+        this.image = new Image(getClass().getResource("/images/normalball.png").toExternalForm());
     }
 
     public boolean isReset() {

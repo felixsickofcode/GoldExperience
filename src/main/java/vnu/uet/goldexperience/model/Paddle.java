@@ -13,7 +13,7 @@ public class Paddle extends MovableObject {
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
         try {
-            this.image = new Image(getClass().getResource("/images/paddle.png").toExternalForm());
+            this.image = new Image(getClass().getResource("/images/mediumpaddle.png").toExternalForm());
         } catch (Exception e) {
             System.err.println("Paddle image not found.");
             this.image = null;

@@ -32,7 +32,7 @@ public class GameEngine {
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
-                Constants.NORMAL_PADDLE_WIDTH, Constants.NORMAL_PADDLE_HEIGHT);
+                Constants.MEDIUM_PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
 
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
@@ -54,7 +54,6 @@ public class GameEngine {
         loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                System.out.println(1);
                 if (lastTime == 0) {
                     lastTime = now;
                     return;
@@ -136,8 +135,8 @@ public class GameEngine {
         gc.setStroke(Color.RED);
         gc.setLineWidth(5);
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
+//
+//        ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
         paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
     }
 
