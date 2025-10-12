@@ -9,6 +9,7 @@ import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameEngine {
@@ -35,7 +36,7 @@ public class GameEngine {
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
-                Constants.NORMAL_PADDLE_WIDTH, Constants.NORMAL_PADDLE_HEIGHT);
+                Constants.MEDIUM_PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
 
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
@@ -45,6 +46,7 @@ public class GameEngine {
     }
 
     public void start() {
+
         loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -61,6 +63,12 @@ public class GameEngine {
             }
         };
         loop.start();
+    }
+    public void end() {
+        if (loop != null) {
+            loop.stop();
+            loop = null;
+        }
     }
 
     private void handleInput() {
@@ -106,13 +114,12 @@ public class GameEngine {
 
     private void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
         paddle.render(gc);
         ball.render(gc);
 
         for (Brick brick : bricks) {
             brick.render(gc);
-            //brick.drawHitBox(gc, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
+            brick.drawHitBox(gc, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
         }
 
         gc.setStroke(Color.RED);
@@ -121,5 +128,8 @@ public class GameEngine {
                 0, 1, canvas.getHeight());
         gc.setLineWidth(5);
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
+        paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
     }
 }

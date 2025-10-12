@@ -47,6 +47,8 @@ public class MenuController {
         levelManager.loadLevel(1);
         if (sceneManager != null) {
             sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
         }
     }
 
