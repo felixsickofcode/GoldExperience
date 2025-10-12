@@ -2,9 +2,12 @@ package vnu.uet.goldexperience.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 
 public class MenuController {
@@ -39,6 +42,9 @@ public class MenuController {
     @FXML
     private void handleChooseStage(ActionEvent event) {
         System.out.println("Choose Stage clicked");
+        Parent gameRoot = sceneManager.getRoot("game");
+        LevelManager levelManager = new LevelManager();
+        levelManager.loadLevel(1);
         if (sceneManager != null) {
             sceneManager.switchTo("game");
         }

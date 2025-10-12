@@ -3,9 +3,11 @@ package vnu.uet.goldexperience.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.core.GameEngine;
 import vnu.uet.goldexperience.manager.InputManager;
+import vnu.uet.goldexperience.manager.LevelManager;
 
 public class GameController {
     @FXML private StackPane root;
