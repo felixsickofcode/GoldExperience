@@ -30,11 +30,19 @@ public class SceneManager {
     }
 
     //preload screens
-    public void PreloadScene(String name, String fxmlPath) throws IOException {
+    public void preloadScene(String name, String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
         loader.load();
         screens.put(name, loader);
         controllers.put(name, loader.getController());
+        System.out.println("Preloaded scene: " + name);
+    }
+
+    public Parent getRoot(String name) {
+        FXMLLoader loader = screens.get(name);
+        if (loader != null)
+            return loader.getRoot();
+        return null;
     }
 
     //tranition effect

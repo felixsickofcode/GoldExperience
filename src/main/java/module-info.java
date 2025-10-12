@@ -12,6 +12,9 @@ module org.example.goldexperience {
     requires com.almasb.fxgl.all;
     requires java.desktop;
     requires javafx.graphics;
+    requires com.google.gson;
+
+    opens vnu.uet.goldexperience.model to com.google.gson;
 
     opens vnu.uet.goldexperience.controller to javafx.fxml;
     exports vnu.uet.goldexperience;
