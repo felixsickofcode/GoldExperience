@@ -9,7 +9,7 @@ import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.model.*;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class GameEngine {
@@ -41,7 +41,7 @@ public class GameEngine {
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
 
-        levelManager.loadLevel(1);
+        levelManager.loadLevel(2);
         bricks = levelManager.getActiveBricks();
     }
 

@@ -17,10 +17,8 @@ public class Constants {
     public static final double NORMAL_BALL_SIZE = 10.5;
     public static final double NORMAL_BRICK_WIDTH = 48;
     public static final double NORMAL_BRICK_HEIGHT = 24;
-
-    public static final int DEFAULT_PADDLE_SIZE = 4;
-    public static final int MIN_PADDLE_SIZE = 2;
-    public static final int MAX_PADDLE_SIZE = 6;
+    public static final int MIN_PADDLE_SIZE = 0;
+    public static final int MAX_PADDLE_SIZE = 4;
 
     public static final double BALL_SPEED = 400;
     public static final double PADDLE_SPEED = 600;

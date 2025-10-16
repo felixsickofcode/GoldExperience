@@ -9,6 +9,14 @@ public abstract class GameObject {
     protected double x, y, width, height;
     protected Image image;
 
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
     public GameObject(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
