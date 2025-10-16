@@ -43,8 +43,6 @@ public class MenuController {
     private void handleChooseStage(ActionEvent event) {
         System.out.println("Choose Stage clicked");
         Parent gameRoot = sceneManager.getRoot("game");
-        LevelManager levelManager = new LevelManager();
-        levelManager.loadLevel(1);
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");

@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.controller.MenuController;
-import vnu.uet.goldexperience.manager.LevelManager;
+import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 
 public class Main extends Application {
@@ -15,6 +15,8 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         StackPane root = new StackPane();
         SceneManager sceneManager = new SceneManager(root);
+        //asset
+        AssetsManager.loadAssets();
 
         // preload FXML
         sceneManager.preloadScene("menu", "/fxml/menu-view.fxml");
@@ -32,7 +34,7 @@ public class Main extends Application {
 
         sceneManager.switchTo("menu");
 
-        Scene scene = new Scene(root,1280,720);
+        Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(getClass().getResource("/fxml/style.css").toExternalForm());
 
         stage.setScene(scene);
