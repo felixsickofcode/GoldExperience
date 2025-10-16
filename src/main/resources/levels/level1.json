@@ -6,7 +6,6 @@
     " ": "empty"
   },
   "layout": [
-    //23456789012
     "            ",
     "            ",
     "            ",
@@ -16,6 +15,6 @@
     "   NNNNNN   ",
     "   NNNNNN   ",
     "   NNNNNN   ",
-    "   NNNNNN   ",
+    "   NNNNNN   "
   ]
 }

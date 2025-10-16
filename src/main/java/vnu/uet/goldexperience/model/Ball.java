@@ -2,7 +2,6 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import vnu.uet.goldexperience.core.Constants;
 
 public class Ball extends MovableObject {

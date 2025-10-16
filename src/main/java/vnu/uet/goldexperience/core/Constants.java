@@ -3,7 +3,7 @@ package vnu.uet.goldexperience.core;
 public class Constants {
     public static final int WINDOW_WIDTH = 1280;
     public static final int WINDOW_HEIGHT = 720;
-    public static final int GAMEPLAYZONE_WIDTH = 600;
+    public static final int GAMEPLAYZONE_WIDTH = 576;
     public static final int GAMEPLAYZONE_HEIGHT = 720;
     public static final int GAME_START = (1280 - 720) / 2;
 
