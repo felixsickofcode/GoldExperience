@@ -10,6 +10,8 @@ public class Ball extends MovableObject {
     private boolean reset = true;
     private long lastCollisionTime = 0;
 
+    static final double minDy = 80;
+
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
@@ -34,94 +36,96 @@ public class Ball extends MovableObject {
         dy = 0;
     }
 
-    public void bounceOffWithPaddle(GameObject other, double deltaTime)
+    public void bounceOffWithPaddle(GameObject paddle, double deltaTime)
     {
         long now = System.currentTimeMillis();
-        if (other != null && checkCollision(other) && now - getLastCollisionTime() > 200) {
+        if (paddle != null && checkCollision(paddle) && now - getLastCollisionTime() > 200) {
 
-            double overlapTop = getCenterY() + radius - other.getY();
-            double overlapBottom = other.getY() + other.getHeight() - (getCenterY() - radius);
-            double overlapLeft = getCenterX() + radius - other.getX();
-            double overlapRight = other.getX() + other.getWidth() - (getCenterX() - radius);
+            double overlapTop = getCenterY() + radius - paddle.getY();
+            double overlapBottom = paddle.getY() + paddle.getHeight() - (getCenterY() - radius);
+            double overlapLeft = getCenterX() + radius - paddle.getX();
+            double overlapRight = paddle.getX() + paddle.getWidth() - (getCenterX() - radius);
 
-            double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
+            double minOverlap = Math.min(Math.min(overlapLeft, overlapRight),
+                    Math.min(overlapTop, overlapBottom));
 
             if (minOverlap == overlapTop && getDy() > 0) {
-                double hit = (getCenterX() - (other.getX() + other.getWidth() / 2)) / (other.getWidth() / 2);
+                double hit = (getCenterX() - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
                 double angle = hit * Math.toRadians(70);
                 double s = Math.hypot(getDx(), getDy());
                 setDx(s * Math.sin(angle));
                 setDy(-Math.abs(s * Math.cos(angle)));
-                setY(other.getY() - radius * 2 - 1);
+                setY(paddle.getY() - radius * 2 - 1);
             }
             else if (minOverlap == overlapLeft) {
-                setX(other.getX() - 2 * radius - 2);
+                setX(paddle.getX() - 2 * radius - 2);
                 setDx(-Math.abs(getDx() + 500));
                 setDy(Math.max(getDy(), 220));
             }
             else if (minOverlap == overlapRight) {
-                setX(other.getX() + other.getWidth() + 2);
+                setX(paddle.getX() + paddle.getWidth() + 2);
                 setDx(Math.abs(getDx()) + 500);
                 setDy(Math.max(getDy(), 220));
             }
 
-            double s = Math.hypot(getDx(), getDy());
-            if (s > Constants.BALL_SPEED) {
-                setDx(getDx() / s * Constants.BALL_SPEED);
-                setDy(getDy() / s * Constants.BALL_SPEED);
-            }
+            increaseSpeedPercent(1.5);
+            normalizeSpeed(Constants.BALL_MAX_SPEED);
             setLastCollisionTime(now);
         }
     }
 
-
-    public boolean bounceOffWithBrick(GameObject other, double deltaTime) {
-        if (other != null && checkCollision(other)) {
-
-            double minDy = 80;
-            double minDx = 150;
-
-            double overlapTop = getCenterY() + radius - other.getY();
-            double overlapBottom = other.getY() + other.getHeight() - (getCenterY() - radius);
-            double overlapLeft = getCenterX() + radius - other.getX();
-            double overlapRight = other.getX() + other.getWidth() - (getCenterX() - radius);
-
-            double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
-
-            if (minOverlap == overlapTop && getDy() > 0) {
-                setDy(-Math.abs(getDy()));
-                setY(other.getY() - 2 * radius - 0.5);
-                System.out.println("TOP");
-            }
-            if (minOverlap == overlapBottom && getDy() < 0) {
-                setDy(Math.abs(getDy()));
-                setY(other.getY() + other.getHeight() + 0.5);
-                System.out.println("BOT");
-            }
-            if (minOverlap == overlapLeft && getDx() > 0) {
-                double newDx = -Math.abs(getDx());
-                if (Math.abs(newDx) < 1e-3) newDx = -minDx;
-                setDx(newDx);
-                setX(other.getX() - 2 * radius - 0.5);
-                if (Math.abs(getDy()) < minDy)
-                    setDy(getDy() >= 0 ? minDy : -minDy);
-                System.out.println("LEFT");
-            }
-            if (minOverlap == overlapRight && getDx() < 0) {
-                double newDx = Math.abs(getDx());
-                if (Math.abs(newDx) < 1e-3) newDx = minDx;
-                setDx(newDx);
-                setX(other.getX() + other.getWidth() + 0.5);
-                if (Math.abs(getDy()) < minDy)
-                    setDy(getDy() >= 0 ? minDy : -minDy);
-                System.out.println("RIGHT");
-            }
-
-            normalizeSpeed(Constants.BALL_MAX_SPEED);
-
-            return true;
+    public boolean bounceOffWithBrick(GameObject brick, double deltaTime) {
+        if (brick == null || !checkCollision(brick)) {
+            return false;
         }
-        return false;
+
+        double overlapTop = getCenterY() + radius - brick.getY();
+        double overlapBottom = brick.getY() + brick.getHeight() - (getCenterY() - radius);
+        double overlapLeft = getCenterX() + radius - brick.getX();
+        double overlapRight = brick.getX() + brick.getWidth() - (getCenterX() - radius);
+
+        double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
+
+        if (minOverlap == overlapLeft && getDx() > 0) {
+            System.out.println("LEFT");
+            setDx(-Math.abs(getDx()));
+            setX(brick.getX() - 2 * radius - 0.5);
+            if (Math.abs(getDy()) < minDy) {
+                setDy(getDy() >= 0 ? minDy : -minDy);
+            }
+        }
+        else if (minOverlap == overlapRight && getDx() < 0) {
+            System.out.println("RIGHT");
+            setDx(Math.abs(getDx()));
+            setX(brick.getX() + brick.getWidth() + 0.5);
+            if (Math.abs(getDy()) < minDy) {
+                setDy(getDy() >= 0 ? minDy : -minDy);
+            }
+        }
+        else if (minOverlap == overlapTop && getDy() > 0) {
+            System.out.println("TOP");
+            setDy(-Math.abs(getDy()));
+            setY(brick.getY() - 2 * radius - 0.5);
+        }
+        else if (minOverlap == overlapBottom && getDy() < 0) {
+            System.out.println("BOTTOM");
+            setDy(Math.abs(getDy()));
+            setY(brick.getY() + brick.getHeight() + 0.5);
+        }
+        else {
+            return false;
+        }
+
+        increaseSpeedPercent(1.5);
+        normalizeSpeed(Constants.BALL_MAX_SPEED);
+        printSpeed();
+
+        return true;
+    }
+
+    private void printSpeed() {
+        double s = Math.hypot(getDx(), getDy());
+        System.out.println("Ball speed: " + s);
     }
 
     private void normalizeSpeed(double maxSpeed) {
@@ -132,16 +136,25 @@ public class Ball extends MovableObject {
         }
     }
 
+    private void increaseSpeedPercent(double percent) {
+        double s = Math.hypot(getDx(), getDy());
+        if (s > 0) {
+            double newSpeed = s * (1 + percent / 100.0);
+            setDx(getDx() / s * newSpeed);
+            setDy(getDy() / s * newSpeed);
+        }
+    }
+
     public void handleBallEdgeCollision() {
-        double minDy = 80;
+
         if (x <= 0) {
             setX(0);
             setDx(Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
         }
-        if (x + getRadius() >= Constants.GAMEPLAYZONE_WIDTH) {
-            setX(Constants.GAMEPLAYZONE_WIDTH - 2 * getRadius());
+        if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
+            setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
@@ -189,6 +202,6 @@ public class Ball extends MovableObject {
     @Override
     public void render(GraphicsContext gc) {
         if (image != null)
-            gc.drawImage(image, x, y);
+            gc.drawImage(image, x, y, width, height);
     }
 }

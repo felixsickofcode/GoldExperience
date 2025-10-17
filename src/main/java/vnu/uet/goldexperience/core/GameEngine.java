@@ -100,11 +100,9 @@ public class GameEngine {
         ball.bounceOffWithPaddle(paddle, deltaTime);
 
         for (Brick brick : bricks) {
-            if (!brick.isDestroyed()) {
-                if (ball.bounceOffWithBrick(brick, deltaTime)) {
+            if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick, deltaTime)) {
                     brick.takeHit();
                     break;
-                }
             }
         }
 
@@ -124,7 +122,7 @@ public class GameEngine {
 
         for (Brick brick : bricks) {
             brick.render(gc);
-            brick.drawHitBox(gc, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
+            //brick.drawHitBox(gc, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
         }
 
         gc.setStroke(Color.RED);
@@ -134,7 +132,7 @@ public class GameEngine {
         gc.setLineWidth(5);
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
-        paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
+        //ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
+       // paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
     }
 }
