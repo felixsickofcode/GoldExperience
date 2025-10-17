@@ -6,6 +6,7 @@ public class Constants {
     public static final int GAMEPLAYZONE_WIDTH = 576;
     public static final int GAMEPLAYZONE_HEIGHT = 720;
     public static final int GAME_START = (1280 - 720) / 2;
+    public static final int GAME_OFFSET = (WINDOW_WIDTH - GAMEPLAYZONE_WIDTH) / 2;
 
     public static final double TINY_PADDLE_WIDTH = 48;
     public static final double SMALL_PADDLE_WIDTH = 78;
@@ -22,6 +23,7 @@ public class Constants {
 
     public static final double BALL_SPEED = 400;
     public static final double PADDLE_SPEED = 600;
+    public static final double MOUSE_LERP_SPEED = 0.3;
     public static final double BALL_MAX_SPEED = 600;
 
     public static final double BALL_INIT_POSITION = 590;

@@ -4,11 +4,12 @@ import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
-
 public class Paddle extends MovableObject {
 
     private final double speed = Constants.PADDLE_SPEED;
     private int direction = 0;
+
+    private double targetX = -1;
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
@@ -32,20 +33,44 @@ public class Paddle extends MovableObject {
 
     public void moveLeft() {
         direction = -1;
+        targetX = -1;
     }
 
     public void moveRight() {
         direction = 1;
+        targetX = -1;
     }
 
     public void stop() {
         direction = 0;
     }
 
+    public void setTargetX(double x) {
+        if (x < 0) {
+            this.targetX = Math.max(0,x);
+        }
+        else if (x > 576) {
+                this.targetX = Math.min(576,x);
+        } else {
+            this.targetX = x;
+        }
+        this.direction = 0;
+    }
+
     @Override
     public void update(double deltaTime) {
-        dx = direction * speed;
-        move(deltaTime);
+        if (targetX >= 0) {
+            double diff = targetX - x;
+            if (Math.abs(diff) > 0.5) {
+                x += diff * Constants.MOUSE_LERP_SPEED;
+            } else {
+                x = targetX;
+            }
+        } else {
+            dx = direction * speed;
+            move(deltaTime);
+        }
+
         handlePaddleEdgeCollision();
     }
 

@@ -9,7 +9,7 @@ import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.model.*;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameEngine {
@@ -29,7 +29,6 @@ public class GameEngine {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.input = input;
-
         this.levelManager = new LevelManager();
         initObjects();
     }
@@ -41,12 +40,11 @@ public class GameEngine {
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
 
-        levelManager.loadLevel(2);
+        levelManager.loadLevel(1);
         bricks = levelManager.getActiveBricks();
     }
 
     public void start() {
-
         loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -64,6 +62,7 @@ public class GameEngine {
         };
         loop.start();
     }
+
     public void end() {
         if (loop != null) {
             loop.stop();
@@ -72,14 +71,20 @@ public class GameEngine {
     }
 
     private void handleInput() {
-        if (input.isPressed(KeyCode.LEFT) || input.isPressed(KeyCode.J))
-            paddle.moveLeft();
-        else if (input.isPressed(KeyCode.RIGHT) || input.isPressed(KeyCode.L))
-            paddle.moveRight();
-        else
-            paddle.stop();
+        if (input.isMouseActive()) {
+            double targetX = input.getMouseX() - Constants.GAME_OFFSET
+                    - paddle.getWidth()/2;
+            paddle.setTargetX(targetX);
+        } else {
+            if (input.isActionActive(Action.MOVE_LEFT))
+                paddle.moveLeft();
+            else if (input.isActionActive(Action.MOVE_RIGHT))
+                paddle.moveRight();
+            else
+                paddle.stop();
+        }
 
-        if (input.isPressed(KeyCode.SPACE) && ball.isReset())
+        if (input.isActionActive(Action.SHOOT) && ball.isReset())
             ball.shoot();
     }
 
