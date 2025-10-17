@@ -93,12 +93,12 @@ public class Ball extends MovableObject {
                 setY(other.getY() - 2 * radius - 0.5);
                 System.out.println("TOP");
             }
-            else if (minOverlap == overlapBottom && getDy() < 0) {
+            if (minOverlap == overlapBottom && getDy() < 0) {
                 setDy(Math.abs(getDy()));
                 setY(other.getY() + other.getHeight() + 0.5);
                 System.out.println("BOT");
             }
-            else if (minOverlap == overlapLeft && getDx() > 0) {
+            if (minOverlap == overlapLeft && getDx() > 0) {
                 double newDx = -Math.abs(getDx());
                 if (Math.abs(newDx) < 1e-3) newDx = -minDx;
                 setDx(newDx);
@@ -107,7 +107,7 @@ public class Ball extends MovableObject {
                     setDy(getDy() >= 0 ? minDy : -minDy);
                 System.out.println("LEFT");
             }
-            else if (minOverlap == overlapRight && getDx() < 0) {
+            if (minOverlap == overlapRight && getDx() < 0) {
                 double newDx = Math.abs(getDx());
                 if (Math.abs(newDx) < 1e-3) newDx = minDx;
                 setDx(newDx);
@@ -115,10 +115,6 @@ public class Ball extends MovableObject {
                 if (Math.abs(getDy()) < minDy)
                     setDy(getDy() >= 0 ? minDy : -minDy);
                 System.out.println("RIGHT");
-            }
-            else {
-                setDy(-getDy());
-                System.out.println("FALLBACK BOUNCE");
             }
 
             normalizeSpeed(Constants.BALL_MAX_SPEED);
