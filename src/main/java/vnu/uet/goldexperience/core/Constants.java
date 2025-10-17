@@ -15,13 +15,13 @@ public class Constants {
     public static final double BIG_PADDLE_WIDTH = 144;
     public static final double PADDLE_HEIGHT = 33;
     public static final double SMALL_BALL_SIZE = 6;
-    public static final double NORMAL_BALL_SIZE = 10.5;
+    public static final double NORMAL_BALL_SIZE = 6;
     public static final double NORMAL_BRICK_WIDTH = 48;
     public static final double NORMAL_BRICK_HEIGHT = 24;
     public static final int MIN_PADDLE_SIZE = 0;
     public static final int MAX_PADDLE_SIZE = 4;
 
-    public static final double BALL_SPEED = 400;
+    public static final double BALL_SPEED = 350;
     public static final double PADDLE_SPEED = 600;
     public static final double MOUSE_LERP_SPEED = 0.3;
     public static final double BALL_MAX_SPEED = 600;
