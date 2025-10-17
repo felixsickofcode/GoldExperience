@@ -1,17 +1,16 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import vnu.uet.goldexperience.manager.AssetsManager;
 
 
 public class Brick extends GameObject {
     protected int hitPoints;
-    protected Image image;
 
     public Brick(double x, double y, double width, double height, int hitPoints) {
         super(x, y, width, height);
         this.hitPoints = hitPoints;
-        this.image = new Image(getClass().getResource("/images/brick_1.png").toExternalForm());
+        this.image = AssetsManager.bricks.getFirst();
     }
 
     public void takeHit() {

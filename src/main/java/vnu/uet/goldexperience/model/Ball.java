@@ -1,8 +1,8 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class Ball extends MovableObject {
     private double speed = Constants.BALL_SPEED; // viết nnay
@@ -13,7 +13,7 @@ public class Ball extends MovableObject {
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
-        this.image = new Image(getClass().getResource("/images/normalball.png").toExternalForm());
+        this.image = AssetsManager.balls.get(1);
     }
 
     public boolean isReset() {

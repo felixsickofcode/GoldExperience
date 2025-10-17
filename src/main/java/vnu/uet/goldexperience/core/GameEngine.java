@@ -33,7 +33,8 @@ public class GameEngine {
                 Constants.MEDIUM_PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
-        levelManager.loadLevel(1);
+
+        levelManager.loadLevel(2);
         bricks = levelManager.getActiveBricks();
     }
 
