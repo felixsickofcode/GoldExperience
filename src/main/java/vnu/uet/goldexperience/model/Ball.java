@@ -21,7 +21,7 @@ public class Ball extends MovableObject {
     }
 
     public void shoot() {
-        dx = 1; //Math.random();
+        dx = 1;
         dy = -speed;
         reset = false;
     }

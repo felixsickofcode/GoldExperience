@@ -9,6 +9,9 @@ public class InputManager {
     private final Set<KeyCode> pressed = new HashSet<>();
     private final Map<KeyCode, Action> keyBindings = new HashMap<>();
 
+    private double mouseX = -1;
+    private boolean isMouseActive = false;
+
     public InputManager() {
         keyBindings.put(KeyCode.LEFT, Action.MOVE_LEFT);
         keyBindings.put(KeyCode.J, Action.MOVE_LEFT);
@@ -21,6 +24,7 @@ public class InputManager {
 
     public void keyPressed(KeyCode code) {
         pressed.add(code);
+        isMouseActive = false;
     }
 
     public void keyReleased(KeyCode code) {
@@ -38,5 +42,32 @@ public class InputManager {
             }
         }
         return false;
+    }
+
+    public void mouseMoved(double x) {
+        this.mouseX = x;
+        this.isMouseActive = true;
+    }
+
+    public void mouseClicked() {
+        pressed.add(KeyCode.SPACE);
+    }
+
+    public void mouseReleased() {
+        pressed.remove(KeyCode.SPACE);
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public boolean isMouseActive() {
+        return isMouseActive;
+    }
+
+    public void clear() {
+        pressed.clear();
+        mouseX = -1;
+        isMouseActive = false;
     }
 }

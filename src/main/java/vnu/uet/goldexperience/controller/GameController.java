@@ -2,65 +2,56 @@ package vnu.uet.goldexperience.controller;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
 import javafx.scene.Cursor;
-
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.core.GameEngine;
-import vnu.uet.goldexperience.model.Paddle;
+import vnu.uet.goldexperience.manager.InputManager;
+import vnu.uet.goldexperience.manager.LevelManager;
 
 public class GameController {
-    @FXML private StackPane root;
+    @FXML private StackPane rootGamePane;
     @FXML private Canvas canvas;
+
     private GameEngine engine;
+    private InputManager input;
 
     @FXML
     public void initialize() {
-        engine = new GameEngine(canvas);
-        Platform.runLater(this::setupInputHandlers);
-    }
+        input = new InputManager();
+        engine = new GameEngine(canvas, input);
 
-    private void setupInputHandlers() {
-        canvas.setCursor(Cursor.NONE);
-        canvas.setFocusTraversable(true);
-        Paddle paddle = engine.getPaddle();
+        Platform.runLater(() -> {
+            rootGamePane.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
+            rootGamePane.setOnKeyReleased(e -> input.keyReleased(e.getCode()));
 
-        canvas.setOnMouseMoved(e -> {
-            double newX = e.getX() - paddle.getWidth() / 2;
-            if (newX < 0) newX = 0;
-            if (newX + paddle.getWidth() > canvas.getWidth()) {
-                newX = canvas.getWidth() - paddle.getWidth();
-            }
-            paddle.setX(newX);
+            rootGamePane.setOnMouseMoved(e -> input.mouseMoved(e.getX()));
+            rootGamePane.setOnMouseDragged(e -> input.mouseMoved(e.getX()));
+            rootGamePane.setOnMousePressed(e -> input.mouseClicked());
+            rootGamePane.setOnMouseReleased(e -> input.mouseReleased());
+
+            rootGamePane.setOnMouseEntered(e -> rootGamePane.setCursor(Cursor.NONE));
         });
-
-        canvas.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.LEFT) {
-                engine.movePaddleLeft();
-            } else if (e.getCode() == KeyCode.RIGHT) {
-                engine.movePaddleRight();
-            } else if (e.getCode() == KeyCode.SPACE) {
-                engine.shootBall();
-            }
-        });
-
-        canvas.setOnKeyReleased(e -> {
-            if (e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.RIGHT) {
-                engine.stopPaddle();
-            }
-        });
-
-        canvas.requestFocus();
     }
 
     public GameEngine getEngine() {
         return engine;
     }
+
+    public InputManager getInput() {
+        return input;
+    }
+
     public void startGame() {
         if (engine != null) engine.start();
     }
+
     public void endGame() {
-        if (engine != null) engine.end();
+        if (engine != null) {
+            engine.end();
+            input.clear();
+        }
     }
 }
