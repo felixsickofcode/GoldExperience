@@ -24,6 +24,8 @@ public class GameController {
         engine = new GameEngine(canvas, input);
 
         Platform.runLater(() -> {
+            rootGamePane.setFocusTraversable(true);
+
             rootGamePane.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
             rootGamePane.setOnKeyReleased(e -> input.keyReleased(e.getCode()));
 
@@ -32,6 +34,7 @@ public class GameController {
             rootGamePane.setOnMousePressed(e -> input.mouseClicked());
             rootGamePane.setOnMouseReleased(e -> input.mouseReleased());
 
+            rootGamePane.requestFocus();
             rootGamePane.setOnMouseEntered(e -> rootGamePane.setCursor(Cursor.NONE));
         });
     }

@@ -15,10 +15,8 @@ public class InputManager {
     public InputManager() {
         keyBindings.put(KeyCode.LEFT, Action.MOVE_LEFT);
         keyBindings.put(KeyCode.J, Action.MOVE_LEFT);
-
         keyBindings.put(KeyCode.RIGHT, Action.MOVE_RIGHT);
         keyBindings.put(KeyCode.L, Action.MOVE_RIGHT);
-
         keyBindings.put(KeyCode.SPACE, Action.SHOOT);
     }
 
