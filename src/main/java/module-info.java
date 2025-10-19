@@ -14,6 +14,7 @@ module org.example.goldexperience {
     requires javafx.graphics;
     requires com.google.gson;
 
+
     opens vnu.uet.goldexperience.model to com.google.gson;
 
     opens vnu.uet.goldexperience.controller to javafx.fxml;
@@ -21,6 +22,8 @@ module org.example.goldexperience {
     exports vnu.uet.goldexperience.manager;
     exports vnu.uet.goldexperience.model;
     exports vnu.uet.goldexperience.core;
-    opens vnu.uet.goldexperience.manager to javafx.fxml;
     opens vnu.uet.goldexperience to javafx.fxml;
+    opens vnu.uet.goldexperience.manager to com.google.gson, javafx.fxml;
+    exports vnu.uet.goldexperience.effect;
+    opens vnu.uet.goldexperience.effect to com.google.gson, javafx.fxml;
 }

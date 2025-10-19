@@ -40,7 +40,7 @@ public class GameEngine {
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
 
-        levelManager.loadLevel(1);
+        levelManager.loadLevel(2);
         bricks = levelManager.getActiveBricks();
     }
 
@@ -97,10 +97,10 @@ public class GameEngine {
             ball.setY(paddle.getY() - ball.getHeight());
         }
 
-        ball.bounceOffWithPaddle(paddle, deltaTime);
+        ball.bounceOffWithPaddle(paddle);
 
         for (Brick brick : bricks) {
-            if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick, deltaTime)) {
+            if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
                     brick.takeHit();
                     break;
             }
@@ -113,6 +113,7 @@ public class GameEngine {
         for (Brick brick : bricks) {
             brick.update(deltaTime);
         }
+        bricks.removeIf(Brick::canBeRemoved);
     }
 
     private void render() {

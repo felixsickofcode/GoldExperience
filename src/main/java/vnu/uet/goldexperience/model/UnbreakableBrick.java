@@ -11,7 +11,7 @@ public class UnbreakableBrick extends Brick {
 
     public UnbreakableBrick(double x, double y, double width, double height) {
         super(x, y, width, height, 100);
-        image = AssetsManager.bricks.get(1);
+        image = AssetsManager.bricks.get(4);
         spriteLoader = new SpriteManager(6, 0, 10);
     }
 
