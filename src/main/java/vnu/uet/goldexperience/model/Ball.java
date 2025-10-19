@@ -1,16 +1,22 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ball extends MovableObject {
     private double speed = Constants.BALL_SPEED; // viết nnay
-    private double radius;
+    private final double radius;
     private boolean reset = true;
     private long lastCollisionTime = 0;
-
     static final double minDy = 80;
+    private final List<double[]> trail = new ArrayList<>();
+    private final int maxTrail = 30;
+    private double glowPulse = 0;
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
@@ -30,14 +36,14 @@ public class Ball extends MovableObject {
 
     public void reset(Paddle paddle) {
         reset = true;
-        setX(paddle.getX() + paddle.getWidth()/2 - radius); // đặt tâm chính giữa paddle
+        setX(paddle.getX() + paddle.getWidth() / 2 - radius); // đặt tâm chính giữa paddle
         setY(paddle.getY() - radius * 2);                   // đặt bóng ngay trên paddle
         dx = 0;
         dy = 0;
+        trail.clear();
     }
 
-    public void bounceOffWithPaddle(GameObject paddle, double deltaTime)
-    {
+    public void bounceOffWithPaddle(GameObject paddle) {
         long now = System.currentTimeMillis();
         if (paddle != null && checkCollision(paddle) && now - getLastCollisionTime() > 200) {
 
@@ -56,13 +62,11 @@ public class Ball extends MovableObject {
                 setDx(s * Math.sin(angle));
                 setDy(-Math.abs(s * Math.cos(angle)));
                 setY(paddle.getY() - radius * 2 - 1);
-            }
-            else if (minOverlap == overlapLeft) {
+            } else if (minOverlap == overlapLeft) {
                 setX(paddle.getX() - 2 * radius - 2);
                 setDx(-Math.abs(getDx() + 500));
                 setDy(Math.max(getDy(), 220));
-            }
-            else if (minOverlap == overlapRight) {
+            } else if (minOverlap == overlapRight) {
                 setX(paddle.getX() + paddle.getWidth() + 2);
                 setDx(Math.abs(getDx()) + 500);
                 setDy(Math.max(getDy(), 220));
@@ -74,7 +78,7 @@ public class Ball extends MovableObject {
         }
     }
 
-    public boolean bounceOffWithBrick(GameObject brick, double deltaTime) {
+    public boolean bounceOffWithBrick(GameObject brick) {
         if (brick == null || !checkCollision(brick)) {
             return false;
         }
@@ -93,26 +97,22 @@ public class Ball extends MovableObject {
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
-        }
-        else if (minOverlap == overlapRight && getDx() < 0) {
+        } else if (minOverlap == overlapRight && getDx() < 0) {
             System.out.println("RIGHT");
             setDx(Math.abs(getDx()));
             setX(brick.getX() + brick.getWidth() + 0.5);
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
-        }
-        else if (minOverlap == overlapTop && getDy() > 0) {
+        } else if (minOverlap == overlapTop && getDy() > 0) {
             System.out.println("TOP");
             setDy(-Math.abs(getDy()));
             setY(brick.getY() - 2 * radius - 0.5);
-        }
-        else if (minOverlap == overlapBottom && getDy() < 0) {
+        } else if (minOverlap == overlapBottom && getDy() < 0) {
             System.out.println("BOTTOM");
             setDy(Math.abs(getDy()));
             setY(brick.getY() + brick.getHeight() + 0.5);
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -170,8 +170,13 @@ public class Ball extends MovableObject {
                 getCenterY() + radius > other.y && getCenterY() - radius < other.y + other.height;
     }
 
-    public void setLastCollisionTime(long t) { lastCollisionTime = t; }
-    public long getLastCollisionTime() { return lastCollisionTime; }
+    public void setLastCollisionTime(long t) {
+        lastCollisionTime = t;
+    }
+
+    public long getLastCollisionTime() {
+        return lastCollisionTime;
+    }
 
     public double getCenterX() {
         return x + radius;
@@ -195,13 +200,64 @@ public class Ball extends MovableObject {
 
     @Override
     public void update(double dt) {
-        if (!reset) move(dt);
-        handleBallEdgeCollision();
+        if (!reset) {
+            move(dt);
+            handleBallEdgeCollision();
+            trail.add(0, new double[]{getCenterX(), getCenterY()});
+            if (trail.size() > maxTrail)
+                trail.remove(trail.size() - 1);
+        }
+        glowPulse = (Math.sin(System.nanoTime() * 1e-9 * 6) + 1) / 2;
     }
 
     @Override
     public void render(GraphicsContext gc) {
+        double cx = getCenterX();
+        double cy = getCenterY();
+        // trail
+        for (int i = 0; i < trail.size(); i++) {
+            double[] pos = trail.get(i);
+            double t = (double) i / trail.size();
+            if (Math.random() < t * 0.25) continue;
+            double alpha = (1 - t * 0.8) * (0.4 + Math.random() * 0.2);
+            double scale = 1.0 - t * 0.7;
+
+            double w = width * scale;
+            double h = height * scale;
+
+            Color start = Color.web("#ffff80");
+            Color end = Color.web("#66ffff");
+            Color trailColor = start.interpolate(end, t);
+
+            gc.setGlobalAlpha(alpha);
+            gc.setFill(trailColor);
+            gc.fillOval(pos[0] - w / 2, pos[1] - h / 2, w, h);
+        }
+
+        // glow
+        double dynamicGlow = 0.4 + 0.3 * glowPulse;
+        double glowSize = radius * 4;
+        gc.setGlobalAlpha(dynamicGlow);
+
+        // light layer
+        gc.setFill(Color.web("#000000", dynamicGlow * 0.8)); // trung tâm đen
+        gc.fillOval(cx - glowSize * 0.6, cy - glowSize * 0.6, glowSize * 1.2, glowSize * 1.2);
+
+        gc.setFill(Color.web("#0033aa", dynamicGlow * 0.5)); // xanh đậm
+        gc.fillOval(cx - glowSize * 0.45, cy - glowSize * 0.45, glowSize * 0.9, glowSize * 0.9);
+
+        gc.setFill(Color.web("#3399ff", dynamicGlow * 0.3)); // xanh nhạt
+        gc.fillOval(cx - glowSize * 0.3, cy - glowSize * 0.3, glowSize * 0.6, glowSize * 0.6);
+
+
+        // ball
+        gc.setGlobalAlpha(1.0);
         if (image != null)
             gc.drawImage(image, x, y, width, height);
+
+        // reset alpha
+        gc.setGlobalAlpha(1.0);
     }
+
+
 }

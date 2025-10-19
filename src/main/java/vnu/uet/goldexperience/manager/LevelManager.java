@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import vnu.uet.goldexperience.model.Brick;
 import vnu.uet.goldexperience.model.LevelData;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.model.MediumBrick;
 import vnu.uet.goldexperience.model.UnbreakableBrick;
 
 import java.io.InputStream;

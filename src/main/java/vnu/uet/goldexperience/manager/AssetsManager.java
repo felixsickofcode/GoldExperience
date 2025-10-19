@@ -16,7 +16,10 @@ public class AssetsManager {
     }
     private static void loadBricks() {
         try {
+            bricks.add(new Image(AssetsManager.class.getResource("/images/brick_15.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1.png").toExternalForm()));
+            bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1_break.png").toExternalForm()));
+            bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1_broken.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/unbreakable1.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/unbreakable2.png").toExternalForm()));
         } catch (Exception e) {
