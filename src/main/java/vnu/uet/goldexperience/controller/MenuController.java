@@ -2,12 +2,9 @@ package vnu.uet.goldexperience.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 
 public class MenuController {
@@ -20,7 +17,20 @@ public class MenuController {
     private Button btnTutorial;
 
     @FXML
+    private Button btnMoveToSetting;
+
+    @FXML
+    private Button btnSound;
+    private boolean soundOn = true;
+
+    @FXML
     private Button btnBack;
+
+    @FXML
+    private Button btnStoryMode;
+
+    @FXML
+    private Button btn2PlayerMode;
 
     @FXML
     private Button btnExit;
@@ -42,12 +52,50 @@ public class MenuController {
     @FXML
     private void handleChooseStage(ActionEvent event) {
         System.out.println("Choose Stage clicked");
-        Parent gameRoot = sceneManager.getRoot("game");
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
             controller.startGame();
         }
+    }
+
+    // HandleSound clicked
+    @FXML
+    private void handleSound(ActionEvent event) {
+        System.out.println("Sound clicked");
+        soundOn = !soundOn;
+        if (soundOn) {
+            btnSound.setText("Sound ON");
+        }
+        else {
+            btnSound.setText("Sound OFF");
+        }
+    }
+
+    // HandleSound clicked
+    @FXML
+    private void handleStoryMode(ActionEvent event) {
+        System.out.println("Story Mode clicked");
+        if (sceneManager != null) {
+            sceneManager.switchTo("stage-select");
+            GameController controller = (GameController) sceneManager.getController("stage-select");
+            controller.startGame();
+        }
+    }
+
+    // HandleMoveToSetting clicked
+    @FXML
+    private void handleMoveToSetting(ActionEvent event) {
+        System.out.println("Move To Setting clicked");
+        if (sceneManager != null) {
+            sceneManager.switchTo("setting");
+        }
+    }
+
+    // HandleSound clicked
+    @FXML
+    private void handle2PlayerMode(ActionEvent event) {
+        System.out.println("2 Player Mode clicked");
     }
 
     // When click on tutorial
@@ -61,10 +109,19 @@ public class MenuController {
 
     // Handle back to menu
     @FXML
-    private void handleBack(ActionEvent event) {
+    private void handleBackToMenu(ActionEvent event) {
         System.out.println("Back to menu clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("menu");
+        }
+    }
+
+    // Handle back to setting
+    @FXML
+    private void handleBackToSetting(ActionEvent event) {
+        System.out.println("Back to setting clicked");
+        if (sceneManager != null) {
+            sceneManager.switchTo("setting");
         }
     }
 
