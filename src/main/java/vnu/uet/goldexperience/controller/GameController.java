@@ -12,11 +12,14 @@ import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.LevelManager;
 
 public class GameController {
-    @FXML private StackPane rootGamePane;
-    @FXML private Canvas canvas;
+    @FXML
+    private StackPane rootGamePane;
+    @FXML
+    private Canvas canvas;
 
     private GameEngine engine;
     private InputManager input;
+
 
     @FXML
     public void initialize() {
