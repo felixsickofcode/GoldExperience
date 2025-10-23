@@ -1,24 +1,74 @@
 package vnu.uet.goldexperience.model;
 
-import vnu.uet.goldexperience.effect.ParticleEffect;
+import javafx.scene.canvas.GraphicsContext;
+import vnu.uet.goldexperience.effect.FlashEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
-public class MediumBrick extends Brick{
-    public MediumBrick(double x, double y, double width, double height, int hitPoints) {
-        super(x, y, width, height, hitPoints);
-        this.image=AssetsManager.bricks.get(1);
+public class MediumBrick extends Brick {
+    private FlashEffect flashEffect;
+    private boolean playingFlashEffect;
+
+    public MediumBrick(double x, double y, double width, double height) {
+        super(x, y, width, height);
+        this.hitPoints = Math.random() < 0.4 ? 2 : 3;
+        this.image = AssetsManager.bricks.get(1);
+        this.playingFlashEffect = false;
     }
+
     @Override
     public void takeHit() {
         hitPoints--;
-        if(hitPoints==2)
-            this.image=AssetsManager.bricks.get(2);
-        if(hitPoints==1)
-            this.image=AssetsManager.bricks.get(3);
-        if (isDestroyed() && !playingBreakEffect) {
-            breakEffect = new ParticleEffect(this);
-            playingBreakEffect = true;
-            System.out.println("Tạo hiệu ứng vỡ tại: " + x + ", " + y); // Debug
+        if (isDestroyed() && !playingBreakEffect && !playingExplosion) {
+            triggerDestroyEffect();
+        } else if (!isDestroyed()) {
+            triggerFlashEffect();
+        }
+    }
+
+    private void triggerFlashEffect() {
+        flashEffect = new FlashEffect(this);
+        playingFlashEffect = true;
+        System.out.println("Flash effect tại: " + x + ", " + y);
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        // Update flash effect
+        if (playingFlashEffect && flashEffect != null) {
+            flashEffect.update(deltaTime);
+            if (flashEffect.isFinished()) {
+                playingFlashEffect = false;
+            }
+        }
+        // Destroy effect
+        if (playingBreakEffect && breakEffect != null) {
+            breakEffect.update(deltaTime);
+            if (breakEffect.isFinished()) {
+                playingBreakEffect = false;
+            }
+        }
+        if (playingExplosion && explosionEffect != null) {
+            explosionEffect.update(deltaTime);
+            if (explosionEffect.isFinished()) {
+                playingExplosion = false;
+                explosionEffect = null;
+            }
+        }
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+        if (!isDestroyed() && image != null) {
+            gc.drawImage(image, x, y);
+            if (playingFlashEffect && flashEffect != null) {
+                flashEffect.render(gc);
+            }
+        }
+        if (playingExplosion && explosionEffect != null) {
+            explosionEffect.render(gc);
+        }
+        if (playingBreakEffect && breakEffect != null) {
+            breakEffect.render(gc);
         }
     }
 }

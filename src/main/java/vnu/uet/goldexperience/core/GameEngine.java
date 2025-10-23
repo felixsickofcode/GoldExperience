@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import vnu.uet.goldexperience.effect.ExplosionEffect;
 import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.model.*;
@@ -40,7 +41,7 @@ public class GameEngine {
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
 
-        levelManager.loadLevel(2);
+        levelManager.loadLevel(3);
         bricks = levelManager.getActiveBricks();
     }
 
@@ -73,7 +74,7 @@ public class GameEngine {
     private void handleInput() {
         if (input.isMouseActive()) {
             double targetX = input.getMouseX() - Constants.GAME_OFFSET
-                    - paddle.getWidth()/2;
+                    - paddle.getWidth() / 2;
             paddle.setTargetX(targetX);
         } else {
             if (input.isActionActive(Action.MOVE_LEFT))
@@ -101,8 +102,8 @@ public class GameEngine {
 
         for (Brick brick : bricks) {
             if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                    brick.takeHit();
-                    break;
+                brick.takeHit();
+                break;
             }
         }
 
@@ -113,6 +114,7 @@ public class GameEngine {
         for (Brick brick : bricks) {
             brick.update(deltaTime);
         }
+        checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
     }
 
@@ -134,6 +136,29 @@ public class GameEngine {
         gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         //ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
-       // paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
+        // paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
+    }
+
+    private void checkChainExplosions() {
+        /**
+         * list brick bi no (moi nhat dc them vao)
+         */
+        List<Brick> newlyExploded = new ArrayList<>();
+        for (Brick brick : bricks) {
+            ExplosionEffect effect = brick.getExplosionEffect();
+            if (effect != null && effect.isActive()) {
+                for (Brick otherBrick : bricks) {
+                    if (otherBrick != brick
+                            && !otherBrick.isDestroyed()
+                            && otherBrick.isInExplosionRadius(effect)) {
+                        newlyExploded.add(otherBrick);
+                    }
+                }
+            }
+        }
+
+        for (Brick brick : newlyExploded) {
+            brick.explodeByChainReaction();
+        }
     }
 }

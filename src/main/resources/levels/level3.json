@@ -1,19 +1,25 @@
 {
-  "levelNumber": 1,
+  "levelNumber": 2,
   "key": {
     "N": "normal",
     "U": "unbreakable",
-    "1": "medium-1",
-    " ": "empty"
+    " ": "empty",
+    "E": "explode",
+    "M": "medium"
   },
   "layout": [
     "            ",
     "            ",
     "            ",
     "            ",
-    "  11111111  ",
-    "  11111111  ",
-    "  11111111  ",
-    "  11111111  "
+    "  EEEEEEEE  ",
+    "            ",
+    "EMUEUUUUEUME",
+    "NMUENMMNEUMN",
+    "NMUEEUUEEUMN",
+    "NNNNNNNNNNNN",
+    "NNNNNNNNNNNN",
+    "NNNNNNNNNNNN",
+    "NNNNNNNNNNNN"
   ]
 }

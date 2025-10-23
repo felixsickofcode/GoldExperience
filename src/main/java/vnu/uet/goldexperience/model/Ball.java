@@ -15,13 +15,13 @@ public class Ball extends MovableObject {
     private long lastCollisionTime = 0;
     static final double minDy = 80;
     private final List<double[]> trail = new ArrayList<>();
-    private final int maxTrail = 30;
+    private final int maxTrail = 50;
     private double glowPulse = 0;
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
-        this.image = AssetsManager.balls.get(1);
+        this.image = AssetsManager.balls.getFirst();
     }
 
     public boolean isReset() {
@@ -91,25 +91,25 @@ public class Ball extends MovableObject {
         double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
 
         if (minOverlap == overlapLeft && getDx() > 0) {
-            System.out.println("LEFT");
+//            System.out.println("LEFT");
             setDx(-Math.abs(getDx()));
             setX(brick.getX() - 2 * radius - 0.5);
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
         } else if (minOverlap == overlapRight && getDx() < 0) {
-            System.out.println("RIGHT");
+//            System.out.println("RIGHT");
             setDx(Math.abs(getDx()));
             setX(brick.getX() + brick.getWidth() + 0.5);
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
         } else if (minOverlap == overlapTop && getDy() > 0) {
-            System.out.println("TOP");
+//            System.out.println("TOP");
             setDy(-Math.abs(getDy()));
             setY(brick.getY() - 2 * radius - 0.5);
         } else if (minOverlap == overlapBottom && getDy() < 0) {
-            System.out.println("BOTTOM");
+//            System.out.println("BOTTOM");
             setDy(Math.abs(getDy()));
             setY(brick.getY() + brick.getHeight() + 0.5);
         } else {
@@ -125,7 +125,7 @@ public class Ball extends MovableObject {
 
     private void printSpeed() {
         double s = Math.hypot(getDx(), getDy());
-        System.out.println("Ball speed: " + s);
+//        System.out.println("Ball speed: " + s);
     }
 
     private void normalizeSpeed(double maxSpeed) {
@@ -220,12 +220,12 @@ public class Ball extends MovableObject {
             double t = (double) i / trail.size();
             if (Math.random() < t * 0.25) continue;
             double alpha = (1 - t * 0.8) * (0.4 + Math.random() * 0.2);
-            double scale = 1.0 - t * 0.7;
+            double scale = 0.8 - t * 0.7;
 
             double w = width * scale;
             double h = height * scale;
 
-            Color start = Color.web("#ffff80");
+            Color start = Color.web("#ffffff");
             Color end = Color.web("#66ffff");
             Color trailColor = start.interpolate(end, t);
 
@@ -240,13 +240,13 @@ public class Ball extends MovableObject {
         gc.setGlobalAlpha(dynamicGlow);
 
         // light layer
-        gc.setFill(Color.web("#000000", dynamicGlow * 0.8)); // trung tâm đen
+        gc.setFill(Color.web("#ffffff", dynamicGlow * 0.8));
         gc.fillOval(cx - glowSize * 0.6, cy - glowSize * 0.6, glowSize * 1.2, glowSize * 1.2);
 
-        gc.setFill(Color.web("#0033aa", dynamicGlow * 0.5)); // xanh đậm
+        gc.setFill(Color.web("#99ffff", dynamicGlow * 0.5)); // xanh đậm
         gc.fillOval(cx - glowSize * 0.45, cy - glowSize * 0.45, glowSize * 0.9, glowSize * 0.9);
 
-        gc.setFill(Color.web("#3399ff", dynamicGlow * 0.3)); // xanh nhạt
+        gc.setFill(Color.web("#00ffff", dynamicGlow * 0.3)); // xanh nhạt
         gc.fillOval(cx - glowSize * 0.3, cy - glowSize * 0.3, glowSize * 0.6, glowSize * 0.6);
 
 

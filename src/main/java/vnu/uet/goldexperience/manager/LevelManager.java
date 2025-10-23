@@ -1,11 +1,8 @@
 package vnu.uet.goldexperience.manager;
 
 import com.google.gson.Gson;
-import vnu.uet.goldexperience.model.Brick;
-import vnu.uet.goldexperience.model.LevelData;
+import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.core.Constants;
-import vnu.uet.goldexperience.model.MediumBrick;
-import vnu.uet.goldexperience.model.UnbreakableBrick;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,13 +50,28 @@ public class LevelManager {
                                 Constants.NORMAL_BRICK_WIDTH * col,
                                 Constants.NORMAL_BRICK_HEIGHT * row,
                                 Constants.NORMAL_BRICK_WIDTH,
-                                Constants.NORMAL_BRICK_HEIGHT,
-                                1
+                                Constants.NORMAL_BRICK_HEIGHT
                         );
                         activeBricks.add(brick);
                     }
                     else  if (type.equals("unbreakable")) {
                         UnbreakableBrick brick = new UnbreakableBrick(
+                                Constants.NORMAL_BRICK_WIDTH * col,
+                                Constants.NORMAL_BRICK_HEIGHT * row,
+                                Constants.NORMAL_BRICK_WIDTH,
+                                Constants.NORMAL_BRICK_HEIGHT);
+                        activeBricks.add(brick);
+                    }
+                    else  if (type.equals("explode")) {
+                        ExplodeBrick brick = new ExplodeBrick(
+                                Constants.NORMAL_BRICK_WIDTH * col,
+                                Constants.NORMAL_BRICK_HEIGHT * row,
+                                Constants.NORMAL_BRICK_WIDTH,
+                                Constants.NORMAL_BRICK_HEIGHT);
+                        activeBricks.add(brick);
+                    }
+                    else  if (type.equals("medium")) {
+                        MediumBrick brick = new MediumBrick(
                                 Constants.NORMAL_BRICK_WIDTH * col,
                                 Constants.NORMAL_BRICK_HEIGHT * row,
                                 Constants.NORMAL_BRICK_WIDTH,

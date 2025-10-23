@@ -18,8 +18,6 @@ public class AssetsManager {
         try {
             bricks.add(new Image(AssetsManager.class.getResource("/images/brick_15.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1.png").toExternalForm()));
-            bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1_break.png").toExternalForm()));
-            bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1_broken.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/unbreakable1.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/unbreakable2.png").toExternalForm()));
         } catch (Exception e) {
@@ -41,9 +39,7 @@ public class AssetsManager {
 
     private static void loadBalls() {
         try {
-            balls.add(new Image(AssetsManager.class.getResource("/images/smallball.png").toExternalForm()));
-            balls.add(new Image(AssetsManager.class.getResource("/images/normalball.png").toExternalForm()));
-            balls.add(new Image(AssetsManager.class.getResource("/images/bigball.png").toExternalForm()));
+            balls.add(new Image(AssetsManager.class.getResource("/images/ball.png").toExternalForm()));
         } catch (Exception e) {
             System.err.println("Không thể tải ball: " + e.getMessage());
         }
