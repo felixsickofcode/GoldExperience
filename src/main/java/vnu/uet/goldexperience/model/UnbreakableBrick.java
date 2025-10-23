@@ -7,7 +7,7 @@ import vnu.uet.goldexperience.manager.SpriteManager;
 
 public class UnbreakableBrick extends Brick {
     private final SpriteManager spriteLoader;
-    private boolean hitAnimating = false;;
+    private boolean hitAnimating = false;
 
     public UnbreakableBrick(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -27,7 +27,6 @@ public class UnbreakableBrick extends Brick {
     protected void triggerDestroyEffect() {
         if (!playingBreakEffect) {
             breakEffect = new ParticleEffect(this);
-
             playingBreakEffect = true;
         }
     }
