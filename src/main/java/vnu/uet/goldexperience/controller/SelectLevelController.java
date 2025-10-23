@@ -49,6 +49,8 @@ public class SelectLevelController {
         selectedLevel = 1;
         if (sceneManager != null) {
             sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
         }
     }
 
@@ -59,6 +61,8 @@ public class SelectLevelController {
         selectedLevel = 2;
         if (sceneManager != null) {
             sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
         }
     }
 
@@ -69,6 +73,8 @@ public class SelectLevelController {
         selectedLevel = 3;
         if (sceneManager != null) {
             sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
         }
     }
 
@@ -79,6 +85,8 @@ public class SelectLevelController {
         selectedLevel = 4;
         if (sceneManager != null) {
             sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
         }
     }
 
@@ -89,6 +97,8 @@ public class SelectLevelController {
         selectedLevel = 5;
         if (sceneManager != null) {
             sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
         }
     }
 

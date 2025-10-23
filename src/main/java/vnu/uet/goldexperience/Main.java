@@ -52,7 +52,7 @@ public class Main extends Application {
         SelectChapterController chapterController = chapterLoader.getController();
         chapterController.setSceneManager(sceneManager);
 
-        sceneManager.switchTo("game");
+        sceneManager.switchTo("menu");
 
         Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(getClass().getResource("/fxml/style.css").toExternalForm());
