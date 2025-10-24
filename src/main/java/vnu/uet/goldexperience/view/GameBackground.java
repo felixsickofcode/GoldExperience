@@ -133,8 +133,6 @@ public class GameBackground {
             fallingShapes.add(new FallingShape());
         }
 
-        setTheme(ChapterTheme.CHAPTER_1_RUST);
-
         setupAnimation();
     }
 

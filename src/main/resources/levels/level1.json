@@ -3,18 +3,17 @@
   "key": {
     "N": "normal",
     "U": "unbreakable",
-    " ": "empty"
+    " ": "empty",
+    "E": "explode",
+    "M": "medium"
   },
   "layout": [
     "            ",
     "            ",
     "            ",
     "            ",
-    "  NNNNNNNN  ",
     "   NNNNNN   ",
-    "   NNNNNN   ",
-    "   NNNNNN   ",
-    "   NNNNNN   ",
-    "   NNNNNN   "
+    "    NNNN    ",
+    "     NN     "
   ]
 }

@@ -1,8 +1,10 @@
 package vnu.uet.goldexperience.manager;
 
 import com.google.gson.Gson;
-import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.model.Brick;
+import vnu.uet.goldexperience.model.BrickType; // <-- Import enum của bạn
+import vnu.uet.goldexperience.model.LevelData;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +12,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class LevelManager {
 
@@ -23,18 +26,16 @@ public class LevelManager {
 
     public void loadLevel(int levelNumber) {
         activeBricks.clear();
-
         String levelFile = "/levels/level" + levelNumber + ".json";
         System.out.println("Đang tải màn chơi: " + levelFile);
 
-        try (InputStream is = getClass().getResourceAsStream(levelFile);
-             Reader reader = new InputStreamReader(is)) {
-
+        try (InputStream is = getClass().getResourceAsStream(levelFile)) {
             if (is == null) {
-                System.err.println("LỖI: Không tìm thấy file màn chơi: " + levelFile);
+                System.err.println("LỖI: Không tìm thấy file: " + levelFile);
                 return;
             }
 
+            Reader reader = new InputStreamReader(Objects.requireNonNull(is));
             LevelData levelData = gson.fromJson(reader, LevelData.class);
             Map<String, String> key = levelData.getKey();
             List<String> layout = levelData.getLayout();
@@ -43,48 +44,19 @@ public class LevelManager {
                 String currentRow = layout.get(row);
                 for (int col = 0; col < currentRow.length(); col++) {
                     char symbol = currentRow.charAt(col);
-                    String type = key.get(String.valueOf(symbol));
-                    if (type == null) continue;
-                    else if (type.equals("normal")) {
-                        NormalBrick brick = new NormalBrick(
-                                Constants.NORMAL_BRICK_WIDTH * col,
-                                Constants.NORMAL_BRICK_HEIGHT * row,
-                                Constants.NORMAL_BRICK_WIDTH,
-                                Constants.NORMAL_BRICK_HEIGHT
-                        );
-                        activeBricks.add(brick);
-                    }
-                    else  if (type.equals("unbreakable")) {
-                        UnbreakableBrick brick = new UnbreakableBrick(
-                                Constants.NORMAL_BRICK_WIDTH * col,
-                                Constants.NORMAL_BRICK_HEIGHT * row,
-                                Constants.NORMAL_BRICK_WIDTH,
-                                Constants.NORMAL_BRICK_HEIGHT);
-                        activeBricks.add(brick);
-                    }
-                    else  if (type.equals("explode")) {
-                        ExplodeBrick brick = new ExplodeBrick(
-                                Constants.NORMAL_BRICK_WIDTH * col,
-                                Constants.NORMAL_BRICK_HEIGHT * row,
-                                Constants.NORMAL_BRICK_WIDTH,
-                                Constants.NORMAL_BRICK_HEIGHT);
-                        activeBricks.add(brick);
-                    }
-                    else  if (type.equals("medium")) {
-                        MediumBrick brick = new MediumBrick(
-                                Constants.NORMAL_BRICK_WIDTH * col,
-                                Constants.NORMAL_BRICK_HEIGHT * row,
-                                Constants.NORMAL_BRICK_WIDTH,
-                                Constants.NORMAL_BRICK_HEIGHT);
-                        activeBricks.add(brick);
-                    }
+                    String typeString = key.get(String.valueOf(symbol));
+                    BrickType brickType = BrickType.fromString(typeString);
 
+                    if (brickType != null) {
+                        double brickX = Constants.NORMAL_BRICK_WIDTH * col;
+                        double brickY = Constants.NORMAL_BRICK_HEIGHT * row;
+                        Brick brick = brickType.create(brickX, brickY);
+                        activeBricks.add(brick);
+                    }
                 }
             }
-
-            System.out.println("ĐỌC FILE THÀNH CÔNG!");
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải hoặc xử lý file màn chơi: " + levelFile);
+            System.err.println("Lỗi khi tải hoặc xử lý file: " + levelFile);
             e.printStackTrace();
         }
     }
