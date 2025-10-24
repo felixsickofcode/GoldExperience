@@ -1,19 +1,21 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.*;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.effect.PaddleEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class Paddle extends MovableObject {
-
     private final double speed = Constants.PADDLE_SPEED;
     private int direction = 0;
-
+    private PaddleEffect effect;
     private double targetX = -1;
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
         this.image = AssetsManager.paddles.get(2);
+        effect = new PaddleEffect(width, height);
     }
 
     public void extendPaddle() {
@@ -70,7 +72,7 @@ public class Paddle extends MovableObject {
             dx = direction * speed;
             move(deltaTime);
         }
-
+        effect.update(x, y, deltaTime);
         handlePaddleEdgeCollision();
     }
 
@@ -82,8 +84,10 @@ public class Paddle extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
+
         if (image != null)
-            gc.drawImage(image, x, y - 5);
+            gc.drawImage(image, x, y, width, height);
+        effect.render(gc);
     }
 
     public int getSize() {
@@ -117,11 +121,16 @@ public class Paddle extends MovableObject {
             case 4 -> newWidth = Constants.BIG_PADDLE_WIDTH;
             default -> newWidth = Constants.MEDIUM_PADDLE_WIDTH;
         }
+        effect = new PaddleEffect(newWidth, height);
         setWidth(newWidth);
         setImage(AssetsManager.paddles.get(size));
     }
-
+    public void onBallCollision(Ball ball) {
+        effect.onBallHit(ball.getX(), ball.getY());
+    }
     public double getSpeed() {
         return speed;
     }
+
+
 }

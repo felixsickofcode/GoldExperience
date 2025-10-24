@@ -1,7 +1,7 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.ParticleEffect;
+import vnu.uet.goldexperience.effect.DebrisEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SpriteManager;
 
@@ -26,7 +26,7 @@ public class UnbreakableBrick extends Brick {
     @Override
     protected void triggerDestroyEffect() {
         if (!playingBreakEffect) {
-            breakEffect = new ParticleEffect(this);
+            breakEffect = new DebrisEffect(this);
             playingBreakEffect = true;
         }
     }
