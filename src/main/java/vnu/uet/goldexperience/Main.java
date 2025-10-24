@@ -4,10 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.controller.MenuController;
-import vnu.uet.goldexperience.controller.SelectStageController;
+import vnu.uet.goldexperience.controller.SelectChapterController;
+import vnu.uet.goldexperience.controller.SelectLevelController;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 
@@ -28,7 +28,8 @@ public class Main extends Application {
         sceneManager.PreloadScene("tutorial", "/fxml/tutorial-view.fxml");
         sceneManager.PreloadScene("game", "/fxml/game.fxml");
         sceneManager.PreloadScene("setting", "/fxml/setting.fxml");
-        sceneManager.PreloadScene("stage-select", "/fxml/stage-select.fxml");
+        sceneManager.PreloadScene("chapter", "/fxml/chapter.fxml");
+        sceneManager.PreloadScene("level", "/fxml/level.fxml");
 
         // Setup controllers
         FXMLLoader menuLoader = sceneManager.getScreens().get("menu");
@@ -43,9 +44,13 @@ public class Main extends Application {
         MenuController optionController = optionLoader.getController();
         optionController.setSceneManager(sceneManager);
 
-        FXMLLoader stageSelectLoader = sceneManager.getScreens().get("stage-select");
-        SelectStageController stageSelectController = stageSelectLoader.getController();
+        FXMLLoader stageSelectLoader = sceneManager.getScreens().get("level");
+        SelectLevelController stageSelectController = stageSelectLoader.getController();
         stageSelectController.setSceneManager(sceneManager);
+
+        FXMLLoader chapterLoader = sceneManager.getScreens().get("chapter");
+        SelectChapterController chapterController = chapterLoader.getController();
+        chapterController.setSceneManager(sceneManager);
 
         sceneManager.switchTo("menu");
 

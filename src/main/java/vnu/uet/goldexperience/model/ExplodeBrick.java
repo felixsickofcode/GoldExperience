@@ -12,6 +12,7 @@ public class ExplodeBrick extends Brick {
         super(x, y, width, height);
         image = AssetsManager.bricks.get(2);
         spriteLoader = new SpriteManager(6, 0, 20);
+        effectType = "Explosion";
     }
 
     @Override
@@ -32,8 +33,6 @@ public class ExplodeBrick extends Brick {
         explosionEffect = new ExplosionEffect(this);
         explosionEffect.trigger();
         playingExplosion = true;
-        effectType = "Explosion";
-        System.out.println("Tạo hiệu ứng nổ tại: " + x + ", " + y);
     }
 
     @Override

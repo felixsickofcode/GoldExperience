@@ -48,17 +48,6 @@ public class MenuController {
         System.out.println("Menu initialized");
     }
 
-    // When click on choose stage - Load game scene
-    @FXML
-    private void handleChooseStage(ActionEvent event) {
-        System.out.println("Choose Stage clicked");
-        if (sceneManager != null) {
-            sceneManager.switchTo("game");
-            GameController controller = (GameController) sceneManager.getController("game");
-            controller.startGame();
-        }
-    }
-
     // HandleSound clicked
     @FXML
     private void handleSound(ActionEvent event) {
@@ -77,9 +66,7 @@ public class MenuController {
     private void handleStoryMode(ActionEvent event) {
         System.out.println("Story Mode clicked");
         if (sceneManager != null) {
-            sceneManager.switchTo("stage-select");
-            GameController controller = (GameController) sceneManager.getController("stage-select");
-            controller.startGame();
+            sceneManager.switchTo("chapter");
         }
     }
 

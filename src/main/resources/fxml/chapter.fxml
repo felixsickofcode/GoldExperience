@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.paint.Color?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #1a1a2e;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vnu.uet.goldexperience.controller.SelectStageController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #1a1a2e;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vnu.uet.goldexperience.controller.SelectChapterController">
     <children>
         <!-- Back Button -->
         <Button fx:id="btnBack" layoutX="30.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleBackToMenu" style="-fx-background-color: #FFD700; -fx-cursor: hand; -fx-background-radius: 10;" prefWidth="100.0" prefHeight="40.0" text="◄ BACK">
@@ -19,10 +19,10 @@
             </font>
         </Button>
 
-        <!-- Left Stack - Previous Stages -->
+        <!-- Left Stack - Previous Chapters -->
         <StackPane fx:id="leftStack" layoutX="50.0" layoutY="200.0" prefHeight="400.0" prefWidth="280.0">
             <children>
-                <!-- Stage 1 (Bottom of left stack) -->
+                <!-- Chapter 1 (Bottom of left stack) -->
                 <AnchorPane translateX="-40.0" translateY="60.0" opacity="0.5" scaleX="0.85" scaleY="0.85">
                     <children>
                         <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
@@ -37,7 +37,7 @@
                                                 <DropShadow color="#00000080" radius="10.0" offsetY="5.0"/>
                                             </effect>
                                         </ImageView>
-                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 1" textAlignment="CENTER" wrappingWidth="200.0" fill="#E0E0E0">
+                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chapter 1" textAlignment="CENTER" wrappingWidth="200.0" fill="#E0E0E0">
                                             <font>
                                                 <Font name="System Bold" size="22.0" />
                                             </font>
@@ -49,34 +49,7 @@
                     </children>
                 </AnchorPane>
 
-                <!-- Stage 2 (Middle of left stack) -->
-                <AnchorPane translateX="-20.0" translateY="30.0" opacity="0.7" scaleX="0.92" scaleY="0.92">
-                    <children>
-                        <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                            <graphic>
-                                <AnchorPane prefHeight="180.0" prefWidth="240.0">
-                                    <children>
-                                        <ImageView fitHeight="120.0" fitWidth="240.0" layoutY="45.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../images/menu-background.jpg" />
-                                            </image>
-                                            <effect>
-                                                <DropShadow color="#00000080" radius="10.0" offsetY="5.0"/>
-                                            </effect>
-                                        </ImageView>
-                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 2" textAlignment="CENTER" wrappingWidth="200.0" fill="#E0E0E0">
-                                            <font>
-                                                <Font name="System Bold" size="22.0" />
-                                            </font>
-                                        </Text>
-                                    </children>
-                                </AnchorPane>
-                            </graphic>
-                        </Button>
-                    </children>
-                </AnchorPane>
-
-                <!-- Stage 3 (Top of left stack - clickable) -->
+                <!-- Chapter 2 (Top of left stack - clickable) -->
                 <AnchorPane translateX="0.0" translateY="0.0" opacity="0.9">
                     <children>
                         <Button fx:id="leftTopButton" mnemonicParsing="false" onAction="#onLeftClick" style="-fx-background-color: transparent; -fx-cursor: hand;">
@@ -91,7 +64,7 @@
                                                 <DropShadow color="#00000080" radius="15.0" offsetY="5.0"/>
                                             </effect>
                                         </ImageView>
-                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 3" textAlignment="CENTER" wrappingWidth="200.0" fill="WHITE">
+                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chapter 2" textAlignment="CENTER" wrappingWidth="200.0" fill="WHITE">
                                             <font>
                                                 <Font name="System Bold" size="22.0" />
                                             </font>
@@ -105,8 +78,8 @@
             </children>
         </StackPane>
 
-        <!-- Center Main Stage -->
-        <AnchorPane fx:id="centerStage" layoutX="420.0" layoutY="160.0" prefHeight="400.0" prefWidth="440.0">
+        <!-- Center Main Chapter -->
+        <AnchorPane fx:id="centerChapter" layoutX="420.0" layoutY="160.0" prefHeight="400.0" prefWidth="440.0">
             <children>
                 <Button mnemonicParsing="false" style="-fx-background-color: transparent;">
                     <graphic>
@@ -120,7 +93,7 @@
                                         <DropShadow color="#FFD700" radius="25.0" spread="0.3" offsetY="5.0"/>
                                     </effect>
                                 </ImageView>
-                                <Text layoutX="100.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 4" textAlignment="CENTER" wrappingWidth="200.0" fill="#FFD700">
+                                <Text layoutX="100.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chapter 3" textAlignment="CENTER" wrappingWidth="200.0" fill="#FFD700">
                                     <font>
                                         <Font name="System Bold" size="36.0" />
                                     </font>
@@ -128,7 +101,7 @@
                                         <DropShadow color="#FFD70080" radius="10.0"/>
                                     </effect>
                                 </Text>
-                                <Text layoutX="50.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click arrows to navigate stages" textAlignment="CENTER" wrappingWidth="300.0" fill="#AAAAAA">
+                                <Text layoutX="50.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click arrows to navigate chapters" textAlignment="CENTER" wrappingWidth="300.0" fill="#AAAAAA">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -140,10 +113,10 @@
             </children>
         </AnchorPane>
 
-        <!-- Right Stack - Next Stages -->
+        <!-- Right Stack - Next Chapters -->
         <StackPane fx:id="rightStack" layoutX="950.0" layoutY="200.0" prefHeight="400.0" prefWidth="280.0">
             <children>
-                <!-- Stage 7 (Bottom of right stack) -->
+                <!-- Chapter 5 (Bottom of right stack) -->
                 <AnchorPane translateX="40.0" translateY="60.0" opacity="0.5" scaleX="0.85" scaleY="0.85">
                     <children>
                         <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
@@ -158,7 +131,7 @@
                                                 <DropShadow color="#00000080" radius="10.0" offsetY="5.0"/>
                                             </effect>
                                         </ImageView>
-                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 7" textAlignment="CENTER" wrappingWidth="200.0" fill="#E0E0E0">
+                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chapter 5" textAlignment="CENTER" wrappingWidth="200.0" fill="#E0E0E0">
                                             <font>
                                                 <Font name="System Bold" size="22.0" />
                                             </font>
@@ -170,34 +143,7 @@
                     </children>
                 </AnchorPane>
 
-                <!-- Stage 6 (Middle of right stack) -->
-                <AnchorPane translateX="20.0" translateY="30.0" opacity="0.7" scaleX="0.92" scaleY="0.92">
-                    <children>
-                        <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                            <graphic>
-                                <AnchorPane prefHeight="180.0" prefWidth="240.0">
-                                    <children>
-                                        <ImageView fitHeight="120.0" fitWidth="240.0" layoutY="45.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../images/menu-background.jpg" />
-                                            </image>
-                                            <effect>
-                                                <DropShadow color="#00000080" radius="10.0" offsetY="5.0"/>
-                                            </effect>
-                                        </ImageView>
-                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 6" textAlignment="CENTER" wrappingWidth="200.0" fill="#E0E0E0">
-                                            <font>
-                                                <Font name="System Bold" size="22.0" />
-                                            </font>
-                                        </Text>
-                                    </children>
-                                </AnchorPane>
-                            </graphic>
-                        </Button>
-                    </children>
-                </AnchorPane>
-
-                <!-- Stage 5 (Top of right stack - clickable) -->
+                <!-- Chapter 4 (Top of right stack - clickable) -->
                 <AnchorPane translateX="0.0" translateY="0.0" opacity="0.9">
                     <children>
                         <Button fx:id="rightTopButton" mnemonicParsing="false" onAction="#onRightClick" style="-fx-background-color: transparent; -fx-cursor: hand;">
@@ -212,7 +158,7 @@
                                                 <DropShadow color="#00000080" radius="15.0" offsetY="5.0"/>
                                             </effect>
                                         </ImageView>
-                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stage 5" textAlignment="CENTER" wrappingWidth="200.0" fill="WHITE">
+                                        <Text layoutX="20.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chapter 4" textAlignment="CENTER" wrappingWidth="200.0" fill="WHITE">
                                             <font>
                                                 <Font name="System Bold" size="22.0" />
                                             </font>
@@ -240,7 +186,7 @@
         </Button>
 
         <!-- Title -->
-        <Text layoutX="440.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SELECT STAGE" textAlignment="CENTER" wrappingWidth="400.0" fill="#FFD700">
+        <Text layoutX="440.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SELECT CHAPTER" textAlignment="CENTER" wrappingWidth="400.0" fill="#FFD700">
             <font>
                 <Font name="System Bold" size="48.0" />
             </font>
@@ -249,8 +195,8 @@
             </effect>
         </Text>
 
-        <!-- Choose Stage Button -->
-        <Button fx:id="btnChooseStage" layoutX="540.0" layoutY="600.0" mnemonicParsing="false" onAction="#handleChooseStage" style="-fx-background-color: #FFD700; -fx-cursor: hand; -fx-background-radius: 10;" prefWidth="200.0" prefHeight="50.0" text="CHOOSE STAGE">
+        <!-- Choose Chapter Button -->
+        <Button fx:id="btnChooseChapter" layoutX="540.0" layoutY="600.0" mnemonicParsing="false" onAction="#handleChooseChapter" style="-fx-background-color: #FFD700; -fx-cursor: hand; -fx-background-radius: 10;" prefWidth="200.0" prefHeight="50.0" text="CHOOSE CHAPTER">
             <font>
                 <Font name="System Bold" size="18.0" />
             </font>

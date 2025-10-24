@@ -46,7 +46,7 @@ public class LevelManager {
                     String type = key.get(String.valueOf(symbol));
                     if (type == null) continue;
                     else if (type.equals("normal")) {
-                        Brick brick = new Brick(
+                        NormalBrick brick = new NormalBrick(
                                 Constants.NORMAL_BRICK_WIDTH * col,
                                 Constants.NORMAL_BRICK_HEIGHT * row,
                                 Constants.NORMAL_BRICK_WIDTH,
