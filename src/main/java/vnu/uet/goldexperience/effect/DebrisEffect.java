@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ParticleEffect {
+public class DebrisEffect {
     private List<Particle> particles;
     private boolean isFinished;
 
-    public ParticleEffect(Brick brick) {
+    public DebrisEffect(Brick brick) {
         this.particles = new ArrayList<>();
         this.isFinished = false;
         createParticles(brick);

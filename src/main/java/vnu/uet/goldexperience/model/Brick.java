@@ -2,12 +2,12 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.ExplosionEffect;
-import vnu.uet.goldexperience.effect.ParticleEffect;
+import vnu.uet.goldexperience.effect.DebrisEffect;
 
 
 public abstract class Brick extends GameObject {
     protected int hitPoints;
-    protected ParticleEffect breakEffect;
+    protected DebrisEffect breakEffect;
     protected boolean playingBreakEffect;
     protected ExplosionEffect explosionEffect;
     protected boolean playingExplosion = false;
@@ -25,7 +25,7 @@ public abstract class Brick extends GameObject {
         if (playingBreakEffect || playingExplosion) {
             return;
         }
-        breakEffect = new ParticleEffect(this);
+        breakEffect = new DebrisEffect(this);
         playingBreakEffect = true;
         effectType = "Particle";
     }

@@ -1,8 +1,9 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.effect.BallTrail;
+import vnu.uet.goldexperience.effect.BallGlow;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
 import java.util.ArrayList;
@@ -17,11 +18,17 @@ public class Ball extends MovableObject {
     private final List<double[]> trail = new ArrayList<>();
     private final int maxTrail = 50;
     private double glowPulse = 0;
+    private BallTrail ballTrail;
+    private BallGlow ballGlow;
+
+
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
         this.image = AssetsManager.balls.getFirst();
+        this.ballGlow = new BallGlow();
+        this.ballTrail = new BallTrail();
     }
 
     public boolean isReset() {
@@ -75,6 +82,8 @@ public class Ball extends MovableObject {
             increaseSpeedPercent(1.5);
             normalizeSpeed(Constants.BALL_MAX_SPEED);
             setLastCollisionTime(now);
+            Paddle paddle_ = (Paddle) paddle;
+            paddle_.onBallCollision(this);
         }
     }
 
@@ -214,42 +223,8 @@ public class Ball extends MovableObject {
     public void render(GraphicsContext gc) {
         double cx = getCenterX();
         double cy = getCenterY();
-        // trail
-        for (int i = 0; i < trail.size(); i++) {
-            double[] pos = trail.get(i);
-            double t = (double) i / trail.size();
-            if (Math.random() < t * 0.25) continue;
-            double alpha = (1 - t * 0.8) * (0.4 + Math.random() * 0.2);
-            double scale = 0.8 - t * 0.7;
-
-            double w = width * scale;
-            double h = height * scale;
-
-            Color start = Color.web("#ffffff");
-            Color end = Color.web("#66ffff");
-            Color trailColor = start.interpolate(end, t);
-
-            gc.setGlobalAlpha(alpha);
-            gc.setFill(trailColor);
-            gc.fillOval(pos[0] - w / 2, pos[1] - h / 2, w, h);
-        }
-
-        // glow
-        double dynamicGlow = 0.4 + 0.3 * glowPulse;
-        double glowSize = radius * 4;
-        gc.setGlobalAlpha(dynamicGlow);
-
-        // light layer
-        gc.setFill(Color.web("#ffffff", dynamicGlow * 0.8));
-        gc.fillOval(cx - glowSize * 0.6, cy - glowSize * 0.6, glowSize * 1.2, glowSize * 1.2);
-
-        gc.setFill(Color.web("#99ffff", dynamicGlow * 0.5)); // xanh đậm
-        gc.fillOval(cx - glowSize * 0.45, cy - glowSize * 0.45, glowSize * 0.9, glowSize * 0.9);
-
-        gc.setFill(Color.web("#00ffff", dynamicGlow * 0.3)); // xanh nhạt
-        gc.fillOval(cx - glowSize * 0.3, cy - glowSize * 0.3, glowSize * 0.6, glowSize * 0.6);
-
-
+        ballTrail.render(gc, trail, width, height);
+        ballGlow.render(gc, cx, cy, radius, glowPulse);
         // ball
         gc.setGlobalAlpha(1.0);
         if (image != null)
