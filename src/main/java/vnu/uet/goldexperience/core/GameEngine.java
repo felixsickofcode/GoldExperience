@@ -130,10 +130,9 @@ public class GameEngine {
 
         gc.setStroke(Color.RED);
         gc.setLineWidth(1);
-        gc.strokeRect(paddle.getX() + paddle.getWidth() / 2,
-                0, 1, canvas.getHeight());
+        //gc.strokeRect(paddle.getX() + paddle.getWidth() / 2, 0, 1, canvas.getHeight());
         gc.setLineWidth(5);
-        gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        //gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         //ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
         // paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
