@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import vnu.uet.goldexperience.effect.ExplosionEffect;
+import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.LevelManager;
 import vnu.uet.goldexperience.model.*;
@@ -40,12 +41,32 @@ public class GameEngine {
 
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
+    }
 
-        levelManager.loadLevel(3);
+    private void loadCurrentLevel() {
+        int levelNumber = GameSession.getInstance().getLevelNumber();
+        System.out.println("Loading level: " + levelNumber +
+                " (Chapter " + GameSession.getInstance().getCurrentChapter() +
+                ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
+
+        levelManager.loadLevel(levelNumber);
         bricks = levelManager.getActiveBricks();
     }
 
+    public void reloadLevel() {
+        loadCurrentLevel();
+        ball.reset(paddle);
+    }
+
     public void start() {
+
+        int levelNumber = GameSession.getInstance().getLevelNumber();
+        loadCurrentLevel();
+
+        bricks = levelManager.getActiveBricks();
+
+        ball.reset(paddle);
+
         loop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -56,6 +77,9 @@ public class GameEngine {
                 double dt = (now - lastTime) / 1_000_000_000.0;
                 lastTime = now;
 
+                if (isLevelComplete()) {
+                    handleLevelComplete();
+                }
                 handleInput();
                 update(dt);
                 render();
@@ -130,11 +154,10 @@ public class GameEngine {
 
         gc.setStroke(Color.RED);
         gc.setLineWidth(1);
-        gc.strokeRect(paddle.getX() + paddle.getWidth() / 2,
-                0, 1, canvas.getHeight());
+        //gc.strokeRect(paddle.getX() + paddle.getWidth() / 2, 0, 1, canvas.getHeight());
         gc.setLineWidth(5);
-        gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
+        //gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        //System.out.println("Số lượng gạch còn lại: " + bricks.size());
         //ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
         // paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
     }
@@ -159,6 +182,26 @@ public class GameEngine {
 
         for (Brick brick : newlyExploded) {
             brick.explodeByChainReaction();
+        }
+    }
+
+    private boolean isLevelComplete() {
+        for (Brick brick : bricks) {
+            if (!brick.isDestroyed() && !(brick instanceof UnbreakableBrick)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void handleLevelComplete() {
+        end();
+        System.out.println("Level Complete!");
+        boolean hasNext = GameSession.getInstance().nextLevel();
+        if (hasNext) {
+            start();
+        } else {
+            System.out.println("Game Complete! All levels finished!");
         }
     }
 }

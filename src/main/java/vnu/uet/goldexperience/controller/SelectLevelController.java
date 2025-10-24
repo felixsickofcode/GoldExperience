@@ -3,10 +3,12 @@ package vnu.uet.goldexperience.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.SceneManager;
 
 public class SelectLevelController {
     private SceneManager sceneManager;
+
     private int selectedLevel = 0;
 
     @FXML
@@ -27,74 +29,46 @@ public class SelectLevelController {
     @FXML
     private Button btnLevel5;
 
-    // Set scene manager
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
     }
 
-    // Get selected level
     public int getLevel() {
         return selectedLevel;
     }
 
     @FXML
-    public void initialize() {
-        System.out.println("SelectLevel initialized");
-    }
-
-    // Handle Level 1 clicked
-    @FXML
     private void handleLevel1(ActionEvent event) {
-        System.out.println("Level 1 clicked");
-        selectedLevel = 1;
-        if (sceneManager != null) {
-            sceneManager.switchTo("game");
-            GameController controller = (GameController) sceneManager.getController("game");
-            controller.startGame();
-        }
+        playLevel(1);
     }
 
-    // Handle Level 2 clicked
     @FXML
     private void handleLevel2(ActionEvent event) {
-        System.out.println("Level 2 clicked");
-        selectedLevel = 2;
-        if (sceneManager != null) {
-            sceneManager.switchTo("game");
-            GameController controller = (GameController) sceneManager.getController("game");
-            controller.startGame();
-        }
+        playLevel(2);
     }
 
-    // Handle Level 3 clicked
     @FXML
     private void handleLevel3(ActionEvent event) {
-        System.out.println("Level 3 clicked");
-        selectedLevel = 3;
-        if (sceneManager != null) {
-            sceneManager.switchTo("game");
-            GameController controller = (GameController) sceneManager.getController("game");
-            controller.startGame();
-        }
+        playLevel(3);
     }
 
-    // Handle Level 4 clicked
     @FXML
     private void handleLevel4(ActionEvent event) {
-        System.out.println("Level 4 clicked");
-        selectedLevel = 4;
-        if (sceneManager != null) {
-            sceneManager.switchTo("game");
-            GameController controller = (GameController) sceneManager.getController("game");
-            controller.startGame();
-        }
+        playLevel(4);
     }
 
-    // Handle Level 5 clicked
     @FXML
     private void handleLevel5(ActionEvent event) {
-        System.out.println("Level 5 clicked");
-        selectedLevel = 5;
+        playLevel(5);
+    }
+
+    private void playLevel(int level) {
+        System.out.println("Level " + level + " clicked");
+
+        GameSession.getInstance().setLevel(level);
+
+        System.out.println("Loading: " + GameSession.getInstance().getLevelFileName());
+
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
@@ -102,7 +76,6 @@ public class SelectLevelController {
         }
     }
 
-    // Handle back to menu
     @FXML
     private void handleBackToMenu(ActionEvent event) {
         System.out.println("Back to menu clicked");

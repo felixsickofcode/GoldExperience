@@ -125,7 +125,7 @@ public class Ball extends MovableObject {
 
     private void printSpeed() {
         double s = Math.hypot(getDx(), getDy());
-        System.out.println("Ball speed: " + s);
+        //System.out.println("Ball speed: " + s);
     }
 
     private void normalizeSpeed(double maxSpeed) {

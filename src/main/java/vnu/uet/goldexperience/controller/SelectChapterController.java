@@ -7,6 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.GameSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ public class SelectChapterController {
     @FXML
     private Button btnChooseChapter;
 
-    // Chapter navigation components
     @FXML
     private StackPane leftStack;
 
@@ -36,10 +36,9 @@ public class SelectChapterController {
     @FXML
     private Button rightTopButton;
 
-    // Chapter data
     private List<ChapterData> chapters;
-    private int currentCenterIndex = 2; // Start with Chapter 3 in center
-    private static final int TOTAL_CHAPTERS = 5; // Total number of chapters
+    private int currentCenterIndex = 2;
+    private static final int TOTAL_CHAPTERS = 5;
 
     protected int getCurrentCenterIndex() {
         return currentCenterIndex;
@@ -49,18 +48,15 @@ public class SelectChapterController {
         this.currentCenterIndex = currentCenterIndex;
     }
 
-    // Inner class to hold chapter data
     private static class ChapterData {
         String name;
         int chapterNumber;
-
         ChapterData(int number) {
             this.chapterNumber = number;
             this.name = "Chapter " + number;
         }
     }
 
-    // Set scene manager
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
     }
@@ -69,6 +65,11 @@ public class SelectChapterController {
     public void initialize() {
         System.out.println("ChapterSelect initialized");
         initializeChapters();
+
+        // Restore last selected chapter from GameSession
+        int lastChapter = GameSession.getInstance().getCurrentChapter();
+        currentCenterIndex = lastChapter - 1;
+
         updateChapterDisplay();
     }
 
@@ -80,10 +81,7 @@ public class SelectChapterController {
     }
 
     private void updateChapterDisplay() {
-        // Update center chapter
         updateCenterChapter();
-
-        // Update left and right stacks
         updateLeftStack();
         updateRightStack();
     }
@@ -91,7 +89,6 @@ public class SelectChapterController {
     private void updateCenterChapter() {
         if (currentCenterIndex >= 0 && currentCenterIndex < chapters.size()) {
             ChapterData centerData = chapters.get(currentCenterIndex);
-            // Find the text element in center chapter and update it
             centerChapter.getChildren().forEach(node -> {
                 if (node instanceof Button) {
                     Button btn = (Button) node;
@@ -112,13 +109,7 @@ public class SelectChapterController {
     }
 
     private void updateLeftStack() {
-        // Update the visible chapters on left stack
-        // leftStack has 2 children in FXML:
-        // Index 0 (Bottom): currentCenterIndex - 2
-        // Index 1 (Top): currentCenterIndex - 1
-
         if (leftStack.getChildren().size() >= 2) {
-            // Update bottom card (Index 0)
             int bottomChapterIndex = currentCenterIndex - 2;
             if (bottomChapterIndex >= 0 && bottomChapterIndex < chapters.size()) {
                 AnchorPane pane = (AnchorPane) leftStack.getChildren().get(0);
@@ -128,7 +119,6 @@ public class SelectChapterController {
                 leftStack.getChildren().get(0).setVisible(false);
             }
 
-            // Update top card (Index 1)
             int topChapterIndex = currentCenterIndex - 1;
             if (topChapterIndex >= 0 && topChapterIndex < chapters.size()) {
                 AnchorPane pane = (AnchorPane) leftStack.getChildren().get(1);
@@ -141,13 +131,7 @@ public class SelectChapterController {
     }
 
     private void updateRightStack() {
-        // Update the visible chapters on right stack
-        // rightStack has 2 children in FXML:
-        // Index 0 (Bottom): currentCenterIndex + 2
-        // Index 1 (Top): currentCenterIndex + 1
-
         if (rightStack.getChildren().size() >= 2) {
-            // Update bottom card (Index 0)
             int bottomChapterIndex = currentCenterIndex + 2;
             if (bottomChapterIndex >= 0 && bottomChapterIndex < chapters.size()) {
                 AnchorPane pane = (AnchorPane) rightStack.getChildren().get(0);
@@ -157,7 +141,6 @@ public class SelectChapterController {
                 rightStack.getChildren().get(0).setVisible(false);
             }
 
-            // Update top card (Index 1)
             int topChapterIndex = currentCenterIndex + 1;
             if (topChapterIndex >= 0 && topChapterIndex < chapters.size()) {
                 AnchorPane pane = (AnchorPane) rightStack.getChildren().get(1);
@@ -188,7 +171,6 @@ public class SelectChapterController {
         });
     }
 
-    // Handle left navigation - move to previous chapter
     @FXML
     public void onLeftClick(ActionEvent event) {
         if (currentCenterIndex > 0) {
@@ -213,13 +195,16 @@ public class SelectChapterController {
 
     @FXML
     private void handleChooseChapter(ActionEvent event) {
-        System.out.println("Choose Chapter " + chapters.get(currentCenterIndex).chapterNumber + " clicked");
+        int selectedChapter = getCurrentChapterNumber();
+        System.out.println("Choose Chapter " + selectedChapter + " clicked");
+
+        GameSession.getInstance().setChapter(selectedChapter);
+
         if (sceneManager != null) {
             sceneManager.switchTo("level");
         }
     }
 
-    // Handle back to menu
     @FXML
     private void handleBackToMenu(ActionEvent event) {
         System.out.println("Back to menu clicked");
@@ -228,7 +213,6 @@ public class SelectChapterController {
         }
     }
 
-    // Get current selected chapter number
     public int getCurrentChapterNumber() {
         return chapters.get(currentCenterIndex).chapterNumber;
     }
