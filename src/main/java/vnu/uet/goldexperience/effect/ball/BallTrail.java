@@ -2,9 +2,23 @@ package vnu.uet.goldexperience.effect;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class BallTrail {
+    private final List<double[]> trail = new ArrayList<>();
+    private final int maxTrail = 50;
+    public void update(double dt,double x, double y) {
+        trail.add(0, new double[]{x,y});
+        if (trail.size() > maxTrail)
+            trail.remove(trail.size() - 1);
+    }
+
+    public List<double[]> getTrail() {
+        return trail;
+    }
+
     public void render(GraphicsContext gc, List<double[]> trail, double width, double height) {
         for (int i = 0; i < trail.size(); i++) {
             double[] pos = trail.get(i);

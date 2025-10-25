@@ -4,12 +4,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import java.util.Random;
 
-public class BubbleEffect {
+public class BallBubbleTrail {
     private double x, y, vx, vy, life;
     private final double size;
     private final Color color;
 
-    public BubbleEffect(double x, double y, double angle, double speed) {
+    public BallBubbleTrail(double x, double y, double angle, double speed) {
         this.x = x;
         this.y = y;
         this.vx = Math.cos(angle) * speed;
@@ -33,7 +33,6 @@ public class BubbleEffect {
     }
 
     public boolean isDead() { return life <= 0; }
-
     public void render(GraphicsContext gc) {
         gc.setGlobalAlpha(life * 0.8);
         gc.setFill(color);
