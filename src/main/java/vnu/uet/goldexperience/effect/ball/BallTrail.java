@@ -8,7 +8,7 @@ import java.util.List;
 
 public class BallTrail {
     private final List<double[]> trail = new ArrayList<>();
-    private final int maxTrail = 50;
+    private final int maxTrail = 60;
     public void update(double x, double y) {
         trail.addFirst(new double[]{x,y});
         if (trail.size() > maxTrail)
