@@ -3,12 +3,10 @@ package vnu.uet.goldexperience.core;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import vnu.uet.goldexperience.effect.BorderFlashEffect;
 import vnu.uet.goldexperience.effect.ExplosionEffect;
-import vnu.uet.goldexperience.manager.GameSession;
-import vnu.uet.goldexperience.manager.InputManager;
-import vnu.uet.goldexperience.manager.LevelManager;
+import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 
 import java.util.ArrayList;
@@ -19,6 +17,13 @@ public class GameEngine {
     private final GraphicsContext gc;
     private final InputManager input;
     private final LevelManager levelManager;
+
+    private final GameStateManager stateManager;
+    private final TransitionManager transitionManager;
+    private final PauseMenuManager pauseMenuManager;
+
+    private SceneManager sceneManager;
+    private CursorChangeListener cursorChangeListener;
 
     private Paddle paddle;
     private Ball ball;
@@ -32,7 +37,18 @@ public class GameEngine {
         this.gc = canvas.getGraphicsContext2D();
         this.input = input;
         this.levelManager = new LevelManager();
+
+        this.transitionManager = new TransitionManager(canvas.getWidth(), canvas.getHeight());
+        this.pauseMenuManager = new PauseMenuManager(canvas, null); // SceneManager set later
+        this.stateManager = new GameStateManager(transitionManager, pauseMenuManager);
+
+        setupPauseMenuCallbacks();
+
         initObjects();
+    }
+
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
     }
 
     private void initObjects() {
@@ -56,16 +72,46 @@ public class GameEngine {
     public void reloadLevel() {
         loadCurrentLevel();
         ball.reset(paddle);
+        paddle.reset();
+        stateManager.setState(GameState.PLAYING);
+    }
+
+    private void setupPauseMenuCallbacks() {
+        pauseMenuManager.setCallback(new PauseMenuManager.PauseMenuCallback() {
+            @Override
+            public void onResume() {
+                System.out.println("Resume clicked");
+                stateManager.setState(GameState.PLAYING);
+                notifyCursorChange();
+            }
+
+            @Override
+            public void onRestart() {
+                System.out.println("Restart clicked");
+                reloadLevel();
+                notifyCursorChange();
+            }
+
+            @Override
+            public void onMainMenu() {
+                System.out.println("Main Menu clicked");
+                if (sceneManager != null) {
+                    end();
+                    sceneManager.switchTo("level");
+                }
+            }
+
+            @Override
+            public void onQuit() {
+                System.out.println("Quit clicked");
+                javafx.application.Platform.exit();
+            }
+        });
     }
 
     public void start() {
-
-        int levelNumber = GameSession.getInstance().getLevelNumber();
         loadCurrentLevel();
-
-        bricks = levelManager.getActiveBricks();
-
-        ball.reset(paddle);
+        stateManager.reset();
 
         loop = new AnimationTimer() {
             @Override
@@ -77,11 +123,10 @@ public class GameEngine {
                 double dt = (now - lastTime) / 1_000_000_000.0;
                 lastTime = now;
 
-                if (isLevelComplete()) {
-                    handleLevelComplete();
-                }
                 handleInput();
+                input.update();
                 update(dt);
+
                 render();
             }
         };
@@ -96,6 +141,42 @@ public class GameEngine {
     }
 
     private void handleInput() {
+        if (input.isActionJustPressed(Action.PAUSE)) {
+            if (stateManager.is(GameState.PLAYING)) {
+                stateManager.setState(GameState.PAUSED);
+                notifyCursorChange();
+            } else if (stateManager.is(GameState.PAUSED)) {
+                stateManager.setState(GameState.PLAYING);
+                notifyCursorChange();
+            }
+            return;
+        }
+
+        if (stateManager.is(GameState.PAUSED)) {
+            pauseMenuManager.handleKeyInput(input);
+            return;
+        }
+
+        if (stateManager.shouldAcceptGameplayInput()) {
+            handleGameplayInput();
+        }
+    }
+
+    public interface CursorChangeListener {
+        void onCursorVisibilityChanged();
+    }
+
+    public void setCursorChangeListener(CursorChangeListener listener) {
+        this.cursorChangeListener = listener;
+    }
+
+    private void notifyCursorChange() {
+        if (cursorChangeListener != null) {
+            cursorChangeListener.onCursorVisibilityChanged();
+        }
+    }
+
+    private void handleGameplayInput() {
         if (input.isMouseActive()) {
             double targetX = input.getMouseX() - Constants.GAME_OFFSET
                     - paddle.getWidth() / 2;
@@ -114,6 +195,33 @@ public class GameEngine {
     }
 
     private void update(double deltaTime) {
+        if (stateManager.is(GameState.PAUSED)) {
+            pauseMenuManager.update(deltaTime);
+            return;
+        }
+
+        if (stateManager.is(GameState.TRANSITIONING)) {
+            if (transitionManager.update(deltaTime)) {
+                ball.reset(paddle);
+                paddle.reset();
+                loadCurrentLevel();
+            }
+
+            if (!transitionManager.isActive()) {
+                stateManager.setState(GameState.PLAYING);
+            }
+        }
+
+        if (stateManager.shouldUpdateGameplay()) {
+            updateGameplay(deltaTime);
+        }
+
+        if (stateManager.is(GameState.PLAYING) && isLevelComplete()) {
+            handleLevelComplete();
+        }
+    }
+
+    private void updateGameplay(double deltaTime) {
         paddle.update(deltaTime);
         ball.update(deltaTime);
 
@@ -124,10 +232,13 @@ public class GameEngine {
 
         ball.bounceOffWithPaddle(paddle);
 
-        for (Brick brick : bricks) {
-            if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                brick.takeHit();
-                break;
+        // Check collision (disable when transitioning and bricks outside screen)
+        if (!transitionManager.shouldDisableCollision()) {
+            for (Brick brick : bricks) {
+                if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
+                    brick.takeHit();
+                    break;
+                }
             }
         }
 
@@ -138,34 +249,34 @@ public class GameEngine {
         for (Brick brick : bricks) {
             brick.update(deltaTime);
         }
+
         checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
     }
 
     private void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        paddle.render(gc);
-        ball.render(gc);
+
+        gc.save();
+        transitionManager.applySlideTransform(gc);
 
         for (Brick brick : bricks) {
             brick.render(gc);
-            //brick.drawHitBox(gc, brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight());
         }
 
-        gc.setStroke(Color.RED);
-        gc.setLineWidth(1);
-        //gc.strokeRect(paddle.getX() + paddle.getWidth() / 2, 0, 1, canvas.getHeight());
-        gc.setLineWidth(5);
-        //gc.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //System.out.println("Số lượng gạch còn lại: " + bricks.size());
-        //ball.drawHitBox(gc, ball.getX(), ball.getY(), ball.getRadius() * 2, ball.getRadius() * 2);
-        // paddle.drawHitBox(gc, paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight());
+        gc.restore();
+
+        paddle.render(gc);
+        ball.render(gc);
+
+        if (stateManager.is(GameState.TRANSITIONING)) {
+            transitionManager.render(gc);
+        } else if (stateManager.is(GameState.PAUSED)) {
+            pauseMenuManager.render(gc);
+        }
     }
 
     private void checkChainExplosions() {
-        /**
-         * list brick bi no (moi nhat dc them vao)
-         */
         List<Brick> newlyExploded = new ArrayList<>();
         for (Brick brick : bricks) {
             ExplosionEffect effect = brick.getExplosionEffect();
@@ -195,13 +306,25 @@ public class GameEngine {
     }
 
     private void handleLevelComplete() {
-        end();
         System.out.println("Level Complete!");
+
         boolean hasNext = GameSession.getInstance().nextLevel();
+
         if (hasNext) {
-            start();
+            stateManager.setState(GameState.TRANSITIONING);
         } else {
             System.out.println("Game Complete! All levels finished!");
+            stateManager.setState(GameState.VICTORY);
         }
+    }
+
+    public GameStateManager getStateManager() {
+        return stateManager;
+    }
+    public PauseMenuManager getPauseMenuManager() {
+        return pauseMenuManager;
+    }
+    public TransitionManager getTransitionManager() {
+            return transitionManager;
     }
 }

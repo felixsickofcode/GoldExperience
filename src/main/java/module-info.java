@@ -1,4 +1,4 @@
-module org.example.goldexperience {
+module vnu.uet.goldexperience {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;

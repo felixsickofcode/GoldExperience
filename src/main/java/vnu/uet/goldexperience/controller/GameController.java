@@ -6,9 +6,12 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.core.GameEngine;
-import vnu.uet.goldexperience.manager.InputManager;
-import vnu.uet.goldexperience.manager.GameSession;
+import vnu.uet.goldexperience.core.GameState;
+import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
+import vnu.uet.goldexperience.core.ChapterTheme;
+
+import java.util.concurrent.TransferQueue;
 
 public class GameController implements GameSession.GameSessionListener {
     @FXML
@@ -19,13 +22,21 @@ public class GameController implements GameSession.GameSessionListener {
     private GameEngine engine;
     private InputManager input;
     private GameBackground background;
+    private PauseMenuManager pauseMenu;
+    private TransitionManager transitionManager;
+    private SceneManager sceneManager;
+    private GameStateManager gameStateManager;
 
     @FXML
     public void initialize() {
         input = new InputManager();
         engine = new GameEngine(canvas, input);
+        pauseMenu = engine.getPauseMenuManager();
+        transitionManager = engine.getTransitionManager();
+        gameStateManager = engine.getStateManager();
 
         GameSession.getInstance().addListener(this);
+        engine.setCursorChangeListener(() -> Platform.runLater(this::updateCursor));
 
         Platform.runLater(() -> {
             setupBackground();
@@ -33,11 +44,16 @@ public class GameController implements GameSession.GameSessionListener {
         });
     }
 
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+        if (engine != null) {
+            engine.setSceneManager(sceneManager);
+        }
+    }
     private void setupBackground() {
         background = new GameBackground(576, 720, rootGamePane);
         rootGamePane.getChildren().add(0, background.getCanvas());
-
-        updateBackgroundTheme(GameSession.getInstance().getCurrentChapter());
+        updateTheme(GameSession.getInstance().getCurrentChapter());
 
         background.start();
     }
@@ -46,36 +62,68 @@ public class GameController implements GameSession.GameSessionListener {
         rootGamePane.setFocusTraversable(true);
         rootGamePane.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
         rootGamePane.setOnKeyReleased(e -> input.keyReleased(e.getCode()));
-        rootGamePane.setOnMouseMoved(e -> input.mouseMoved(e.getX()));
-        rootGamePane.setOnMouseDragged(e -> input.mouseMoved(e.getX()));
-        rootGamePane.setOnMousePressed(e -> input.mouseClicked());
+
+        canvas.setOnMouseMoved(e -> {
+            double canvasX = e.getX();
+            double canvasY = e.getY();
+            input.mouseMoved(canvasX + canvas.getLayoutX());
+            pauseMenu.handleMouseInput(canvasX, canvasY, false);
+        });
+
+        rootGamePane.setOnMouseDragged(e -> {
+            input.mouseMoved(e.getX());
+        });
+
+        rootGamePane.setOnMousePressed(e -> {
+            input.mouseClicked();
+
+            if (engine != null && engine.getStateManager() != null) {
+                engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true);
+            }
+        });
+
         rootGamePane.setOnMouseReleased(e -> input.mouseReleased());
+
         rootGamePane.requestFocus();
-        rootGamePane.setOnMouseEntered(e -> rootGamePane.setCursor(Cursor.NONE));
+        rootGamePane.setOnMouseEntered(e -> updateCursor());
     }
 
-    private void updateBackgroundTheme(int chapter) {
+    private void updateCursor() {
+        if (engine != null && engine.getStateManager() != null) {
+            if (engine.getStateManager().is(GameState.PAUSED)) {
+                rootGamePane.setCursor(Cursor.DEFAULT);
+            } else {
+                rootGamePane.setCursor(Cursor.NONE);
+            }
+        } else {
+            rootGamePane.setCursor(Cursor.NONE);
+        }
+    }
+
+    private void updateTheme(int chapter) {
         if (background != null) {
-            GameBackground.ChapterTheme theme = getThemeForChapter(chapter);
+            ChapterTheme theme = getThemeForChapter(chapter);
             background.setTheme(theme);
+            pauseMenu.setTheme(theme);
+            transitionManager.setTheme(theme);
             System.out.println("Background theme updated to: " + theme);
         }
     }
 
-    private GameBackground.ChapterTheme getThemeForChapter(int chapter) {
+    private ChapterTheme getThemeForChapter(int chapter) {
         switch (chapter) {
-            case 1: return GameBackground.ChapterTheme.CHAPTER_1_RUST;
-            case 2: return GameBackground.ChapterTheme.CHAPTER_2_NEON;
-            case 3: return GameBackground.ChapterTheme.CHAPTER_3_VERDANT;
-            case 4: return GameBackground.ChapterTheme.CHAPTER_4_CATHEDRAL;
-            case 5: return GameBackground.ChapterTheme.CHAPTER_5_NEXUS;
-            default: return GameBackground.ChapterTheme.ORIGINAL;
+            case 1: return ChapterTheme.CHAPTER_1_RUST;
+            case 2: return ChapterTheme.CHAPTER_2_NEON;
+            case 3: return ChapterTheme.CHAPTER_3_VERDANT;
+            case 4: return ChapterTheme.CHAPTER_4_CATHEDRAL;
+            case 5: return ChapterTheme.CHAPTER_5_NEXUS;
+            default: return ChapterTheme.ORIGINAL;
         }
     }
 
     public void onChapterChanged(int newChapter) {
         System.out.println("GameController: Chapter changed to " + newChapter);
-        Platform.runLater(() -> updateBackgroundTheme(newChapter));
+        Platform.runLater(() -> updateTheme(newChapter));
     }
 
     @Override
@@ -94,6 +142,7 @@ public class GameController implements GameSession.GameSessionListener {
     public void startGame() {
         if (engine != null) {
             engine.start();
+            updateCursor();
         }
     }
 
@@ -111,4 +160,7 @@ public class GameController implements GameSession.GameSessionListener {
         GameSession.getInstance().removeListener(this);
         endGame();
     }
+
+    @Override
+    public void onBallHitWall(GameSession.HitSide hitSide) {}
 }

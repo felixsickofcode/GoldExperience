@@ -5,6 +5,7 @@ import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.BallTrail;
 import vnu.uet.goldexperience.effect.BallGlow;
 import vnu.uet.goldexperience.manager.AssetsManager;
+import vnu.uet.goldexperience.manager.GameSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class Ball extends MovableObject {
     private long lastCollisionTime = 0;
     static final double minDy = 80;
     private final List<double[]> trail = new ArrayList<>();
-    private final int maxTrail = 50;
+    private final int maxTrail = 60;
     private double glowPulse = 0;
     private BallTrail ballTrail;
     private BallGlow ballGlow;
@@ -161,16 +162,19 @@ public class Ball extends MovableObject {
             setDx(Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.LEFT);
         }
         if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
             setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.RIGHT);
         }
         if (getY() <= 0) {
             setY(0);
             setDy(Math.abs(getDy()));
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.TOP);
         }
     }
 

@@ -47,12 +47,6 @@ public class PaddleEffect {
             spawnParticles(x, y, speed);
         }
 
-        energyRingTimer += deltaTime;
-        if (speed > PARTICLE_SPAWN_THRESHOLD * 0.5 && energyRingTimer > 0.15) {
-            spawnEnergyRing(x, y);
-            energyRingTimer = 0;
-        }
-
         particles.removeIf(p -> {
             p.update(deltaTime);
             return p.isDead();
@@ -66,7 +60,6 @@ public class PaddleEffect {
         flash.setPosition(x, y);
         flash.update(deltaTime);
         shake.update(deltaTime);
-
 
         lastX = x;
         lastY = y;
@@ -83,7 +76,7 @@ public class PaddleEffect {
             double py = y + paddleHeight + random.nextDouble() * 5;
             double angle = Math.atan2(-velocityY, -velocityX) + (random.nextDouble() - 0.5) * 0.5;
             double particleSpeed = 30 + random.nextDouble() * 50;
-            particles.add(new BubbleEffect(px, py, angle, particleSpeed));
+            //particles.add(new BubbleEffect(px, py, angle, particleSpeed));
         }
     }
 
@@ -98,7 +91,7 @@ public class PaddleEffect {
         for (int i = 0; i < 15; i++) {
             double angle = Math.PI / 2 + (random.nextDouble() - 0.5) * Math.PI;
             double speed = 100 + random.nextDouble() * 100;
-            particles.add(new BubbleEffect(x, y, angle, speed));
+            //particles.add(new BubbleEffect(x, y, angle, speed));
         }
         energyRings.add(new EnergyRingEffect(x, y, true));
         flash.trigger();
