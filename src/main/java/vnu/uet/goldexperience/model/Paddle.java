@@ -1,9 +1,8 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.*;
 import vnu.uet.goldexperience.core.Constants;
-import vnu.uet.goldexperience.effect.PaddleEffect;
+import vnu.uet.goldexperience.effect.paddle.PaddleEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class Paddle extends MovableObject {

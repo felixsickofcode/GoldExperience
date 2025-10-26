@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.paddle;
 
 import javafx.scene.canvas.GraphicsContext;
 import java.util.Random;

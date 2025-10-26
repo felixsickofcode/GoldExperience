@@ -26,4 +26,8 @@ module vnu.uet.goldexperience {
     opens vnu.uet.goldexperience.manager to com.google.gson, javafx.fxml;
     exports vnu.uet.goldexperience.effect;
     opens vnu.uet.goldexperience.effect to com.google.gson, javafx.fxml;
+    exports vnu.uet.goldexperience.effect.ball;
+    opens vnu.uet.goldexperience.effect.ball to com.google.gson, javafx.fxml;
+    exports vnu.uet.goldexperience.effect.paddle;
+    opens vnu.uet.goldexperience.effect.paddle to com.google.gson, javafx.fxml;
 }

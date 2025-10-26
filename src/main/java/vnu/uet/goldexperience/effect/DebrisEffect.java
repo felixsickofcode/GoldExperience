@@ -4,14 +4,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import vnu.uet.goldexperience.model.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class DebrisEffect {
-    private List<Particle> particles;
-    private boolean isFinished;
+    protected List<Particle> particles;
+    protected boolean isFinished;
 
     public DebrisEffect(Brick brick) {
         this.particles = new ArrayList<>();
@@ -19,7 +20,7 @@ public class DebrisEffect {
         createParticles(brick);
     }
 
-    private void createParticles(Brick brick) {
+    protected void createParticles(Brick brick) {
         Random random = new Random();
         int particleCount = 7;
 
@@ -58,11 +59,11 @@ public class DebrisEffect {
         }
     }
 
-    private WritableImage createParticleImage(Image source, Random random) {
+    protected WritableImage createParticleImage(Image source, Random random) {
         if (source == null) {
             WritableImage img = new WritableImage(6, 6);
             var writer = img.getPixelWriter();
-            javafx.scene.paint.Color color = javafx.scene.paint.Color.rgb(
+            Color color = Color.rgb(
                     100 + random.nextInt(156),
                     100 + random.nextInt(156),
                     100 + random.nextInt(156)
@@ -94,7 +95,7 @@ public class DebrisEffect {
             p.update(deltaTime);
         }
 
-        isFinished = particles.stream().allMatch(p -> !p.isAlive());
+        isFinished = particles.stream().noneMatch(Particle::isAlive);
     }
 
     public void render(GraphicsContext gc) {
@@ -110,9 +111,9 @@ public class DebrisEffect {
     }
 
 
-    private static class Particle {
+    protected static class Particle {
         private double x, y;
-        private double velocityX, velocityY;
+        private double vx, vy;
         private double gravity;
         private double lifetime;
         private double age;
@@ -125,8 +126,8 @@ public class DebrisEffect {
                         double rotationSpeed, Image image) {
             this.x = x;
             this.y = y;
-            this.velocityX = vx;
-            this.velocityY = vy;
+            this.vx = vx;
+            this.vy = vy;
             this.gravity = gravity;
             this.lifetime = lifetime;
             this.age = 0;
@@ -141,11 +142,11 @@ public class DebrisEffect {
             age += deltaTime;
 
 
-            x += velocityX * deltaTime;
-            y += velocityY * deltaTime;
+            x += vx * deltaTime;
+            y += vy * deltaTime;
 
 
-            velocityY += gravity * deltaTime;
+            vy += gravity * deltaTime;
 
 
             rotation += rotationSpeed * deltaTime;

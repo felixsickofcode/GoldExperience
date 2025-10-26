@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.paddle;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -23,7 +23,7 @@ public class PaddleFlashEffect {
     public void update(double deltaTime) {
         if (!active) return;
 
-        alpha -= deltaTime * 3; // giảm độ sáng dần
+        alpha -= deltaTime * 3;
         if (alpha <= 0) {
             alpha = 0;
             active = false;

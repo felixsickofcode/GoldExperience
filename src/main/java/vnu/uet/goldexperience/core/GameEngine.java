@@ -298,7 +298,9 @@ public class GameEngine {
 
     private boolean isLevelComplete() {
         for (Brick brick : bricks) {
-            if (!brick.isDestroyed() && !(brick instanceof UnbreakableBrick)) {
+            if ((!brick.isDestroyed() && !(brick instanceof UnbreakableBrick))
+                    || (brick.getBreakEffect() != null && !(brick.getBreakEffect().isFinished()))
+                    || (brick.getExplosionEffect() != null && brick.getExplosionEffect().isActive())) {
                 return false;
             }
         }
@@ -306,25 +308,48 @@ public class GameEngine {
     }
 
     private void handleLevelComplete() {
-        System.out.println("Level Complete!");
-
-        boolean hasNext = GameSession.getInstance().nextLevel();
-
-        if (hasNext) {
-            stateManager.setState(GameState.TRANSITIONING);
-        } else {
-            System.out.println("Game Complete! All levels finished!");
-            stateManager.setState(GameState.VICTORY);
+        for (Brick brick : bricks) {
+            if (brick instanceof UnbreakableBrick) {
+                ((UnbreakableBrick) brick).destroy();
+            }
         }
+        if (areAllEffectsFinished()) {
+            System.out.println("Level Complete!");
+            boolean hasNext = GameSession.getInstance().nextLevel();
+            if (hasNext) {
+                stateManager.setState(GameState.TRANSITIONING);
+            } else {
+                System.out.println("Game Complete! All levels finished!");
+                stateManager.setState(GameState.VICTORY);
+            }
+        }
+    }
+
+    private boolean areAllEffectsFinished() {
+        for (Brick brick : bricks) {
+            if (brick instanceof UnbreakableBrick)
+                if (((UnbreakableBrick) brick).getDestructionEffect() != null && !((UnbreakableBrick) brick).getDestructionEffect().isFinished()) {
+                    return false;
+                }
+            if (brick.getExplosionEffect() != null && brick.getExplosionEffect().isActive()) {
+                return false;
+            }
+            if (brick.getBreakEffect() != null && !brick.getBreakEffect().isFinished()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public GameStateManager getStateManager() {
         return stateManager;
     }
+
     public PauseMenuManager getPauseMenuManager() {
         return pauseMenuManager;
     }
+
     public TransitionManager getTransitionManager() {
-            return transitionManager;
+        return transitionManager;
     }
 }
