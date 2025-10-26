@@ -3,22 +3,17 @@ package vnu.uet.goldexperience.view;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import vnu.uet.goldexperience.core.ChapterTheme;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.*;
 import javafx.scene.effect.BlendMode;
+import vnu.uet.goldexperience.manager.GameSession;
+import vnu.uet.goldexperience.effect.BorderFlashEffect;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameBackground {
-
-    public enum ChapterTheme {
-        ORIGINAL,
-        CHAPTER_1_RUST,
-        CHAPTER_2_NEON,
-        CHAPTER_3_VERDANT,
-        CHAPTER_4_CATHEDRAL,
-        CHAPTER_5_NEXUS
-    }
+public class GameBackground implements GameSession.GameSessionListener {
 
     private class FallingShape {
         double x, y, size, speed, rotation, rotationSpeed;
@@ -80,26 +75,6 @@ public class GameBackground {
     private boolean glitchActive = false;
     private double borderPulse = 0;
 
-    private final Color NEON_PINK = Color.rgb(255, 0, 128);
-    private final Color NEON_CYAN = Color.rgb(0, 255, 255);
-    private final Color NEON_PURPLE = Color.rgb(138, 43, 226);
-    private final Color DARK_BG_ORIGINAL = Color.rgb(10, 5, 20);
-
-    private final Color DARK_BG_CH1 = Color.rgb(30, 25, 20);
-    private final Color NEON_ORANGE = Color.rgb(255, 140, 0);
-    private final Color MEDIUM_GRAY = Color.rgb(150, 150, 150);
-
-    private final Color DARK_BG_CH3 = Color.rgb(10, 20, 10);
-    private final Color NEON_GREEN = Color.rgb(0, 255, 100);
-    private final Color EARTHY_YELLOW = Color.rgb(200, 180, 50);
-
-    private final Color DARK_BG_CH4 = Color.rgb(20, 10, 30);
-    private final Color GOLD = Color.rgb(255, 215, 0);
-
-    private final Color DARK_BG_CH5 = Color.rgb(15, 15, 25);
-    private final Color PURE_WHITE = Color.rgb(255, 255, 255);
-
-
     private ChapterTheme currentTheme;
 
     private Pane rootPane;
@@ -116,6 +91,7 @@ public class GameBackground {
     private final int glitchLines = 5;
     private final double glitchOffset = 20;
 
+    private final BorderFlashEffect borderFlashEffect;
     private List<FallingShape> fallingShapes;
     private final int NUM_SHAPES = 15;
 
@@ -124,7 +100,9 @@ public class GameBackground {
         this.width = width;
         this.height = height;
         this.rootPane = rootPane;
+        this.borderFlashEffect = new BorderFlashEffect();
 
+        GameSession.getInstance().addListener(this);
         backgroundCanvas = new Canvas(width, height);
         gc = backgroundCanvas.getGraphicsContext2D();
 
@@ -173,41 +151,41 @@ public class GameBackground {
 
         switch (theme) {
             case CHAPTER_1_RUST:
-                currentDarkBG = DARK_BG_CH1;
-                borderColor = NEON_ORANGE;
-                cornerColor = MEDIUM_GRAY;
-                gridColor = NEON_ORANGE;
+                currentDarkBG = ChapterTheme.DARK_BG_CH1;
+                borderColor = ChapterTheme.NEON_ORANGE;
+                cornerColor = ChapterTheme.MEDIUM_GRAY;
+                gridColor = ChapterTheme.NEON_ORANGE;
                 break;
             case CHAPTER_2_NEON:
-                currentDarkBG = DARK_BG_ORIGINAL;
-                borderColor = NEON_CYAN;
-                cornerColor = NEON_PINK;
-                gridColor = NEON_CYAN;
+                currentDarkBG = ChapterTheme.DARK_BG_ORIGINAL;
+                borderColor = ChapterTheme.NEON_CYAN;
+                cornerColor = ChapterTheme.NEON_PINK;
+                gridColor = ChapterTheme.NEON_CYAN;
                 break;
             case CHAPTER_3_VERDANT:
-                currentDarkBG = DARK_BG_CH3;
-                borderColor = NEON_GREEN;
-                cornerColor = EARTHY_YELLOW;
-                gridColor = NEON_GREEN;
+                currentDarkBG = ChapterTheme.DARK_BG_CH3;
+                borderColor = ChapterTheme.NEON_GREEN;
+                cornerColor = ChapterTheme.EARTHY_YELLOW;
+                gridColor = ChapterTheme.NEON_GREEN;
                 break;
             case CHAPTER_4_CATHEDRAL:
-                currentDarkBG = DARK_BG_CH4;
-                borderColor = GOLD;
-                cornerColor = GOLD;
-                gridColor = GOLD;
+                currentDarkBG = ChapterTheme.DARK_BG_CH4;
+                borderColor = ChapterTheme.GOLD;
+                cornerColor = ChapterTheme.GOLD;
+                gridColor = ChapterTheme.GOLD;
                 break;
             case CHAPTER_5_NEXUS:
-                currentDarkBG = DARK_BG_CH5;
-                borderColor = PURE_WHITE;
-                cornerColor = PURE_WHITE;
-                gridColor = PURE_WHITE;
+                currentDarkBG = ChapterTheme.DARK_BG_CH5;
+                borderColor = ChapterTheme.PURE_WHITE;
+                cornerColor = ChapterTheme.PURE_WHITE;
+                gridColor = ChapterTheme.PURE_WHITE;
                 break;
             case ORIGINAL:
             default:
-                currentDarkBG = DARK_BG_ORIGINAL;
-                borderColor = NEON_PINK;
-                cornerColor = NEON_CYAN;
-                gridColor = NEON_CYAN;
+                currentDarkBG = ChapterTheme.DARK_BG_ORIGINAL;
+                borderColor = ChapterTheme.NEON_PINK;
+                cornerColor = ChapterTheme.NEON_CYAN;
+                gridColor = ChapterTheme.NEON_CYAN;
                 break;
         }
     }
@@ -234,6 +212,7 @@ public class GameBackground {
 
         updateFallingShapes();
         drawFallingShapes();
+        borderFlashEffect.update();
 
         updateGlitch();
         if (glitchActive) {
@@ -243,6 +222,12 @@ public class GameBackground {
         drawNeonBorder();
 
         drawCornerAccents();
+
+        borderFlashEffect.render(gc, width, height);
+    }
+
+    public void triggerWallHit() {
+        this.borderFlashEffect.trigger();
     }
 
     private void updateFallingShapes() {
@@ -299,6 +284,7 @@ public class GameBackground {
             double offset = (Math.random() - 0.5) * glitchOffset;
 
             gc.setFill(Color.rgb(255, 0, 0, 0.3));
+            //gc.setFill(borderColor);
             gc.fillRect(offset, y, width, h);
 
             gc.setFill(Color.rgb(0, 255, 255, 0.3));
@@ -325,6 +311,8 @@ public class GameBackground {
         gc.setStroke(borderColor.deriveColor(1, 1, 1.5, pulse));
         gc.setLineWidth(1);
         gc.strokeRect(6, 6, width - 12, height - 12);
+
+
     }
 
     private void drawCornerAccents() {
@@ -357,6 +345,12 @@ public class GameBackground {
         if (animationTimer != null) {
             animationTimer.stop();
         }
+    }
+
+    public void onChapterChanged(int newChapter){}
+    public void onLevelChanged(int newLevel){}
+    public void onBallHitWall(){
+        this.borderFlashEffect.trigger();
     }
 }
 

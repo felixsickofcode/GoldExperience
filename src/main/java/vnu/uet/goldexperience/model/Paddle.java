@@ -132,5 +132,8 @@ public class Paddle extends MovableObject {
         return speed;
     }
 
-
+    public void reset()
+    {
+        setTargetX((Constants.GAMEPLAYZONE_WIDTH - width)/2);
+    }
 }

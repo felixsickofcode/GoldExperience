@@ -6,9 +6,11 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.core.GameEngine;
-import vnu.uet.goldexperience.manager.InputManager;
-import vnu.uet.goldexperience.manager.GameSession;
+import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
+import vnu.uet.goldexperience.core.ChapterTheme;
+
+import java.util.concurrent.TransferQueue;
 
 public class GameController implements GameSession.GameSessionListener {
     @FXML
@@ -19,11 +21,16 @@ public class GameController implements GameSession.GameSessionListener {
     private GameEngine engine;
     private InputManager input;
     private GameBackground background;
+    private PauseMenuManager pauseMenu;
+    private TransitionManager transitionManager;
+    private SceneManager sceneManager;
 
     @FXML
     public void initialize() {
         input = new InputManager();
         engine = new GameEngine(canvas, input);
+        pauseMenu = engine.getPauseMenuManager();
+        transitionManager = engine.getTransitionManager();
 
         GameSession.getInstance().addListener(this);
 
@@ -33,11 +40,17 @@ public class GameController implements GameSession.GameSessionListener {
         });
     }
 
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+        if (engine != null) {
+            engine.setSceneManager(sceneManager);
+        }
+    }
     private void setupBackground() {
         background = new GameBackground(576, 720, rootGamePane);
         rootGamePane.getChildren().add(0, background.getCanvas());
 
-        updateBackgroundTheme(GameSession.getInstance().getCurrentChapter());
+        updateTheme(GameSession.getInstance().getCurrentChapter());
 
         background.start();
     }
@@ -54,28 +67,30 @@ public class GameController implements GameSession.GameSessionListener {
         rootGamePane.setOnMouseEntered(e -> rootGamePane.setCursor(Cursor.NONE));
     }
 
-    private void updateBackgroundTheme(int chapter) {
+    private void updateTheme(int chapter) {
         if (background != null) {
-            GameBackground.ChapterTheme theme = getThemeForChapter(chapter);
+            ChapterTheme theme = getThemeForChapter(chapter);
             background.setTheme(theme);
+            pauseMenu.setTheme(theme);
+            transitionManager.setTheme(theme);
             System.out.println("Background theme updated to: " + theme);
         }
     }
 
-    private GameBackground.ChapterTheme getThemeForChapter(int chapter) {
+    private ChapterTheme getThemeForChapter(int chapter) {
         switch (chapter) {
-            case 1: return GameBackground.ChapterTheme.CHAPTER_1_RUST;
-            case 2: return GameBackground.ChapterTheme.CHAPTER_2_NEON;
-            case 3: return GameBackground.ChapterTheme.CHAPTER_3_VERDANT;
-            case 4: return GameBackground.ChapterTheme.CHAPTER_4_CATHEDRAL;
-            case 5: return GameBackground.ChapterTheme.CHAPTER_5_NEXUS;
-            default: return GameBackground.ChapterTheme.ORIGINAL;
+            case 1: return ChapterTheme.CHAPTER_1_RUST;
+            case 2: return ChapterTheme.CHAPTER_2_NEON;
+            case 3: return ChapterTheme.CHAPTER_3_VERDANT;
+            case 4: return ChapterTheme.CHAPTER_4_CATHEDRAL;
+            case 5: return ChapterTheme.CHAPTER_5_NEXUS;
+            default: return ChapterTheme.ORIGINAL;
         }
     }
 
     public void onChapterChanged(int newChapter) {
         System.out.println("GameController: Chapter changed to " + newChapter);
-        Platform.runLater(() -> updateBackgroundTheme(newChapter));
+        Platform.runLater(() -> updateTheme(newChapter));
     }
 
     @Override
@@ -111,4 +126,7 @@ public class GameController implements GameSession.GameSessionListener {
         GameSession.getInstance().removeListener(this);
         endGame();
     }
+
+    @Override
+    public void onBallHitWall() {}
 }
