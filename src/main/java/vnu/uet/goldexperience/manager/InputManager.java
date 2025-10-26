@@ -14,7 +14,6 @@ public class InputManager {
     private boolean isMouseActive = false;
 
     public InputManager() {
-        // Movement
         keyBindings.put(KeyCode.LEFT, Action.MOVE_LEFT);
         keyBindings.put(KeyCode.J, Action.MOVE_LEFT);
         keyBindings.put(KeyCode.A, Action.MOVE_LEFT);

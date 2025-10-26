@@ -162,19 +162,19 @@ public class Ball extends MovableObject {
             setDx(Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
-            GameSession.getInstance().notifyBallHitWall();
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.LEFT);
         }
         if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
             setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
-            GameSession.getInstance().notifyBallHitWall();
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.RIGHT);
         }
         if (getY() <= 0) {
             setY(0);
             setDy(Math.abs(getDy()));
-            GameSession.getInstance().notifyBallHitWall();
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.TOP);
         }
     }
 

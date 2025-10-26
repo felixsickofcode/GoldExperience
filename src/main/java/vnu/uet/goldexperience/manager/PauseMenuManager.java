@@ -36,7 +36,6 @@ public class PauseMenuManager {
     private final double canvasWidth;
     private final double canvasHeight;
 
-    // Menu box dimensions
     private static final double BOX_SIZE = 400;
 
     private static final double BUTTON_WIDTH = 280;
@@ -73,14 +72,8 @@ public class PauseMenuManager {
         this.canvasHeight = canvas.getHeight();
         setTheme(ChapterTheme.ORIGINAL);
 
-        try {
-            titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 52);
-            buttonFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 20);
-        } catch (Exception e) {
-            System.err.println("⚠️ Failed to load custom font, fallback to system font.");
-            titleFont = Font.font("Arial", 48);
-            buttonFont = Font.font("Arial", 20);
-        }
+        titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 52);
+        buttonFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 20);
     }
 
     public void setTheme(ChapterTheme theme) {
@@ -144,16 +137,10 @@ public class PauseMenuManager {
         isVisible = true;
         selectedIndex = 0;
         animationTimer = 0;
-        System.out.println("PauseMenuManager: Menu shown");
     }
 
     public void hide() {
         isVisible = false;
-        System.out.println("PauseMenuManager: Menu hidden");
-    }
-
-    public boolean isVisible() {
-        return isVisible;
     }
 
     public void update(double deltaTime) {

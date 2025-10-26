@@ -17,6 +17,11 @@ public class GameSession {
         STORY,
         ENDLESS
     }
+    public enum HitSide {
+        TOP,
+        LEFT,
+        RIGHT
+    }
 
     private GameMode mode = GameMode.STORY;
 
@@ -40,7 +45,7 @@ public class GameSession {
     public interface GameSessionListener {
         void onChapterChanged(int newChapter);
         void onLevelChanged(int newLevel);
-        void onBallHitWall();
+        void onBallHitWall(HitSide hitSide);
     }
 
     public void addListener(GameSessionListener listener) {
@@ -65,9 +70,9 @@ public class GameSession {
         }
     }
 
-    public void notifyBallHitWall() {
+    public void notifyBallHitWall(HitSide hitSide) {
         for (GameSessionListener listener : listeners) {
-            listener.onBallHitWall();
+            listener.onBallHitWall(hitSide);
         }
     }
 

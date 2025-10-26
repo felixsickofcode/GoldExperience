@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import vnu.uet.goldexperience.effect.BorderFlashEffect;
 import vnu.uet.goldexperience.effect.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
@@ -17,13 +18,12 @@ public class GameEngine {
     private final InputManager input;
     private final LevelManager levelManager;
 
-    // ⭐ State Management
     private final GameStateManager stateManager;
     private final TransitionManager transitionManager;
     private final PauseMenuManager pauseMenuManager;
 
-    // Scene manager for menu navigation
     private SceneManager sceneManager;
+    private CursorChangeListener cursorChangeListener;
 
     private Paddle paddle;
     private Ball ball;
@@ -38,20 +38,15 @@ public class GameEngine {
         this.input = input;
         this.levelManager = new LevelManager();
 
-        // Initialize managers
         this.transitionManager = new TransitionManager(canvas.getWidth(), canvas.getHeight());
         this.pauseMenuManager = new PauseMenuManager(canvas, null); // SceneManager set later
         this.stateManager = new GameStateManager(transitionManager, pauseMenuManager);
 
-        // Setup pause menu callbacks
         setupPauseMenuCallbacks();
 
         initObjects();
     }
 
-    /**
-     * Set SceneManager (called from GameController)
-     */
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
     }
@@ -87,12 +82,14 @@ public class GameEngine {
             public void onResume() {
                 System.out.println("Resume clicked");
                 stateManager.setState(GameState.PLAYING);
+                notifyCursorChange();
             }
 
             @Override
             public void onRestart() {
                 System.out.println("Restart clicked");
                 reloadLevel();
+                notifyCursorChange();
             }
 
             @Override
@@ -130,7 +127,6 @@ public class GameEngine {
                 input.update();
                 update(dt);
 
-                // Render
                 render();
             }
         };
@@ -148,8 +144,10 @@ public class GameEngine {
         if (input.isActionJustPressed(Action.PAUSE)) {
             if (stateManager.is(GameState.PLAYING)) {
                 stateManager.setState(GameState.PAUSED);
+                notifyCursorChange();
             } else if (stateManager.is(GameState.PAUSED)) {
                 stateManager.setState(GameState.PLAYING);
+                notifyCursorChange();
             }
             return;
         }
@@ -161,6 +159,20 @@ public class GameEngine {
 
         if (stateManager.shouldAcceptGameplayInput()) {
             handleGameplayInput();
+        }
+    }
+
+    public interface CursorChangeListener {
+        void onCursorVisibilityChanged();
+    }
+
+    public void setCursorChangeListener(CursorChangeListener listener) {
+        this.cursorChangeListener = listener;
+    }
+
+    private void notifyCursorChange() {
+        if (cursorChangeListener != null) {
+            cursorChangeListener.onCursorVisibilityChanged();
         }
     }
 
@@ -183,13 +195,11 @@ public class GameEngine {
     }
 
     private void update(double deltaTime) {
-        // Update pause menu animation
         if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.update(deltaTime);
-            return; // Don't update gameplay when paused
+            return;
         }
 
-        // Update transition
         if (stateManager.is(GameState.TRANSITIONING)) {
             if (transitionManager.update(deltaTime)) {
                 ball.reset(paddle);
@@ -202,12 +212,10 @@ public class GameEngine {
             }
         }
 
-        // Update gameplay (if not frozen)
         if (stateManager.shouldUpdateGameplay()) {
             updateGameplay(deltaTime);
         }
 
-        // Check level complete (only in PLAYING state)
         if (stateManager.is(GameState.PLAYING) && isLevelComplete()) {
             handleLevelComplete();
         }
@@ -310,7 +318,6 @@ public class GameEngine {
         }
     }
 
-    // Public API for GameController
     public GameStateManager getStateManager() {
         return stateManager;
     }

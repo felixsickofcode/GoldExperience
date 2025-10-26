@@ -85,7 +85,6 @@ public class TransitionManager {
         currentPhase = Phase.ROUND_CLEAR;
         timer = 0;
         shouldLoadLevel = false;
-        System.out.println("TransitionManager: Starting ROUND CLEAR display");
     }
 
     public boolean update(double deltaTime) {
@@ -98,7 +97,6 @@ public class TransitionManager {
                 slideOffset = -canvasHeight;
                 shouldLoadLevel = true;
                 needLoadLevel = true;
-                System.out.println("TransitionManager: Starting slide animation");
             }
         } else if (currentPhase == Phase.SLIDING) {
             slideOffset += SLIDE_SPEED * deltaTime;
@@ -106,7 +104,6 @@ public class TransitionManager {
                 slideOffset = 0;
                 currentPhase = Phase.IDLE;
                 shouldLoadLevel = false;
-                System.out.println("TransitionManager: Transition complete");
             }
         }
 
@@ -120,8 +117,8 @@ public class TransitionManager {
     }
 
     private void renderRoundClear(GraphicsContext gc) {
-        double boxX = (canvasWidth - BOX_WIDTH) / 2; // Sẽ bằng 0
-        double boxY = (canvasHeight - BOX_HEIGHT) / 2; // Căn giữa theo chiều dọc
+        double boxX = (canvasWidth - BOX_WIDTH) / 2;
+        double boxY = (canvasHeight - BOX_HEIGHT) / 2; //
 
         double centerX = boxX + BOX_WIDTH / 2;
         double centerY = boxY + BOX_HEIGHT / 2;

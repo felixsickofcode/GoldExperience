@@ -17,7 +17,7 @@ public class GameBackground implements GameSession.GameSessionListener {
 
     private class FallingShape {
         double x, y, size, speed, rotation, rotationSpeed;
-        int type; // 0 = square, 1 = triangle
+        int type;
 
         FallingShape() {
             reset();
@@ -223,11 +223,7 @@ public class GameBackground implements GameSession.GameSessionListener {
 
         drawCornerAccents();
 
-        borderFlashEffect.render(gc, width, height);
-    }
-
-    public void triggerWallHit() {
-        this.borderFlashEffect.trigger();
+        borderFlashEffect.render(gc, width, height, currentTheme);
     }
 
     private void updateFallingShapes() {
@@ -284,7 +280,7 @@ public class GameBackground implements GameSession.GameSessionListener {
             double offset = (Math.random() - 0.5) * glitchOffset;
 
             gc.setFill(Color.rgb(255, 0, 0, 0.3));
-            //gc.setFill(borderColor);
+
             gc.fillRect(offset, y, width, h);
 
             gc.setFill(Color.rgb(0, 255, 255, 0.3));
@@ -319,20 +315,22 @@ public class GameBackground implements GameSession.GameSessionListener {
         double cornerSize = 30;
         double cornerThick = 3;
 
+        int margin = 10;
+
         gc.setStroke(cornerColor);
         gc.setLineWidth(cornerThick);
 
-        gc.strokeLine(10, 10, 10 + cornerSize, 10);
-        gc.strokeLine(10, 10, 10, 10 + cornerSize);
+        gc.strokeLine(margin, margin, margin + cornerSize, margin);
+        gc.strokeLine(margin, margin, margin, margin + cornerSize);
 
-        gc.strokeLine(width - 10, 10, width - 10 - cornerSize, 10);
-        gc.strokeLine(width - 10, 10, width - 10, 10 + cornerSize);
+        gc.strokeLine(width - margin, margin, width - margin - cornerSize, margin);
+        gc.strokeLine(width - margin, margin, width - margin, margin + cornerSize);
 
-        gc.strokeLine(10, height - 10, 10 + cornerSize, height - 10);
-        gc.strokeLine(10, height - 10, 10, height - 10 - cornerSize);
+        gc.strokeLine(margin, height - margin, margin + cornerSize, height - margin);
+        gc.strokeLine(margin, height - margin, margin, height - margin - cornerSize);
 
-        gc.strokeLine(width - 10, height - 10, width - 10 - cornerSize, height - 10);
-        gc.strokeLine(width - 10, height - 10, width - 10, height - 10 - cornerSize);
+        gc.strokeLine(width - margin, height - margin, width - margin - cornerSize, height - margin);
+        gc.strokeLine(width - margin, height - margin, width - margin, height - margin - cornerSize);
     }
 
     public void start() {
@@ -345,12 +343,13 @@ public class GameBackground implements GameSession.GameSessionListener {
         if (animationTimer != null) {
             animationTimer.stop();
         }
+        GameSession.getInstance().removeListener(this);
     }
 
     public void onChapterChanged(int newChapter){}
     public void onLevelChanged(int newLevel){}
-    public void onBallHitWall(){
-        this.borderFlashEffect.trigger();
+    public void onBallHitWall(GameSession.HitSide side){
+        this.borderFlashEffect.trigger(side);
     }
 }
 

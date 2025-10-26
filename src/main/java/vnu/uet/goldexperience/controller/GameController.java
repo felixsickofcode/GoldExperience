@@ -6,6 +6,7 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.core.GameEngine;
+import vnu.uet.goldexperience.core.GameState;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
 import vnu.uet.goldexperience.core.ChapterTheme;
@@ -24,6 +25,7 @@ public class GameController implements GameSession.GameSessionListener {
     private PauseMenuManager pauseMenu;
     private TransitionManager transitionManager;
     private SceneManager sceneManager;
+    private GameStateManager gameStateManager;
 
     @FXML
     public void initialize() {
@@ -31,8 +33,10 @@ public class GameController implements GameSession.GameSessionListener {
         engine = new GameEngine(canvas, input);
         pauseMenu = engine.getPauseMenuManager();
         transitionManager = engine.getTransitionManager();
+        gameStateManager = engine.getStateManager();
 
         GameSession.getInstance().addListener(this);
+        engine.setCursorChangeListener(() -> Platform.runLater(this::updateCursor));
 
         Platform.runLater(() -> {
             setupBackground();
@@ -49,7 +53,6 @@ public class GameController implements GameSession.GameSessionListener {
     private void setupBackground() {
         background = new GameBackground(576, 720, rootGamePane);
         rootGamePane.getChildren().add(0, background.getCanvas());
-
         updateTheme(GameSession.getInstance().getCurrentChapter());
 
         background.start();
@@ -59,12 +62,42 @@ public class GameController implements GameSession.GameSessionListener {
         rootGamePane.setFocusTraversable(true);
         rootGamePane.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
         rootGamePane.setOnKeyReleased(e -> input.keyReleased(e.getCode()));
-        rootGamePane.setOnMouseMoved(e -> input.mouseMoved(e.getX()));
-        rootGamePane.setOnMouseDragged(e -> input.mouseMoved(e.getX()));
-        rootGamePane.setOnMousePressed(e -> input.mouseClicked());
+
+        canvas.setOnMouseMoved(e -> {
+            double canvasX = e.getX();
+            double canvasY = e.getY();
+            input.mouseMoved(canvasX + canvas.getLayoutX());
+            pauseMenu.handleMouseInput(canvasX, canvasY, false);
+        });
+
+        rootGamePane.setOnMouseDragged(e -> {
+            input.mouseMoved(e.getX());
+        });
+
+        rootGamePane.setOnMousePressed(e -> {
+            input.mouseClicked();
+
+            if (engine != null && engine.getStateManager() != null) {
+                engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true);
+            }
+        });
+
         rootGamePane.setOnMouseReleased(e -> input.mouseReleased());
+
         rootGamePane.requestFocus();
-        rootGamePane.setOnMouseEntered(e -> rootGamePane.setCursor(Cursor.NONE));
+        rootGamePane.setOnMouseEntered(e -> updateCursor());
+    }
+
+    private void updateCursor() {
+        if (engine != null && engine.getStateManager() != null) {
+            if (engine.getStateManager().is(GameState.PAUSED)) {
+                rootGamePane.setCursor(Cursor.DEFAULT);
+            } else {
+                rootGamePane.setCursor(Cursor.NONE);
+            }
+        } else {
+            rootGamePane.setCursor(Cursor.NONE);
+        }
     }
 
     private void updateTheme(int chapter) {
@@ -109,6 +142,7 @@ public class GameController implements GameSession.GameSessionListener {
     public void startGame() {
         if (engine != null) {
             engine.start();
+            updateCursor();
         }
     }
 
@@ -128,5 +162,5 @@ public class GameController implements GameSession.GameSessionListener {
     }
 
     @Override
-    public void onBallHitWall() {}
+    public void onBallHitWall(GameSession.HitSide hitSide) {}
 }
