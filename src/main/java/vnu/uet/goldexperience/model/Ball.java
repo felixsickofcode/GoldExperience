@@ -2,8 +2,13 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.core.Constants;
-import vnu.uet.goldexperience.effect.ball.BallEffect;
+import vnu.uet.goldexperience.effect.BallTrail;
+import vnu.uet.goldexperience.effect.BallGlow;
 import vnu.uet.goldexperience.manager.AssetsManager;
+import vnu.uet.goldexperience.manager.GameSession;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Ball extends MovableObject {
     private double speed = Constants.BALL_SPEED; // viết nnay
@@ -11,13 +16,20 @@ public class Ball extends MovableObject {
     private boolean reset = true;
     private long lastCollisionTime = 0;
     static final double minDy = 80;
-    private BallEffect effect;
+    private final List<double[]> trail = new ArrayList<>();
+    private final int maxTrail = 60;
+    private double glowPulse = 0;
+    private BallTrail ballTrail;
+    private BallGlow ballGlow;
+
+
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
         this.image = AssetsManager.balls.getFirst();
-        this.effect = new BallEffect();
+        this.ballGlow = new BallGlow();
+        this.ballTrail = new BallTrail();
     }
 
     public boolean isReset() {
@@ -32,11 +44,11 @@ public class Ball extends MovableObject {
 
     public void reset(Paddle paddle) {
         reset = true;
-        setX(paddle.getX() + paddle.getWidth() / 2 - radius);
-        setY(paddle.getY() - radius * 2);
+        setX(paddle.getX() + paddle.getWidth() / 2 - radius); // đặt tâm chính giữa paddle
+        setY(paddle.getY() - radius * 2);                   // đặt bóng ngay trên paddle
         dx = 0;
         dy = 0;
-        effect.clear();
+        trail.clear();
     }
 
     public void bounceOffWithPaddle(GameObject paddle) {
@@ -150,16 +162,19 @@ public class Ball extends MovableObject {
             setDx(Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.LEFT);
         }
         if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
             setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)
                 setDy(getDy() >= 0 ? minDy : -minDy);
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.RIGHT);
         }
         if (getY() <= 0) {
             setY(0);
             setDy(Math.abs(getDy()));
+            GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.TOP);
         }
     }
 
@@ -201,18 +216,26 @@ public class Ball extends MovableObject {
         if (!reset) {
             move(dt);
             handleBallEdgeCollision();
+            trail.add(0, new double[]{getCenterX(), getCenterY()});
+            if (trail.size() > maxTrail)
+                trail.remove(trail.size() - 1);
         }
-        effect.update(getCenterX(), getCenterY(), dt, width, height);
+        glowPulse = (Math.sin(System.nanoTime() * 1e-9 * 6) + 1) / 2;
     }
-
 
     @Override
     public void render(GraphicsContext gc) {
-        effect.render(gc);
+        double cx = getCenterX();
+        double cy = getCenterY();
+        ballTrail.render(gc, trail, width, height);
+        ballGlow.render(gc, cx, cy, radius, glowPulse);
         // ball
         gc.setGlobalAlpha(1.0);
         if (image != null)
             gc.drawImage(image, x, y, width, height);
+
+        // reset alpha
+        gc.setGlobalAlpha(1.0);
     }
 
 

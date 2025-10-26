@@ -24,7 +24,7 @@ public class Constants {
     public static final double SPAWN_THRESHOLD = 50.0;
     public static final double BALL_SPEED = 350;
     public static final double PADDLE_SPEED = 600;
-    public static final double MOUSE_LERP_SPEED = 0.3;
+    public static final double MOUSE_LERP_SPEED = 0.4;
     public static final double BALL_MAX_SPEED = 600;
 
     public static final double BALL_INIT_POSITION = 590;

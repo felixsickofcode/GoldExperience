@@ -83,6 +83,11 @@ public class MenuController {
     @FXML
     private void handle2PlayerMode(ActionEvent event) {
         System.out.println("2 Player Mode clicked");
+        if (sceneManager != null) {
+            sceneManager.switchTo("game");
+            GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
+        }
     }
 
     // When click on tutorial
