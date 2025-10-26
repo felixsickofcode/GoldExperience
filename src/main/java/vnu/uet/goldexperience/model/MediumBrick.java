@@ -5,8 +5,8 @@ import vnu.uet.goldexperience.effect.FlashEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class MediumBrick extends Brick {
-    private FlashEffect flashEffect;
-    private boolean playingFlashEffect;
+    protected FlashEffect flashEffect;
+    protected boolean playingFlashEffect;
 
     public MediumBrick(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -28,7 +28,6 @@ public class MediumBrick extends Brick {
     private void triggerFlashEffect() {
         flashEffect = new FlashEffect(this);
         playingFlashEffect = true;
-        System.out.println("Flash effect tại: " + x + ", " + y);
     }
 
     @Override

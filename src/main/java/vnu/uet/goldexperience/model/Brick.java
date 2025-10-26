@@ -6,6 +6,8 @@ import vnu.uet.goldexperience.effect.DebrisEffect;
 
 
 public abstract class Brick extends GameObject {
+
+
     protected int hitPoints;
     protected DebrisEffect breakEffect;
     protected boolean playingBreakEffect;
@@ -27,7 +29,7 @@ public abstract class Brick extends GameObject {
         }
         breakEffect = new DebrisEffect(this);
         playingBreakEffect = true;
-        effectType = "Particle";
+        effectType = "Debris";
     }
 
     public boolean isDestroyed() {
@@ -40,7 +42,7 @@ public abstract class Brick extends GameObject {
         }
         if ("Explosion".equals(effectType)) {
             return explosionEffect == null || explosionEffect.isFinished();
-        } else if ("Particle".equals(effectType)) {
+        } else if ("Debris".equals(effectType)) {
             return breakEffect == null || breakEffect.isFinished();
         }
         return true;
@@ -85,5 +87,9 @@ public abstract class Brick extends GameObject {
 
     public ExplosionEffect getExplosionEffect() {
         return explosionEffect;
+    }
+
+    public DebrisEffect getBreakEffect() {
+        return breakEffect;
     }
 }

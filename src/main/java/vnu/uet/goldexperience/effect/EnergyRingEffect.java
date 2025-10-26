@@ -9,10 +9,6 @@ public class EnergyRingEffect {
     private double life;
     private final boolean isStrong;
 
-    public EnergyRingEffect(double x, double y) {
-        this(x, y, false);
-    }
-
     public EnergyRingEffect(double x, double y, boolean isStrong) {
         this.x = x;
         this.y = y;

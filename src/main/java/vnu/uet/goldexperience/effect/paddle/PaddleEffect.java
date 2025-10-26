@@ -1,6 +1,7 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.paddle;
 
 import javafx.scene.canvas.GraphicsContext;
+import vnu.uet.goldexperience.effect.EnergyRingEffect;
 
 public class PaddleEffect {
     private EnergyRingEffect energyRings;
@@ -12,9 +13,6 @@ public class PaddleEffect {
         shake = new PaddleShakeEffect();
     }
 
-    // ------------------------------
-    // UPDATE
-    // ------------------------------
     public void update(double x, double y, double deltaTime) {
         if (energyRings != null)
             energyRings.update(deltaTime);
@@ -23,16 +21,12 @@ public class PaddleEffect {
         shake.update(deltaTime);
     }
 
-
     public void onBallHit(double x, double y) {
         energyRings = new EnergyRingEffect(x, y, true);
         flash.trigger();
         shake.trigger(0.15, 10);
     }
 
-    // ------------------------------
-    // RENDER
-    // ------------------------------
     public void render(GraphicsContext gc) {
         gc.save();
         if (energyRings != null)

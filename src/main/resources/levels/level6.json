@@ -3,17 +3,44 @@
   "key": {
     "N": "normal",
     "U": "unbreakable",
-    " ": "empty",
     "E": "explode",
-    "M": "medium"
+    "M": "medium",
+    "H": "movable_horizontal",
+    "V": "movable_vertical",
+    " ": "empty"
   },
   "layout": [
     "            ",
+    "   HHHHHH   ",
+    "            ",
+    "  EEEEEEEE  ",
     "            ",
     "            ",
     "            ",
-    "    N      ",
-    "",
-    "     "
-  ]
+    "   V   V    ",
+    "            ",
+    "            ",
+    "            ",
+    "EMUEUUUUEUME",
+    "NMUENMMNEUMN",
+    "NMUEEUUEEUMN",
+    "            ",
+    "            ",
+    "            ",
+    "   HHHHHH   "
+  ],
+  "properties": {
+    "movable_horizontal": {
+      "dx": 100,
+      "dy": 0,
+      "rangeX": 150,
+      "rangeY": 0
+    },
+    "movable_vertical": {
+      "dx": 0,
+      "dy": 100,
+      "rangeX": 0,
+      "rangeY": 48
+    }
+  }
 }

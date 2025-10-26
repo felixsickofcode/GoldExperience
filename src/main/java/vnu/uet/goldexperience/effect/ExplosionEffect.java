@@ -27,24 +27,8 @@ public class ExplosionEffect {
     public double getY() {
         return y;
     }
-    public double getCurrentInnerRadius() {
-        if (!isActive || isFinished) {
-            return 0;
-        }
 
-        double progress = elapsed / duration;
-
-
-        if (progress >= FLASH_PHASE && progress < EXPAND_PHASE) {
-            double phaseProgress = (progress - FLASH_PHASE) / (EXPAND_PHASE - FLASH_PHASE);
-            double expansionRadius = width * (0.8 + phaseProgress * 0.7);
-            return expansionRadius * 0.8; //
-        }
-
-        return 0;
-    }
-
-    private List<Particle> particles;
+    private final List<Particle> particles;
     private final Random random;
 
     // Các phase của explosion
@@ -81,7 +65,7 @@ public class ExplosionEffect {
     }
 
     /**
-     * Tạo các particle bay tứ tung
+     * Generate Particle
      */
     private void createParticles() {
         particles.clear();
@@ -103,12 +87,10 @@ public class ExplosionEffect {
 
         elapsed += deltaTime;
 
-        // Update tất cả particles
         for (Particle particle : particles) {
             particle.update(deltaTime);
         }
 
-        // Kết thúc hiệu ứng
         if (elapsed >= duration) {
             isFinished = true;
             isActive = false;
@@ -124,18 +106,18 @@ public class ExplosionEffect {
 
         gc.save();
 
-        // Phase 1: Flash sáng chói (0-10%)
+        // flash
         if (progress < FLASH_PHASE) {
             renderFlashPhase(gc, progress / FLASH_PHASE);
         }
 
-        // Phase 2: Giãn nở và particles (10-40%)
+        // particles generate and expand
         if (progress >= FLASH_PHASE && progress < EXPAND_PHASE) {
             double phaseProgress = (progress - FLASH_PHASE) / (EXPAND_PHASE - FLASH_PHASE);
             renderExpandPhase(gc, phaseProgress);
         }
 
-        // Phase 3: Fade out particles (40-100%)
+        // fade
         if (progress >= EXPAND_PHASE) {
             double phaseProgress = (progress - EXPAND_PHASE) / (FADE_PHASE - EXPAND_PHASE);
             renderFadePhase(gc, phaseProgress);
@@ -144,14 +126,10 @@ public class ExplosionEffect {
         gc.restore();
     }
 
-    /**
-     * Phase 1: Flash sáng ban đầu
-     */
     private void renderFlashPhase(GraphicsContext gc, double phaseProgress) {
         double alpha = 1.0 - phaseProgress;
         double radius = width * (0.5 + phaseProgress * 0.5);
 
-        // Vẽ nhiều vòng tròn sáng chồng lên nhau
         for (int i = 3; i >= 1; i--) {
             double layerRadius = radius * (i / 3.0);
             double layerAlpha = alpha * (1.0 - i / 4.0);
@@ -165,8 +143,6 @@ public class ExplosionEffect {
                     layerRadius * 2
             );
         }
-
-        // Core trắng sáng
         gc.setGlobalAlpha(alpha);
         gc.setFill(Color.WHITE);
         gc.fillOval(
@@ -177,18 +153,13 @@ public class ExplosionEffect {
         );
     }
 
-    /**
-     * Phase 2: Giãn nở với fire ring
-     */
     private void renderExpandPhase(GraphicsContext gc, double phaseProgress) {
         double alpha = 1.0 - phaseProgress * 0.5;
         double expansionRadius = width * (0.8 + phaseProgress * 0.7);
 
-        // Vòng lửa giãn nở
         gc.setGlobalAlpha(alpha);
         gc.setLineWidth(8 - phaseProgress * 4);
 
-        // Outer ring - vàng cam
         gc.setStroke(Color.rgb(255, 150, 0, alpha));
         gc.strokeOval(
                 x - expansionRadius,
@@ -197,7 +168,6 @@ public class ExplosionEffect {
                 expansionRadius * 2
         );
 
-        // Inner ring - đỏ
         double innerRadius = expansionRadius * 0.7;
         gc.setStroke(Color.rgb(255, 50, 0, alpha));
         gc.strokeOval(
@@ -211,17 +181,11 @@ public class ExplosionEffect {
         renderParticles(gc, alpha);
     }
 
-    /**
-     * Phase 3: Fade out particles
-     */
     private void renderFadePhase(GraphicsContext gc, double phaseProgress) {
         double alpha = 1.0 - phaseProgress;
         renderParticles(gc, alpha);
     }
 
-    /**
-     * Vẽ các particle bay tứ tung
-     */
     private void renderParticles(GraphicsContext gc, double alpha) {
         for (Particle particle : particles) {
             particle.render(gc, alpha);
@@ -236,27 +200,38 @@ public class ExplosionEffect {
         return isActive;
     }
 
-    /**
-     * Inner class: Particle bay tứ tung
-     */
+    public double getCurrentInnerRadius() {
+        if (!isActive || isFinished) {
+            return 0;
+        }
+
+        double progress = elapsed / duration;
+
+
+        if (progress >= FLASH_PHASE && progress < EXPAND_PHASE) {
+            double phaseProgress = (progress - FLASH_PHASE) / (EXPAND_PHASE - FLASH_PHASE);
+            double expansionRadius = width * (0.8 + phaseProgress * 0.7);
+            return expansionRadius * 0.8; //
+        }
+
+        return 0;
+    }
+
     private static class Particle {
         private double x, y;
-        private final double startX, startY;
         private final double angle;
         private final double speed;
         private final double size;
         private final Color color;
 
         public Particle(double x, double y, double angle, double speed, double size) {
-            this.startX = x;
-            this.startY = y;
             this.x = x;
             this.y = y;
             this.angle = angle;
             this.speed = speed;
             this.size = size;
 
-            // Random màu từ vàng -> đỏ -> xám
+            // vang->xam
             Random rand = new Random();
             double colorVariant = rand.nextDouble();
             if (colorVariant < 0.4) {
@@ -273,33 +248,13 @@ public class ExplosionEffect {
         }
 
         public void update(double deltaTime) {
-            // Di chuyển theo góc
             x += Math.cos(angle) * speed * deltaTime;
             y += Math.sin(angle) * speed * deltaTime;
-
-            // Trọng lực (particles rơi xuống một chút)
-            y += 50 * deltaTime;
         }
 
         public void render(GraphicsContext gc, double alpha) {
             gc.setGlobalAlpha(alpha);
             gc.setFill(color);
-
-            // Vẽ particle với trail effect
-            double distance = Math.hypot(x - startX, y - startY);
-            double trailLength = Math.min(distance * 0.3, size * 2);
-
-            // Trail
-            gc.setGlobalAlpha(alpha * 0.5);
-            gc.fillOval(
-                    x - size * 0.5 - Math.cos(angle) * trailLength,
-                    y - size * 0.5 - Math.sin(angle) * trailLength,
-                    size,
-                    size
-            );
-
-            // Main particle
-            gc.setGlobalAlpha(alpha);
             gc.fillOval(x - size * 0.5, y - size * 0.5, size, size);
         }
     }

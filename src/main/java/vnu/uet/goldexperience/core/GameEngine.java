@@ -187,7 +187,9 @@ public class GameEngine {
 
     private boolean isLevelComplete() {
         for (Brick brick : bricks) {
-            if (!brick.isDestroyed() && !(brick instanceof UnbreakableBrick)) {
+            if ((!brick.isDestroyed() && !(brick instanceof UnbreakableBrick))
+                    || (brick.getBreakEffect() != null && !(brick.getBreakEffect().isFinished()))
+                    || (brick.getExplosionEffect() != null && brick.getExplosionEffect().isActive())) {
                 return false;
             }
         }
@@ -195,13 +197,36 @@ public class GameEngine {
     }
 
     private void handleLevelComplete() {
-        end();
-        System.out.println("Level Complete!");
-        boolean hasNext = GameSession.getInstance().nextLevel();
-        if (hasNext) {
-            start();
-        } else {
-            System.out.println("Game Complete! All levels finished!");
+        for (Brick brick : bricks) {
+            if (brick instanceof UnbreakableBrick) {
+                ((UnbreakableBrick) brick).destroy();
+            }
         }
+        if (areAllEffectsFinished()) {
+            end();
+            System.out.println("Level Complete!");
+            boolean hasNext = GameSession.getInstance().nextLevel();
+            if (hasNext) {
+                start();
+            } else {
+                System.out.println("Game Complete! All levels finished!");
+            }
+        }
+    }
+
+    private boolean areAllEffectsFinished() {
+        for (Brick brick : bricks) {
+            if (brick instanceof UnbreakableBrick)
+                if (((UnbreakableBrick) brick).getDestructionEffect() != null && !((UnbreakableBrick) brick).getDestructionEffect().isFinished()) {
+                    return false;
+                }
+            if (brick.getExplosionEffect() != null && brick.getExplosionEffect().isActive()) {
+                return false;
+            }
+            if (brick.getBreakEffect() != null && !brick.getBreakEffect().isFinished()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

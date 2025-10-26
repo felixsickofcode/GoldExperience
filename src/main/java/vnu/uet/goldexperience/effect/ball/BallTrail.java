@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.ball;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -9,10 +9,10 @@ import java.util.List;
 public class BallTrail {
     private final List<double[]> trail = new ArrayList<>();
     private final int maxTrail = 50;
-    public void update(double dt,double x, double y) {
-        trail.add(0, new double[]{x,y});
+    public void update(double x, double y) {
+        trail.addFirst(new double[]{x,y});
         if (trail.size() > maxTrail)
-            trail.remove(trail.size() - 1);
+            trail.removeLast();
     }
 
     public List<double[]> getTrail() {
@@ -30,8 +30,9 @@ public class BallTrail {
 
             double w = width * scale;
             double h = height * scale;
-
+            //trang
             Color start = Color.web("#ffffff");
+            //xanh ngoc
             Color end = Color.web("#66ffff");
             Color trailColor = start.interpolate(end, t);
 

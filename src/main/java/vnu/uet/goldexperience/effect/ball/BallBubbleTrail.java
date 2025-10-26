@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.ball;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -18,9 +18,10 @@ public class BallBubbleTrail {
         this.life = 1.0;
 
         Random rand = new Random();
-        int r = 140 + rand.nextInt(30);   // ít đỏ hơn
-        int g = 210 + rand.nextInt(40);   // xanh lá sáng
-        int b = 255;                      // xanh dương mạnh
+        //trang+xanh
+        int r = 140 + rand.nextInt(30);
+        int g = 210 + rand.nextInt(40);
+        int b = 255;
         this.color = Color.rgb(r, g, b);
     }
 
@@ -28,7 +29,7 @@ public class BallBubbleTrail {
         x += vx * deltaTime;
         y += vy * deltaTime;
         vx *= 0.9;
-        vy = vy * 0.98 + 30 * deltaTime;  // trọng lực nhẹ
+        vy = vy * 0.98 + 30 * deltaTime;
         life -= deltaTime * 1.5;
     }
 
@@ -37,11 +38,10 @@ public class BallBubbleTrail {
         gc.setGlobalAlpha(life * 0.8);
         gc.setFill(color);
 
-        // Bóng tròn chính
+
         gc.fillOval(x - size, y - size, size * 2, size * 2);
 
-        // Viền sáng mờ — tạo hiệu ứng bong bóng
-        gc.setGlobalAlpha(life * 0.25);
+        gc.setGlobalAlpha(life * 0.5);
         gc.setFill(Color.rgb(255, 255, 255, 0.4));
         gc.fillOval(x - size * 1.4, y - size * 1.4, size * 2.8, size * 2.8);
     }
