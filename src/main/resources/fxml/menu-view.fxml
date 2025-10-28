@@ -3,59 +3,36 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="root"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="vnu.uet.goldexperience.controller.MenuController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="root, menu-root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vnu.uet.goldexperience.controller.MenuController">
 
     <children>
-        <VBox alignment="CENTER" layoutX="502.0" layoutY="346.0"
-              prefHeight="267.0" prefWidth="276.0" spacing="15.0">
+
+        <!-- Menu Container -->
+        <VBox fx:id="menuContainer" alignment="CENTER" layoutX="440.0" layoutY="300.0" prefHeight="350.0" prefWidth="400.0" spacing="20.0" styleClass="menu-container">
             <children>
-                <Button fx:id="btnStoryMode" mnemonicParsing="false"
-                        onAction="#handleStoryMode"
-                        prefHeight="101.0" prefWidth="260.0" text="Story Mode">
+                <Button fx:id="btnStoryMode" mnemonicParsing="false" onAction="#handleStoryMode" prefHeight="80.0" prefWidth="340.0" styleClass="menu-button" text="Story Mode">
                     <font>
-                        <Font size="23.0" />
+                        <Font size="28.0" />
                     </font>
                 </Button>
-                <Button fx:id="btn2PlayerMode" mnemonicParsing="false"
-                        onAction="#handle2PlayerMode"
-                        prefHeight="100.0" prefWidth="259.0" text="2 Player Mode">
+                <Button fx:id="btn2PlayerMode" mnemonicParsing="false" onAction="#handle2PlayerMode" prefHeight="80.0" prefWidth="340.0" styleClass="menu-button" text="2 Player Mode">
                     <font>
-                        <Font size="23.0" />
+                        <Font size="28.0" />
+                    </font>
+                </Button>
+                <Button fx:id="btnMoveToSetting" mnemonicParsing="false" onAction="#handleMoveToSetting" prefHeight="80.0" prefWidth="340.0" styleClass="menu-button" text="Setting">
+                    <font>
+                        <Font size="28.0" />
                     </font>
                 </Button>
             </children>
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
         </VBox>
-
-        <Label fx:id="titleLabel" alignment="CENTER" layoutX="389.0" layoutY="150.0"
-               prefHeight="128.0" prefWidth="502.0" styleClass="title-label" text="ARKANOID">
-            <font>
-                <Font name="System Bold" size="100.0" />
-            </font>
-        </Label>
-
-        <Button fx:id="btnMoveToSetting" layoutX="1139.0" layoutY="8.0"
-                mnemonicParsing="false" onAction="#handleMoveToSetting"
-                style="-fx-background-color: transparent;">
-            <graphic>
-                <ImageView fitHeight="85.0" fitWidth="83.0"
-                           preserveRatio="true" pickOnBounds="true">
-                    <image>
-                        <Image url="@../images/Setting_image.png" />
-                    </image>
-                </ImageView>
-            </graphic>
-        </Button>
     </children>
 </AnchorPane>
