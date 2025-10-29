@@ -25,7 +25,7 @@ public class MediumBrick extends Brick {
         }
     }
 
-    private void triggerFlashEffect() {
+    protected void triggerFlashEffect() {
         flashEffect = new FlashEffect(this);
         playingFlashEffect = true;
     }

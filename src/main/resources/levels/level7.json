@@ -1,19 +1,29 @@
 {
-  "levelNumber": 2,
+  "levelNumber": 3,
   "key": {
-    "N": "normal",
-    "U": "unbreakable",
-    " ": "empty",
-    "E": "explode",
-    "M": "medium"
+    "C": "movable_circular",
+    " ": "empty"
   },
   "layout": [
     "            ",
     "            ",
+    "  CC     CC ",
+    "    C   C   ",
     "            ",
     "            ",
-    "    N      ",
-    "",
-    "     "
-  ]
+    "            ",
+    "            ",
+    "            ",
+    "            ",
+    "            ",
+    "     CC     "
+  ],
+  "properties": {
+    "movable_circular": {
+      "dx": 0,
+      "dy": 0,
+      "rangeX": 100,
+      "rangeY": 100
+    }
+  }
 }

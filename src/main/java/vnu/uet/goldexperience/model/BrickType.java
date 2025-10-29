@@ -32,6 +32,12 @@ public enum BrickType {
             return new MediumBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
         }
     },
+    STRONG("strong") {
+        @Override
+        public Brick create(double x, double y) {
+            return new StrongBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
+        }
+    },
     MOVABLE_HORIZONTAL("movable_horizontal") {
         @Override
         public Brick create(double x, double y) {
@@ -68,6 +74,32 @@ public enum BrickType {
                     0, 0,
                     100, 100,    // bán kính quỹ đạo
                     PathType.CIRCULAR
+            );
+        }
+    },
+    MOVABLE_UNBREAKABLE_VERTICAL("movable_unbreakable_vertical") {
+        @Override
+        public Brick create(double x, double y) {
+            return new UnbreakableMovableBrick(
+                    x, y,
+                    Constants.NORMAL_BRICK_WIDTH,
+                    Constants.NORMAL_BRICK_HEIGHT,
+                    0, 80,       // dx, dy
+                    0, 48,      // rangeX, rangeY
+                    PathType.VERTICAL
+            );
+        }
+    },
+    MOVABLE_UNBREAKABLE_HORIZONTAL("movable_unbreakable_horizontal") {
+        @Override
+        public Brick create(double x, double y) {
+            return new UnbreakableMovableBrick(
+                    x, y,
+                    Constants.NORMAL_BRICK_WIDTH,
+                    Constants.NORMAL_BRICK_HEIGHT,
+                    80, 0,       // dx, dy
+                    144, 0,      // rangeX, rangeY
+                    PathType.HORIZONTAL
             );
         }
     };

@@ -15,11 +15,16 @@ public class Constants {
     public static final double BIG_PADDLE_WIDTH = 144;
     public static final double PADDLE_HEIGHT = 14;
     public static final double SMALL_BALL_SIZE = 6;
-    public static final double NORMAL_BALL_SIZE = 9;
+    public static final double NORMAL_BALL_SIZE = 8;
     public static final double NORMAL_BRICK_WIDTH = 48;
     public static final double NORMAL_BRICK_HEIGHT = 24;
     public static final int MIN_PADDLE_SIZE = 0;
     public static final int MAX_PADDLE_SIZE = 4;
+
+    //regenerateBrick
+    public static final double REGENERATION_TIME = 10.0;
+    public static final int REGENERATION_THRESHOLD = 3;
+    public static final int MAX_HIT_POINTS = 4;
 
     public static final double SPAWN_THRESHOLD = 50.0;
     public static final double BALL_SPEED = 350;

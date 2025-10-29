@@ -1,15 +1,14 @@
 package vnu.uet.goldexperience.model;
 
-public class MovableBrick extends MediumBrick implements Movable {
+public class UnbreakableMovableBrick extends UnbreakableBrick implements Movable {
     protected double dx, dy;
     private double originX, originY;
     private double moveRangeX, moveRangeY;
     private PathType pathType;
-    private double angle;
 
-    public MovableBrick(double x, double y, double width, double height,
-                        double dx, double dy, double moveRangeX, double moveRangeY,
-                        PathType pathType) {
+    public UnbreakableMovableBrick(double x, double y, double width, double height,
+                                   double dx, double dy, double moveRangeX, double moveRangeY,
+                                   PathType pathType) {
         super(x, y, width, height);
         this.dx = dx;
         this.dy = dy;
@@ -18,13 +17,6 @@ public class MovableBrick extends MediumBrick implements Movable {
         this.moveRangeX = moveRangeX;
         this.moveRangeY = moveRangeY;
         this.pathType = pathType;
-        this.angle = 0;
-    }
-
-    @Override
-    public void update(double deltaTime) {
-        super.update(deltaTime);
-        move(deltaTime);
     }
 
     @Override
@@ -32,8 +24,13 @@ public class MovableBrick extends MediumBrick implements Movable {
         switch (pathType) {
             case HORIZONTAL -> moveHorizontal(deltaTime);
             case VERTICAL -> moveVertical(deltaTime);
-            case CIRCULAR -> moveCircular(deltaTime);
         }
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        super.update(deltaTime);
+        move(deltaTime);
     }
 
     private void moveHorizontal(double dt) {
@@ -58,16 +55,6 @@ public class MovableBrick extends MediumBrick implements Movable {
         }
     }
 
-    private void moveCircular(double dt) {
-        angle += 1.5 * dt;
-        if (angle > 2 * Math.PI) {
-            angle -= 2 * Math.PI;
-        }
-        x = originX + moveRangeX * Math.cos(angle);
-        y = originY + moveRangeY * Math.sin(angle);
-    }
-
-
     @Override
     public double getDx() {
         return dx;
@@ -87,4 +74,6 @@ public class MovableBrick extends MediumBrick implements Movable {
     public void setDy(double dy) {
         this.dy = dy;
     }
+
+
 }

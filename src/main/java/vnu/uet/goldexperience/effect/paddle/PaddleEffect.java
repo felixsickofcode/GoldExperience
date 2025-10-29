@@ -1,7 +1,6 @@
 package vnu.uet.goldexperience.effect.paddle;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.EnergyRingEffect;
 
 public class PaddleEffect {
     private EnergyRingEffect energyRings;

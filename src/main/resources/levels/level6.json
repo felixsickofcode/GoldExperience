@@ -31,14 +31,14 @@
   ],
   "properties": {
     "movable_horizontal": {
-      "dx": 100,
+      "dx": 48,
       "dy": 0,
-      "rangeX": 150,
+      "rangeX": 144,
       "rangeY": 0
     },
     "movable_vertical": {
       "dx": 0,
-      "dy": 100,
+      "dy": 24,
       "rangeX": 0,
       "rangeY": 48
     }
