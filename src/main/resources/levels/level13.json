@@ -1,0 +1,21 @@
+{
+  "levelNumber": 2,
+  "key": {
+    "N": "normal",
+    "U": "unbreakable",
+    " ": "empty",
+    "E": "explode",
+    "M": "medium"
+  },
+  "layout": [
+    "            ",
+    "            ",
+    "            ",
+    "            ",
+    "  EEEEEEEE  ",
+    "            ",
+    "EMUEUUUUEUME",
+    "NMUENMMNEUMN",
+    "NMUEEUUEEUMN"
+  ]
+}

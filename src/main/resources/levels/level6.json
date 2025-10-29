@@ -1,0 +1,46 @@
+{
+  "levelNumber": 2,
+  "key": {
+    "N": "normal",
+    "U": "unbreakable",
+    "E": "explode",
+    "M": "medium",
+    "H": "movable_horizontal",
+    "V": "movable_vertical",
+    " ": "empty"
+  },
+  "layout": [
+    "            ",
+    "   HHHHHH   ",
+    "            ",
+    "  EEEEEEEE  ",
+    "            ",
+    "            ",
+    "            ",
+    "   V   V    ",
+    "            ",
+    "            ",
+    "            ",
+    "EMUEUUUUEUME",
+    "NMUENMMNEUMN",
+    "NMUEEUUEEUMN",
+    "            ",
+    "            ",
+    "            ",
+    "   HHHHHH   "
+  ],
+  "properties": {
+    "movable_horizontal": {
+      "dx": 100,
+      "dy": 0,
+      "rangeX": 150,
+      "rangeY": 0
+    },
+    "movable_vertical": {
+      "dx": 0,
+      "dy": 100,
+      "rangeX": 0,
+      "rangeY": 48
+    }
+  }
+}

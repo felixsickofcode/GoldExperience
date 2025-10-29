@@ -43,7 +43,6 @@ public class FlashEffect {
     public void render(GraphicsContext gc) {
         if (isFinished || brick == null) return;
 
-        // Nhấp nháy: chẵn = hiển thị flash, lẻ = không hiển thị
         boolean shouldFlash = (flashCount % 2 == 0);
 
         if (shouldFlash) {

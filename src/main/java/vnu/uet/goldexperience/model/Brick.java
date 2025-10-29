@@ -2,13 +2,14 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.ExplosionEffect;
-import vnu.uet.goldexperience.manager.AssetsManager;
-import vnu.uet.goldexperience.effect.ParticleEffect;
+import vnu.uet.goldexperience.effect.DebrisEffect;
 
 
-public class Brick extends GameObject {
+public abstract class Brick extends GameObject {
+
+
     protected int hitPoints;
-    protected ParticleEffect breakEffect;
+    protected DebrisEffect breakEffect;
     protected boolean playingBreakEffect;
     protected ExplosionEffect explosionEffect;
     protected boolean playingExplosion = false;
@@ -17,27 +18,18 @@ public class Brick extends GameObject {
     public Brick(double x, double y, double width, double height) {
         super(x, y, width, height);
         this.hitPoints = 1;
-        this.image = AssetsManager.bricks.getFirst();
-        this.effectType = "Particle";
     }
 
-    public void takeHit() {
-        hitPoints--;
-        if (isDestroyed()) {
-            triggerDestroyEffect();
-        }
-    }
+    public abstract void takeHit();
 
 
     protected void triggerDestroyEffect() {
         if (playingBreakEffect || playingExplosion) {
             return;
         }
-        breakEffect = new ParticleEffect(this);
+        breakEffect = new DebrisEffect(this);
         playingBreakEffect = true;
-        effectType = "Particle";
-        System.out.println("Tạo hiệu ứng vỡ tại: " + x + ", " + y);
-
+        effectType = "Debris";
     }
 
     public boolean isDestroyed() {
@@ -50,43 +42,17 @@ public class Brick extends GameObject {
         }
         if ("Explosion".equals(effectType)) {
             return explosionEffect == null || explosionEffect.isFinished();
-        } else if ("Particle".equals(effectType)) {
+        } else if ("Debris".equals(effectType)) {
             return breakEffect == null || breakEffect.isFinished();
         }
-
         return true;
     }
 
     @Override
-    public void update(double deltaTime) {
-        if (playingBreakEffect && breakEffect != null) {
-            breakEffect.update(deltaTime);
-            if (breakEffect.isFinished()) {
-                playingBreakEffect = false;
-                breakEffect = null;
-            }
-        }
-        if (playingExplosion && explosionEffect != null) {
-            explosionEffect.update(deltaTime);
-            if (explosionEffect.isFinished()) {
-                playingExplosion = false;
-                explosionEffect = null;
-            }
-        }
-    }
+    public abstract void update(double deltaTime);
 
     @Override
-    public void render(GraphicsContext gc) {
-        if (!isDestroyed() && image != null) {
-            gc.drawImage(image, x, y);
-        }
-        if (playingExplosion && explosionEffect != null) {
-            explosionEffect.render(gc);
-        }
-        if (playingBreakEffect && breakEffect != null) {
-            breakEffect.render(gc);
-        }
-    }
+    public abstract void render(GraphicsContext gc);
 
     public boolean isInExplosionRadius(ExplosionEffect explosion) {
         if (isDestroyed()) {
@@ -121,5 +87,9 @@ public class Brick extends GameObject {
 
     public ExplosionEffect getExplosionEffect() {
         return explosionEffect;
+    }
+
+    public DebrisEffect getBreakEffect() {
+        return breakEffect;
     }
 }
