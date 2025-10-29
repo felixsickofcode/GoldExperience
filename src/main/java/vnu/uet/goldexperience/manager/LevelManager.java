@@ -59,16 +59,32 @@ public class LevelManager {
                                     brickX, brickY,
                                     Constants.NORMAL_BRICK_WIDTH,
                                     Constants.NORMAL_BRICK_HEIGHT,
-                                    dx, dy, rangeX, rangeY,PathType.HORIZONTAL
+                                    dx, dy, rangeX, rangeY, PathType.HORIZONTAL
                             );
                         } else if (typeString.equals("movable_vertical")) {
                             brick = new MovableBrick(
                                     brickX, brickY,
                                     Constants.NORMAL_BRICK_WIDTH,
                                     Constants.NORMAL_BRICK_HEIGHT,
-                                    dx, dy, rangeX, rangeY,PathType.VERTICAL
+                                    dx, dy, rangeX, rangeY, PathType.VERTICAL
                             );
+                        } else if (typeString.equals("movable_circular")) {
+                            brick = new MovableBrick(brickX, brickY,
+                                    Constants.NORMAL_BRICK_WIDTH,
+                                    Constants.NORMAL_BRICK_HEIGHT,
+                                    dx, dy, rangeX, rangeY, PathType.CIRCULAR);
+                        } else if (typeString.equals("movable_unbreakable_vertical")) {
+                            brick = new UnbreakableMovableBrick(brickX, brickY,
+                                    Constants.NORMAL_BRICK_WIDTH,
+                                    Constants.NORMAL_BRICK_HEIGHT,
+                                    dx, dy, rangeX, rangeY, PathType.VERTICAL);
+                        } else if (typeString.equals("movable_unbreakable_horizontal")) {
+                            brick = new UnbreakableMovableBrick(brickX, brickY,
+                                    Constants.NORMAL_BRICK_WIDTH,
+                                    Constants.NORMAL_BRICK_HEIGHT,
+                                    dx, dy, rangeX, rangeY, PathType.HORIZONTAL);
                         }
+
                         if (brick != null) {
                             activeBricks.add(brick);
                         }

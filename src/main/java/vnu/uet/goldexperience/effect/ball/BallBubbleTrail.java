@@ -15,7 +15,7 @@ public class BallBubbleTrail {
         this.vx = Math.cos(angle) * speed;
         this.vy = Math.sin(angle) * speed;
         this.size = 2.5 + Math.random() * 3.5;
-        this.life = 1.0;
+        this.life = 1;
 
         Random rand = new Random();
         //trang+xanh

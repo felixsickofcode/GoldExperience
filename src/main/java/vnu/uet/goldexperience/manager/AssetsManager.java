@@ -20,6 +20,8 @@ public class AssetsManager {
             bricks.add(new Image(AssetsManager.class.getResource("/images/brick_1.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/unbreakable1.png").toExternalForm()));
             bricks.add(new Image(AssetsManager.class.getResource("/images/unbreakable2.png").toExternalForm()));
+            bricks.add(new Image(AssetsManager.class.getResource("/images/brick_3.png").toExternalForm()));
+            bricks.add(new Image(AssetsManager.class.getResource("/images/brick3.png").toExternalForm()));
         } catch (Exception e) {
             System.err.println("Không thể tải brick: " + e.getMessage());
         }
