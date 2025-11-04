@@ -1,6 +1,7 @@
 package vnu.uet.goldexperience.manager;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -9,23 +10,23 @@ import vnu.uet.goldexperience.core.ChapterTheme;
 public class TransitionManager {
 
     private enum Phase {
-        IDLE,
-        ROUND_CLEAR,
+        HIDDEN,
+        FADING_IN_TITLE,
+        HOLDING_TITLE,
+        FADING_OUT_TITLE,
         SLIDING
     }
+    private Phase currentPhase = Phase.HIDDEN;
 
-    private Phase currentPhase = Phase.IDLE;
-    private double timer = 0;
+    private double transitionTimer = 0;
     private double slideOffset = 0;
 
     private final double canvasWidth;
     private final double canvasHeight;
 
-    // Kích thước mới theo yêu cầu
-    private double BOX_WIDTH; // Sẽ được gán bằng canvasWidth
-    private static final double BOX_HEIGHT = 150; // Chiều cao 300
-
-    private static final double ROUND_CLEAR_DURATION = 2.0;
+    private static final double FADE_IN_DURATION = 0.5;
+    private static final double HOLD_DURATION = 1.0;
+    private static final double FADE_OUT_DURATION = 0.5;
     private static final double SLIDE_SPEED = 600.0;
 
     private boolean shouldLoadLevel = false;
@@ -34,14 +35,15 @@ public class TransitionManager {
     private Color colorSecondary;
     private Color colorText;
     private Color colorBackground;
-    private Font tileFont;
+    private Font titleFont;
 
     public TransitionManager(double canvasWidth, double canvasHeight) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        this.BOX_WIDTH = canvasWidth; // Gán chiều rộng
         setTheme(ChapterTheme.ORIGINAL);
-        tileFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 62);
+
+        titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 66);
+
     }
 
     public void setTheme(ChapterTheme theme) {
@@ -82,17 +84,29 @@ public class TransitionManager {
     }
 
     public void start() {
-        currentPhase = Phase.ROUND_CLEAR;
-        timer = 0;
+        currentPhase = Phase.FADING_IN_TITLE;
+        transitionTimer = 0;
         shouldLoadLevel = false;
     }
 
     public boolean update(double deltaTime) {
         boolean needLoadLevel = false;
 
-        if (currentPhase == Phase.ROUND_CLEAR) {
-            timer += deltaTime;
-            if (timer >= ROUND_CLEAR_DURATION) {
+        if (currentPhase == Phase.FADING_IN_TITLE) {
+            transitionTimer += deltaTime;
+            if (transitionTimer >= FADE_IN_DURATION) {
+                transitionTimer = 0;
+                currentPhase = Phase.HOLDING_TITLE;
+            }
+        } else if (currentPhase == Phase.HOLDING_TITLE) {
+            transitionTimer += deltaTime;
+            if (transitionTimer >= HOLD_DURATION) {
+                transitionTimer = 0;
+                currentPhase = Phase.FADING_OUT_TITLE;
+            }
+        } else if (currentPhase == Phase.FADING_OUT_TITLE) {
+            transitionTimer += deltaTime;
+            if (transitionTimer >= FADE_OUT_DURATION) {
                 currentPhase = Phase.SLIDING;
                 slideOffset = -canvasHeight;
                 shouldLoadLevel = true;
@@ -102,7 +116,7 @@ public class TransitionManager {
             slideOffset += SLIDE_SPEED * deltaTime;
             if (slideOffset >= 0) {
                 slideOffset = 0;
-                currentPhase = Phase.IDLE;
+                currentPhase = Phase.HIDDEN;
                 shouldLoadLevel = false;
             }
         }
@@ -111,72 +125,48 @@ public class TransitionManager {
     }
 
     public void render(GraphicsContext gc) {
-        if (currentPhase == Phase.ROUND_CLEAR) {
-            renderRoundClear(gc);
+        if (currentPhase == Phase.FADING_IN_TITLE ||
+                currentPhase == Phase.HOLDING_TITLE ||
+                currentPhase == Phase.FADING_OUT_TITLE) {
+
+            double alpha = 0.0;
+            if (currentPhase == Phase.FADING_IN_TITLE) {
+                alpha = transitionTimer / FADE_IN_DURATION;
+            } else if (currentPhase == Phase.HOLDING_TITLE) {
+                alpha = 1.0;
+            } else if (currentPhase == Phase.FADING_OUT_TITLE) {
+                alpha = 1.0 - (transitionTimer / FADE_OUT_DURATION);
+            }
+            alpha = Math.max(0, Math.min(1, alpha));
+
+            renderRoundClear(gc, alpha);
         }
     }
 
-    private void renderRoundClear(GraphicsContext gc) {
-        double boxX = (canvasWidth - BOX_WIDTH) / 2;
-        double boxY = (canvasHeight - BOX_HEIGHT) / 2; //
-
-        double centerX = boxX + BOX_WIDTH / 2;
-        double centerY = boxY + BOX_HEIGHT / 2;
-
-        double alpha;
-        if (timer < 0.3) {
-            alpha = timer / 0.3;
-        } else if (timer > ROUND_CLEAR_DURATION - 0.3) {
-            alpha = (ROUND_CLEAR_DURATION - timer) / 0.3;
-        } else {
-            alpha = 1.0;
-        }
+    private void renderRoundClear(GraphicsContext gc, double alpha) {
 
         gc.setFill(colorBackground.deriveColor(0, 1, 1, alpha * 0.7));
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
 
-        gc.setFill(colorBackground.darker().deriveColor(0, 1, 1, alpha * 0.8));
-        gc.fillRect(boxX, boxY, BOX_WIDTH, BOX_HEIGHT);
+        gc.save();
+        gc.setGlobalAlpha(alpha);
+
+        double centerX = canvasWidth / 2;
+        double centerY = canvasHeight / 2;
 
         gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(titleFont);
 
-        gc.setFill(colorPrimary.deriveColor(0, 1, 1, alpha));
-        gc.setFont(tileFont);
-        gc.fillText("ROUND CLEAR", centerX, centerY+20);
+        gc.save();
+        gc.setEffect(new GaussianBlur(25));
+        gc.setFill(colorSecondary);
+        gc.fillText("ROUND CLEAR", centerX, centerY);
+        gc.restore();
 
-        double pulse = Math.sin(timer * 10) * 0.3 + 0.7;
+        gc.setFill(colorPrimary);
+        gc.fillText("ROUND CLEAR", centerX, centerY);
 
-        gc.setStroke(colorSecondary.deriveColor(0, 1, 1, alpha * pulse * 0.4));
-        gc.setLineWidth(6);
-        gc.strokeRect(boxX, boxY, BOX_WIDTH, BOX_HEIGHT);
-
-        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, alpha * pulse));
-        gc.setLineWidth(2);
-        gc.strokeRect(boxX + 4, boxY + 4, BOX_WIDTH - 8, BOX_HEIGHT - 8);
-
-        drawCornerAccents(gc, alpha * pulse, boxX, boxY);
-    }
-
-    private void drawCornerAccents(GraphicsContext gc, double alpha, double boxX, double boxY) {
-        double cornerSize = 30;
-        double offset = 4;
-
-        gc.setStroke(colorSecondary.deriveColor(0, 1, 1, alpha));
-        gc.setLineWidth(3);
-
-        gc.strokeLine(boxX + offset, boxY + offset, boxX + offset + cornerSize, boxY + offset);
-        gc.strokeLine(boxX + offset, boxY + offset, boxX + offset, boxY + offset + cornerSize);
-
-        gc.strokeLine(boxX + BOX_WIDTH - offset, boxY + offset, boxX + BOX_WIDTH - offset - cornerSize, boxY + offset);
-        gc.strokeLine(boxX + BOX_WIDTH - offset, boxY + offset, boxX + BOX_WIDTH - offset, boxY + offset + cornerSize);
-
-        gc.strokeLine(boxX + offset, boxY + BOX_HEIGHT - offset, boxX + offset + cornerSize, boxY + BOX_HEIGHT - offset);
-        gc.strokeLine(boxX + offset, boxY + BOX_HEIGHT - offset, boxX + offset, boxY + BOX_HEIGHT - offset - cornerSize);
-
-        gc.strokeLine(boxX + BOX_WIDTH - offset, boxY + BOX_HEIGHT - offset,
-                boxX + BOX_WIDTH - offset - cornerSize, boxY + BOX_HEIGHT - offset);
-        gc.strokeLine(boxX + BOX_WIDTH - offset, boxY + BOX_HEIGHT - offset,
-                boxX + BOX_WIDTH - offset, boxY + BOX_HEIGHT - offset - cornerSize);
+        gc.restore();
     }
 
     public void applySlideTransform(GraphicsContext gc) {
@@ -186,7 +176,7 @@ public class TransitionManager {
     }
 
     public boolean isActive() {
-        return currentPhase != Phase.IDLE;
+        return currentPhase != Phase.HIDDEN;
     }
 
     public boolean shouldDisableCollision() {
@@ -194,8 +184,8 @@ public class TransitionManager {
     }
 
     public void reset() {
-        currentPhase = Phase.IDLE;
-        timer = 0;
+        currentPhase = Phase.HIDDEN;
+        transitionTimer = 0;
         slideOffset = 0;
         shouldLoadLevel = false;
     }
