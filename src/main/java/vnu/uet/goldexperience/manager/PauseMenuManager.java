@@ -59,7 +59,7 @@ public class PauseMenuManager {
     public interface PauseMenuCallback {
         void onResume();
         void onRestart();
-        void onMainMenu();
+        void onLevelSelect();
         void onQuit();
     }
 
@@ -145,6 +145,7 @@ public class PauseMenuManager {
 
     public void update(double deltaTime) {
         if (isVisible) {
+            System.out.println(animationTimer);
             animationTimer += deltaTime;
         }
     }
@@ -211,7 +212,7 @@ public class PauseMenuManager {
                 callback.onRestart();
                 break;
             case LEVEL_SELECT:
-                callback.onMainMenu();
+                callback.onLevelSelect();
                 break;
             case QUIT:
                 callback.onQuit();
