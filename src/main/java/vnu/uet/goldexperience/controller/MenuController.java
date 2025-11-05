@@ -38,7 +38,6 @@ public class MenuController {
     @FXML
     private Label titleLabel;
 
-    // Set scene manager
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
     }
@@ -48,7 +47,6 @@ public class MenuController {
         System.out.println("Menu initialized");
     }
 
-    // HandleSound clicked
     @FXML
     private void handleSound(ActionEvent event) {
         System.out.println("Sound clicked");

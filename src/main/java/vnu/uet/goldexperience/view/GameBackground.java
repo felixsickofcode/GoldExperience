@@ -210,8 +210,8 @@ public class GameBackground implements GameSession.GameSessionListener {
 
         drawPerspectiveGrid();
 
-        updateFallingShapes();
-        drawFallingShapes();
+        //updateFallingShapes();
+        //drawFallingShapes();
         borderFlashEffect.update();
 
         updateGlitch();
