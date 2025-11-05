@@ -1,6 +1,7 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brickFactory;
 
-import vnu.uet.goldexperience.model.brickFactory.*;
+import vnu.uet.goldexperience.model.brick.Brick;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

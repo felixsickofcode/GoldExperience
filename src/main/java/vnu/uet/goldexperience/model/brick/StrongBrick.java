@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.core.Constants;

@@ -6,6 +6,8 @@ import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.Brick;
+import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
 
 import java.util.ArrayList;
 import java.util.List;

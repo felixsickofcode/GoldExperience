@@ -1,30 +1,49 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
+import vnu.uet.goldexperience.effect.brick.FlashEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
-public class NormalBrick extends Brick {
-    public NormalBrick(double x, double y, double width, double height) {
+public class MediumBrick extends Brick {
+    protected FlashEffect flashEffect;
+    protected boolean playingFlashEffect;
+
+    public MediumBrick(double x, double y, double width, double height) {
         super(x, y, width, height);
-        this.image = AssetsManager.bricks.getFirst();
-        this.effectType = "Debris";
+        this.hitPoints = Math.random() < 0.4 ? 2 : 3;
+        this.image = AssetsManager.bricks.get(1);
+        this.playingFlashEffect = false;
     }
 
     @Override
     public void takeHit() {
         hitPoints--;
-        if (isDestroyed()) {
+        if (isDestroyed() && !playingBreakEffect && !playingExplosion) {
             triggerDestroyEffect();
+        } else if (!isDestroyed()) {
+            triggerFlashEffect();
         }
+    }
+
+    protected void triggerFlashEffect() {
+        flashEffect = new FlashEffect(this);
+        playingFlashEffect = true;
     }
 
     @Override
     public void update(double deltaTime) {
+        // Update flash effect
+        if (playingFlashEffect && flashEffect != null) {
+            flashEffect.update(deltaTime);
+            if (flashEffect.isFinished()) {
+                playingFlashEffect = false;
+            }
+        }
+        // Destroy effect
         if (playingBreakEffect && breakEffect != null) {
             breakEffect.update(deltaTime);
             if (breakEffect.isFinished()) {
                 playingBreakEffect = false;
-                breakEffect = null;
             }
         }
         if (playingExplosion && explosionEffect != null) {
@@ -35,10 +54,14 @@ public class NormalBrick extends Brick {
             }
         }
     }
+
     @Override
     public void render(GraphicsContext gc) {
         if (!isDestroyed() && image != null) {
             gc.drawImage(image, x, y);
+            if (playingFlashEffect && flashEffect != null) {
+                flashEffect.render(gc);
+            }
         }
         if (playingExplosion && explosionEffect != null) {
             explosionEffect.render(gc);

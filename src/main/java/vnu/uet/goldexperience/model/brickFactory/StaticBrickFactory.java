@@ -1,7 +1,7 @@
 package vnu.uet.goldexperience.model.brickFactory;
 
 import vnu.uet.goldexperience.core.Constants;
-import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.*;
 
 import java.util.Map;
 
