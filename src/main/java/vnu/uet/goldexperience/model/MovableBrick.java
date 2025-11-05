@@ -1,10 +1,12 @@
 package vnu.uet.goldexperience.model;
-
+import vnu.uet.goldexperience.model.brickFactory.MovableBrickFactory.PathType;
 public class MovableBrick extends MediumBrick implements Movable {
     protected double dx, dy;
-    private double originX, originY;
-    private double moveRangeX, moveRangeY;
-    private PathType pathType;
+    private final double originX;
+    private final double originY;
+    private final double moveRangeX;
+    private final double moveRangeY;
+    private final PathType pathType;
     private double angle;
 
     public MovableBrick(double x, double y, double width, double height,

@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.brick;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -28,13 +28,11 @@ public class FlashEffect {
 
         elapsed += deltaTime;
 
-        // Đếm số lần nhấp nháy
         int newFlashCount = (int)(elapsed / interval);
         if (newFlashCount > flashCount) {
             flashCount = newFlashCount;
         }
 
-        // Kết thúc hiệu ứng
         if (elapsed >= duration) {
             isFinished = true;
         }
@@ -46,11 +44,11 @@ public class FlashEffect {
         boolean shouldFlash = (flashCount % 2 == 0);
 
         if (shouldFlash) {
-            // Tính alpha giảm dần nhưng vẫn mạnh
+            // alpha giam theo elapsed
             double progress = elapsed / duration;
             double alpha = 1.0 - (progress * 0.5);
 
-            // Tính biên độ xung (pulse) - dao động từ 0 -> maxPulse
+            // nhip pulse theo sin
             double pulsePhase = (elapsed / interval) * Math.PI * 2;
             double pulseAmount = Math.abs(Math.sin(pulsePhase)) * 8;
 
@@ -61,7 +59,7 @@ public class FlashEffect {
 
             gc.save();
 
-            // Vẽ hào quang xung quanh gạch (nhiều lớp)
+            // stroke xung quanh
             for (int i = 3; i >= 1; i--) {
                 double offset = pulseAmount * i / 3.0;
                 double layerAlpha = alpha * (1.0 - i / 4.0);
@@ -76,16 +74,10 @@ public class FlashEffect {
                 );
             }
 
-            // Vẽ overlay trắng lên gạch
+            //overlay
             gc.setGlobalAlpha(alpha * 0.7);
             gc.setFill(flashColor);
             gc.fillRect(x, y, width, height);
-
-            // Vẽ viền sáng xung quanh
-            gc.setGlobalAlpha(alpha);
-            gc.setLineWidth(3 + pulseAmount * 0.3);
-            gc.setStroke(Color.rgb(255, 255, 255, alpha));
-            gc.strokeRect(x, y, width, height);
 
             gc.restore();
         }

@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.brick;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;

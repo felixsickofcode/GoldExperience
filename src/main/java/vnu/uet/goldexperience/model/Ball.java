@@ -213,7 +213,6 @@ public class Ball extends MovableObject {
     @Override
     public void render(GraphicsContext gc) {
         effect.render(gc);
-        // ball
         gc.setGlobalAlpha(1.0);
         if (image != null)
             gc.drawImage(image, x, y, width, height);

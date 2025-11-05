@@ -1,8 +1,8 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.ExplosionEffect;
-import vnu.uet.goldexperience.effect.DebrisEffect;
+import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
+import vnu.uet.goldexperience.effect.brick.DebrisEffect;
 
 
 public abstract class Brick extends GameObject {

@@ -15,6 +15,7 @@ module vnu.uet.goldexperience {
     requires com.google.gson;
 
 
+
     opens vnu.uet.goldexperience.model to com.google.gson;
 
     opens vnu.uet.goldexperience.controller to javafx.fxml;
@@ -30,4 +31,6 @@ module vnu.uet.goldexperience {
     opens vnu.uet.goldexperience.effect.ball to com.google.gson, javafx.fxml;
     exports vnu.uet.goldexperience.effect.paddle;
     opens vnu.uet.goldexperience.effect.paddle to com.google.gson, javafx.fxml;
+    exports vnu.uet.goldexperience.effect.brick;
+    opens vnu.uet.goldexperience.effect.brick to com.google.gson, javafx.fxml;
 }

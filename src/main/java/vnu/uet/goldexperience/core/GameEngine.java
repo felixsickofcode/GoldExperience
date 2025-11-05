@@ -3,9 +3,7 @@ package vnu.uet.goldexperience.core;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import vnu.uet.goldexperience.effect.BorderFlashEffect;
-import vnu.uet.goldexperience.effect.ExplosionEffect;
+import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 

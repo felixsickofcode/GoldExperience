@@ -1,7 +1,7 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.FlashEffect;
+import vnu.uet.goldexperience.effect.brick.FlashEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class MediumBrick extends Brick {
