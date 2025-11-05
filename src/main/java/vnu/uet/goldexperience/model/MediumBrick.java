@@ -23,7 +23,6 @@ public class MediumBrick extends Brick {
             notifyDestroyed();
         } else if (!isDestroyed()) {
             triggerFlashEffect();
-            notifyDestroyed();
         }
     }
 

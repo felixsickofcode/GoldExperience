@@ -26,7 +26,6 @@ public class StrongBrick extends MediumBrick {
             notifyDestroyed();
         } else if (!isDestroyed()) {
             triggerFlashEffect();
-            notifyDestroyed();
             if (hitPoints <= Constants.REGENERATION_THRESHOLD) {
                 image = AssetsManager.bricks.get(4);
                 isRegenerating = true;

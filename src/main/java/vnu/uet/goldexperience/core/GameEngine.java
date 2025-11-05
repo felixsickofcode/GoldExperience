@@ -35,6 +35,8 @@ public class GameEngine implements Brick.BrickListener {
     private AnimationTimer loop;
     private long lastTime = 0;
 
+    private int comboCount = 0;
+
     public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
@@ -294,6 +296,7 @@ public class GameEngine implements Brick.BrickListener {
         ball.update(deltaTime);
 
         if (ball.isReset()) {
+            comboCount = 0;
             ball.setX(paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2);
             ball.setY(paddle.getY() - ball.getHeight());
         }
@@ -423,14 +426,13 @@ public class GameEngine implements Brick.BrickListener {
 
     @Override
     public void onBrickDestroyed(Brick brick) {
-        int points = 124;
-        GameSession.getInstance().addScore(points);
+        int points = 125;
+        GameSession.getInstance().addScore(points + comboCount);
+        comboCount += 5;
 
         if (uiCallback != null) {
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
-
-        System.out.println("Brick destroyed -> +"+points+" points! Total: " + GameSession.getInstance().getScore());
     }
 
 
