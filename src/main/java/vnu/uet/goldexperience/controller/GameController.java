@@ -18,11 +18,13 @@ import vnu.uet.goldexperience.view.GameUIComponents;
 public class GameController implements GameSession.GameSessionListener {
     @FXML
     private StackPane rootGamePane;
+
     @FXML
     private Canvas canvas;
 
     @FXML
     private Label scoreLabel;
+
     @FXML
     private HBox livesContainer;
 
@@ -63,7 +65,6 @@ public class GameController implements GameSession.GameSessionListener {
         Platform.runLater(() -> {
             setupBackground();
             setupInputHandlers();
-           
             updateScore(GameSession.getInstance().getScore());
         });
     }

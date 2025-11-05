@@ -20,8 +20,10 @@ public class MediumBrick extends Brick {
         hitPoints--;
         if (isDestroyed() && !playingBreakEffect && !playingExplosion) {
             triggerDestroyEffect();
+            notifyDestroyed();
         } else if (!isDestroyed()) {
             triggerFlashEffect();
+            notifyDestroyed();
         }
     }
 

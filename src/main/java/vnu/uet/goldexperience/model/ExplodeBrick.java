@@ -20,10 +20,9 @@ public class ExplodeBrick extends Brick {
         hitPoints--;
         if (isDestroyed()) {
             triggerDestroyEffect();
+            notifyDestroyed();
         }
     }
-
-
 
     @Override
     protected void triggerDestroyEffect() {
