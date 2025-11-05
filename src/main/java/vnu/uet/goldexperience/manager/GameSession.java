@@ -38,7 +38,7 @@ public class GameSession {
         return mode;
     }
 
-    //OBSERVER
+    //OBSERVER + SINGLETON
     public static GameSession getInstance() {
         if (instance == null) {
             instance = new GameSession();
