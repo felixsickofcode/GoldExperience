@@ -15,6 +15,7 @@ public class NormalBrick extends Brick {
         hitPoints--;
         if (isDestroyed()) {
             triggerDestroyEffect();
+            notifyDestroyed();
         }
     }
 

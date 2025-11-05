@@ -10,7 +10,7 @@ import vnu.uet.goldexperience.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameEngine {
+public class GameEngine implements Brick.BrickListener {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final InputManager input;
@@ -62,22 +62,32 @@ public class GameEngine {
 
     private void loadCurrentLevel() {
         int levelNumber = GameSession.getInstance().getLevelNumber();
+
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
+
+        // Load trước
+        levelManager.loadLevel(levelNumber);
+        bricks = levelManager.getActiveBricks();
+
+        // Rồi mới add listener
+        if (bricks != null) {
+            for (Brick brick : bricks) {
+                brick.addListener(this);
+            }
+        }
+
         ball.reset(paddle);
         paddle.reset();
-
         GameSession.getInstance().resetLives();
 
         if (uiCallback != null) {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
-
-        levelManager.loadLevel(levelNumber);
-        bricks = levelManager.getActiveBricks();
     }
+
 
     public void reloadLevel() {
         loadCurrentLevel();
@@ -294,15 +304,6 @@ public class GameEngine {
                     boolean wasDestroyed = brick.isDestroyed();
 
                     brick.takeHit();
-                    if (!wasDestroyed && brick.isDestroyed()) {
-                        int points = 124;
-                        GameSession.getInstance().addScore(points);
-
-                        if (uiCallback != null) {
-                            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
-                        }
-                    }
-
                     break;
                 }
             }
@@ -417,6 +418,19 @@ public class GameEngine {
         }
         return true;
     }
+
+    @Override
+    public void onBrickDestroyed(Brick brick) {
+        int points = 124;
+        GameSession.getInstance().addScore(points);
+
+        if (uiCallback != null) {
+            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+        }
+
+        System.out.println("Brick destroyed -> +"+points+" points! Total: " + GameSession.getInstance().getScore());
+    }
+
 
     public GameStateManager getStateManager() {
         return stateManager;
