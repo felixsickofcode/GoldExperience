@@ -85,6 +85,7 @@ public class MenuController {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
             controller.startGame();
+            controller.setSceneManager(sceneManager);
         }
     }
 
