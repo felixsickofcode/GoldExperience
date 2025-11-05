@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.brick;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

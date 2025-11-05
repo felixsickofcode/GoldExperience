@@ -1,118 +1,58 @@
 package vnu.uet.goldexperience.model;
 
-import vnu.uet.goldexperience.core.Constants;
-
+import vnu.uet.goldexperience.model.brickFactory.*;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum BrickType {
-    NORMAL("normal") {
-        @Override
-        public Brick create(double x, double y) {
-            return new NormalBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
-        }
-    },
-    UNBREAKABLE("unbreakable") {
-        @Override
-        public Brick create(double x, double y) {
-            return new UnbreakableBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
-        }
-    },
-    EXPLODE("explode") {
-        @Override
-        public Brick create(double x, double y) {
-            return new ExplodeBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
-        }
-    },
-    MEDIUM("medium") {
-        @Override
-        public Brick create(double x, double y) {
-            return new MediumBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
-        }
-    },
-    STRONG("strong") {
-        @Override
-        public Brick create(double x, double y) {
-            return new StrongBrick(x, y, Constants.NORMAL_BRICK_WIDTH, Constants.NORMAL_BRICK_HEIGHT);
-        }
-    },
-    MOVABLE_HORIZONTAL("movable_horizontal") {
-        @Override
-        public Brick create(double x, double y) {
-            return new MovableBrick(
-                    x, y,
-                    Constants.NORMAL_BRICK_WIDTH,
-                    Constants.NORMAL_BRICK_HEIGHT,
-                    80, 0,       // dx, dy
-                    144, 0,      // rangeX, rangeY
-                    PathType.HORIZONTAL
-            );
-        }
-    },
-    MOVABLE_VERTICAL("movable_vertical") {
-        @Override
-        public Brick create(double x, double y) {
-            return new MovableBrick(
-                    x, y,
-                    Constants.NORMAL_BRICK_WIDTH,
-                    Constants.NORMAL_BRICK_HEIGHT,
-                    0, 80,       // dx, dy
-                    0, 48,      // rangeX, rangeY
-                    PathType.VERTICAL
-            );
-        }
-    },
-    MOVABLE_CIRCULAR("movable_circular") {
-        @Override
-        public Brick create(double x, double y) {
-            return new MovableBrick(
-                    x, y,
-                    Constants.NORMAL_BRICK_WIDTH,
-                    Constants.NORMAL_BRICK_HEIGHT,
-                    0, 0,
-                    100, 100,    // bán kính quỹ đạo
-                    PathType.CIRCULAR
-            );
-        }
-    },
-    MOVABLE_UNBREAKABLE_VERTICAL("movable_unbreakable_vertical") {
-        @Override
-        public Brick create(double x, double y) {
-            return new UnbreakableMovableBrick(
-                    x, y,
-                    Constants.NORMAL_BRICK_WIDTH,
-                    Constants.NORMAL_BRICK_HEIGHT,
-                    0, 80,       // dx, dy
-                    0, 48,      // rangeX, rangeY
-                    PathType.VERTICAL
-            );
-        }
-    },
-    MOVABLE_UNBREAKABLE_HORIZONTAL("movable_unbreakable_horizontal") {
-        @Override
-        public Brick create(double x, double y) {
-            return new UnbreakableMovableBrick(
-                    x, y,
-                    Constants.NORMAL_BRICK_WIDTH,
-                    Constants.NORMAL_BRICK_HEIGHT,
-                    80, 0,       // dx, dy
-                    144, 0,      // rangeX, rangeY
-                    PathType.HORIZONTAL
-            );
-        }
-    };
+    NORMAL("normal",
+            new StaticBrickFactory(StaticBrickFactory.StaticBrickType.NORMAL)
+    ),
+    UNBREAKABLE("unbreakable",
+            new StaticBrickFactory(StaticBrickFactory.StaticBrickType.UNBREAKABLE)
+    ),
+    EXPLODE("explode",
+            new StaticBrickFactory(StaticBrickFactory.StaticBrickType.EXPLODE)
+    ),
+    MEDIUM("medium",
+            new StaticBrickFactory(StaticBrickFactory.StaticBrickType.MEDIUM)
+    ),
+    STRONG("strong",
+            new StaticBrickFactory(StaticBrickFactory.StaticBrickType.STRONG)
+    ),
 
+    MOVABLE_HORIZONTAL("movable_horizontal",
+            new MovableBrickFactory(MovableBrickFactory.PathType.HORIZONTAL, MovableBrickFactory.MovableBrickType.NORMAL)
+    ),
 
+    MOVABLE_VERTICAL("movable_vertical",
+            new MovableBrickFactory(MovableBrickFactory.PathType.VERTICAL, MovableBrickFactory.MovableBrickType.NORMAL)
+    ),
+
+    MOVABLE_CIRCULAR("movable_circular",
+            new MovableBrickFactory(MovableBrickFactory.PathType.CIRCULAR, MovableBrickFactory.MovableBrickType.NORMAL)
+    ),
+
+    MOVABLE_UNBREAKABLE_VERTICAL("movable_unbreakable_vertical",
+            new MovableBrickFactory(MovableBrickFactory.PathType.VERTICAL, MovableBrickFactory.MovableBrickType.UNBREAKABLE)
+    ),
+
+    MOVABLE_UNBREAKABLE_HORIZONTAL("movable_unbreakable_horizontal",
+            new MovableBrickFactory(MovableBrickFactory.PathType.HORIZONTAL, MovableBrickFactory.MovableBrickType.UNBREAKABLE)
+    );
 
     private final String key;
+    private final BrickFactory factory;
 
-    BrickType(String key) {
+    BrickType(String key, BrickFactory factory) {
         this.key = key;
+        this.factory = factory;
     }
 
-    public abstract Brick create(double x, double y);
+    public Brick create(double x, double y, Map<String, Double> config) {
+        return factory.create(x, y, config);
+    }
 
     private static final Map<String, BrickType> KEY_TO_TYPE_MAP =
             Stream.of(values()).collect(Collectors.toMap(e -> e.key, e -> e));
