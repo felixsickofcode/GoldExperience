@@ -6,15 +6,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import vnu.uet.goldexperience.core.Action;
-import vnu.uet.goldexperience.core.ChapterTheme; // <-- IMPORT THÊM
+import vnu.uet.goldexperience.core.ChapterTheme;
 
-public class PauseMenuManager {
+public class GameOverManager {
 
     private enum MenuOption {
-        RESUME(0, "RESUME"),
-        RESTART(1, "RESTART"),
-        LEVEL_SELECT(2, "LEVEL SELECT"),
-        QUIT(3, "QUIT");
+        RETRY(0, "RETRY"),
+        LEVEL_SELECT(1, "LEVEL SELECT"),
+        MAIN_MENU(2, "MAIN MENU");
 
         final int index;
         final String label;
@@ -25,10 +24,17 @@ public class PauseMenuManager {
         }
     }
 
+    private enum Phase {
+        HIDDEN,
+        FADING_IN_TITLE,
+        FADING_IN_MENU,
+        SHOWN
+    }
+    private Phase currentPhase = Phase.HIDDEN;
+
     private final Canvas canvas;
     private final SceneManager sceneManager;
 
-    private boolean isVisible = false;
     private int selectedIndex = 0;
     private double mouseX = 0;
     private double mouseY = 0;
@@ -36,12 +42,10 @@ public class PauseMenuManager {
     private final double canvasWidth;
     private final double canvasHeight;
 
-    private static final double BOX_SIZE = 400;
-
     private static final double BUTTON_WIDTH = 280;
     private static final double BUTTON_HEIGHT = 45;
     private static final double BUTTON_SPACING = 12;
-    private static final int MENU_OPTION_COUNT = 4;
+    private static final int MENU_OPTION_COUNT = 3;
 
     private ChapterTheme currentTheme;
     private Color colorPrimary;
@@ -56,23 +60,24 @@ public class PauseMenuManager {
 
     private double animationTimer = 0;
 
-    public interface PauseMenuCallback {
-        void onResume();
-        void onRestart();
+    private double transitionTimer = 0.0;
+    private static final double TITLE_FADE_DURATION = 1.5;
+    private static final double MENU_FADE_DURATION = 0.5;
+
+    public interface GameOverCallback {
+        void onRetry();
         void onLevelSelect();
-        void onQuit();
+        void onMainMenu();
     }
+    private GameOverCallback callback;
 
-    private PauseMenuCallback callback;
-
-    public PauseMenuManager(Canvas canvas, SceneManager sceneManager) {
+    public GameOverManager(Canvas canvas, SceneManager sceneManager) {
         this.canvas = canvas;
         this.sceneManager = sceneManager;
         this.canvasWidth = canvas.getWidth();
         this.canvasHeight = canvas.getHeight();
         setTheme(ChapterTheme.ORIGINAL);
-
-        titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 52);
+        titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 77);
         buttonFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 20);
     }
 
@@ -129,36 +134,51 @@ public class PauseMenuManager {
         }
     }
 
-    public void setCallback(PauseMenuCallback callback) {
+    public void setCallback(GameOverCallback callback) {
         this.callback = callback;
     }
 
     public void show() {
-        isVisible = true;
+        if (currentPhase != Phase.HIDDEN) return;
+        currentPhase = Phase.FADING_IN_TITLE;
+        transitionTimer = 0;
         selectedIndex = 0;
         animationTimer = 0;
     }
 
     public void hide() {
-        isVisible = false;
+        currentPhase = Phase.HIDDEN;
+    }
+
+    public boolean isVisible() {
+        return currentPhase != Phase.HIDDEN;
     }
 
     public void update(double deltaTime) {
-        if (isVisible) {
-            System.out.println(animationTimer);
-            animationTimer += deltaTime;
+        if (!isVisible()) return;
+        animationTimer += deltaTime;
+        if (currentPhase == Phase.FADING_IN_TITLE) {
+            transitionTimer += deltaTime;
+            if (transitionTimer >= TITLE_FADE_DURATION) {
+                transitionTimer = 0;
+                currentPhase = Phase.FADING_IN_MENU;
+            }
+        } else if (currentPhase == Phase.FADING_IN_MENU) {
+            transitionTimer += deltaTime;
+            if (transitionTimer >= MENU_FADE_DURATION) {
+                transitionTimer = MENU_FADE_DURATION;
+                currentPhase = Phase.SHOWN;
+            }
         }
     }
 
     public void handleKeyInput(InputManager input) {
-        if (!isVisible) return;
-
+        if (currentPhase != Phase.SHOWN) return;
         if (input.isActionJustPressed(Action.MOVE_UP)) {
             selectedIndex = (selectedIndex - 1 + MENU_OPTION_COUNT) % MENU_OPTION_COUNT;
         } else if (input.isActionJustPressed(Action.MOVE_DOWN)) {
             selectedIndex = (selectedIndex + 1) % MENU_OPTION_COUNT;
         }
-
         if (input.isActionJustPressed(Action.CONFIRM) ||
                 input.isActionJustPressed(Action.SHOOT)) {
             executeSelectedOption();
@@ -166,31 +186,24 @@ public class PauseMenuManager {
     }
 
     public void handleMouseInput(double mouseX, double mouseY, boolean clicked) {
-        if (!isVisible) return;
-
+        if (currentPhase == Phase.HIDDEN) return;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
-
         int hoveredIndex = getButtonIndexAtPosition(mouseX, mouseY);
         if (hoveredIndex >= 0) {
             selectedIndex = hoveredIndex;
-
-            if (clicked) {
-                executeSelectedOption();
-            }
+        }
+        if (clicked && currentPhase == Phase.SHOWN && hoveredIndex >= 0) {
+            executeSelectedOption();
         }
     }
 
     private int getButtonIndexAtPosition(double x, double y) {
-        double boxX = (canvasWidth - BOX_SIZE) / 2;
-        double boxY = (canvasHeight - BOX_SIZE) / 2;
-
-        double startY = boxY + 140;
+        double startY = canvasHeight / 2 + 20;
+        double btnX = (canvasWidth - BUTTON_WIDTH) / 2;
 
         for (int i = 0; i < MENU_OPTION_COUNT; i++) {
-            double btnX = boxX + (BOX_SIZE - BUTTON_WIDTH) / 2;
             double btnY = startY + i * (BUTTON_HEIGHT + BUTTON_SPACING);
-
             if (x >= btnX && x <= btnX + BUTTON_WIDTH &&
                     y >= btnY && y <= btnY + BUTTON_HEIGHT) {
                 return i;
@@ -201,118 +214,107 @@ public class PauseMenuManager {
 
     private void executeSelectedOption() {
         if (callback == null) return;
-
         MenuOption option = MenuOption.values()[selectedIndex];
-
         switch (option) {
-            case RESUME:
-                callback.onResume();
-                break;
-            case RESTART:
-                callback.onRestart();
+            case RETRY:
+                callback.onRetry();
                 break;
             case LEVEL_SELECT:
                 callback.onLevelSelect();
                 break;
-            case QUIT:
-                callback.onQuit();
+            case MAIN_MENU:
+                callback.onMainMenu();
                 break;
         }
     }
 
     public void render(GraphicsContext gc) {
-        if (!isVisible) return;
+        if (currentPhase == Phase.HIDDEN) return;
 
-        gc.setFill(colorOverlay);
+        double titleAlpha = 0.0;
+        double menuAlpha = 0.0;
+
+        if (currentPhase == Phase.FADING_IN_TITLE) {
+            titleAlpha = transitionTimer / TITLE_FADE_DURATION;
+        } else if (currentPhase == Phase.FADING_IN_MENU) {
+            titleAlpha = 1.0;
+            menuAlpha = transitionTimer / MENU_FADE_DURATION;
+        } else if (currentPhase == Phase.SHOWN) {
+            titleAlpha = 1.0;
+            menuAlpha = 1.0;
+        }
+
+        titleAlpha = Math.max(0, Math.min(1, titleAlpha));
+        menuAlpha = Math.max(0, Math.min(1, menuAlpha));
+
+        double baseOverlayAlpha = colorOverlay.getOpacity();
+        gc.setFill(colorOverlay.deriveColor(0, 1, 1, baseOverlayAlpha * titleAlpha));
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
 
-        double boxX = (canvasWidth - BOX_SIZE) / 2;
-        double boxY = (canvasHeight - BOX_SIZE) / 2;
+        gc.save();
+        gc.setGlobalAlpha(titleAlpha);
+        renderTitle(gc);
+        gc.restore();
 
+        gc.save();
+        gc.setGlobalAlpha(menuAlpha);
         double pulse = Math.sin(animationTimer * 3) * 0.5 + 0.5;
-
-        gc.setFill(colorBackground);
-        gc.fillRect(boxX, boxY, BOX_SIZE, BOX_SIZE);
-
-        gc.setFill(colorBackgroundSecondary.deriveColor(0, 1, 1, 0.3));
-        gc.fillRect(boxX, boxY, BOX_SIZE, BOX_SIZE);
-
-        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.3));
-        gc.setLineWidth(8);
-        gc.strokeRect(boxX - 4, boxY - 4, BOX_SIZE + 8, BOX_SIZE + 8);
-
-        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.5));
-        gc.setLineWidth(4);
-        gc.strokeRect(boxX - 2, boxY - 2, BOX_SIZE + 4, BOX_SIZE + 4);
-
-        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.8 + pulse * 0.2));
-        gc.setLineWidth(3);
-        gc.strokeRect(boxX, boxY, BOX_SIZE, BOX_SIZE);
-
-        renderCornerAccents(gc, boxX, boxY, pulse);
-
-        renderGridPattern(gc, boxX, boxY);
-
-        renderTitle(gc, boxX, boxY);
-
-        renderButtons(gc, boxX, boxY, pulse);
-
-        renderScanlines(gc, boxX, boxY);
+        renderButtons(gc, pulse);
+        gc.restore();
     }
 
-    private void renderCornerAccents(GraphicsContext gc, double boxX, double boxY, double pulse) {
-        double size = 20;
+    private void renderTitle(GraphicsContext gc) {
+        double centerX = canvasWidth / 2;
+        double titleY = canvasHeight / 2 - 80;
 
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(titleFont);
+
+        gc.save();
+        gc.setEffect(new javafx.scene.effect.GaussianBlur(25));
+        gc.setFill(colorSecondary);
+        gc.fillText("GAME OVER!", centerX, titleY);
+        gc.restore();
+
+        gc.setFill(colorPrimary);
+        gc.fillText("GAME OVER!", centerX, titleY);
+    }
+
+    private void renderButtons(GraphicsContext gc, double pulse) {
+        double startY = canvasHeight / 2 + 20;
+        double btnX = (canvasWidth - BUTTON_WIDTH) / 2;
+
+        double padding = 20.0;
+        double boxWidth = BUTTON_WIDTH + (padding * 2);
+        double boxHeight = (MENU_OPTION_COUNT * BUTTON_HEIGHT) + ((MENU_OPTION_COUNT - 1) * BUTTON_SPACING) + (padding * 2);
+        double boxX = (canvasWidth - boxWidth) / 2;
+        double boxY = startY - padding;
+
+        gc.setFill(colorBackground.deriveColor(0, 1, 1, 0.3));
+        gc.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.5));
+        gc.setLineWidth(2);
+        gc.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+        double cornerSize = 20;
         gc.setStroke(colorSecondary.deriveColor(0, 1, 1, 0.8 + pulse * 0.2));
         gc.setLineWidth(3);
 
-        gc.strokeLine(boxX, boxY, boxX + size, boxY);
-        gc.strokeLine(boxX, boxY, boxX, boxY + size);
+        gc.strokeLine(boxX, boxY, boxX + cornerSize, boxY);
+        gc.strokeLine(boxX, boxY, boxX, boxY + cornerSize);
 
-        gc.strokeLine(boxX + BOX_SIZE, boxY, boxX + BOX_SIZE - size, boxY);
-        gc.strokeLine(boxX + BOX_SIZE, boxY, boxX + BOX_SIZE, boxY + size);
+        gc.strokeLine(boxX + boxWidth, boxY, boxX + boxWidth - cornerSize, boxY);
+        gc.strokeLine(boxX + boxWidth, boxY, boxX + boxWidth, boxY + cornerSize);
 
-        gc.strokeLine(boxX, boxY + BOX_SIZE, boxX + size, boxY + BOX_SIZE);
-        gc.strokeLine(boxX, boxY + BOX_SIZE, boxX, boxY + BOX_SIZE - size);
+        gc.strokeLine(boxX, boxY + boxHeight, boxX + cornerSize, boxY + boxHeight);
+        gc.strokeLine(boxX, boxY + boxHeight, boxX, boxY + boxHeight - cornerSize);
 
-        gc.strokeLine(boxX + BOX_SIZE, boxY + BOX_SIZE, boxX + BOX_SIZE - size, boxY + BOX_SIZE);
-        gc.strokeLine(boxX + BOX_SIZE, boxY + BOX_SIZE, boxX + BOX_SIZE, boxY + BOX_SIZE - size);
-    }
-
-    private void renderGridPattern(GraphicsContext gc, double boxX, double boxY) {
-        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.08));
-        gc.setLineWidth(1);
-
-        for (int i = 0; i < BOX_SIZE; i += 20) {
-            gc.strokeLine(boxX + i, boxY, boxX + i, boxY + BOX_SIZE);
-            gc.strokeLine(boxX, boxY + i, boxX + BOX_SIZE, boxY + i);
-        }
-    }
-
-    private void renderTitle(GraphicsContext gc, double boxX, double boxY) {
-        double titleY = boxY + 80;
-
-        gc.setTextAlign(TextAlignment.CENTER);
-
-        gc.setFill(colorSecondary);
-        gc.setFont(titleFont);
-        gc.fillText("PAUSED", boxX + BOX_SIZE / 2, titleY);
-
-        double lineWidth = 150;
-        double lineX = boxX + (BOX_SIZE - lineWidth) / 2;
-
-        gc.setStroke(colorPrimary);
-        gc.setLineWidth(2);
-        gc.strokeLine(lineX, titleY + 10, lineX + lineWidth, titleY + 10);
-    }
-
-    private void renderButtons(GraphicsContext gc, double boxX, double boxY, double pulse) {
-        double startY = boxY + 140;
+        gc.strokeLine(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - cornerSize, boxY + boxHeight);
+        gc.strokeLine(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth, boxY + boxHeight - cornerSize);
 
         for (MenuOption option : MenuOption.values()) {
-            double btnX = boxX + (BOX_SIZE - BUTTON_WIDTH) / 2;
             double btnY = startY + option.index * (BUTTON_HEIGHT + BUTTON_SPACING);
-
             boolean isSelected = (option.index == selectedIndex);
             renderButton(gc, btnX, btnY, option.label, isSelected, pulse);
         }
@@ -320,43 +322,27 @@ public class PauseMenuManager {
 
     private void renderButton(GraphicsContext gc, double x, double y, String text, boolean selected, double pulse) {
         if (selected) {
-
             gc.setFill(colorPrimary.deriveColor(0, 1, 1, 0.15));
             gc.fillRect(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-
             gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.8 + pulse * 0.2));
             gc.setLineWidth(2);
             gc.strokeRect(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-
             gc.setFill(colorSecondary.deriveColor(0, 1, 1, 0.8 + pulse * 0.2));
             gc.fillRect(x, y, 4, BUTTON_HEIGHT);
-
             gc.setTextAlign(TextAlignment.CENTER);
             gc.setFill(colorText);
             gc.setFont(buttonFont);
             gc.fillText(text, x + BUTTON_WIDTH / 2, y + BUTTON_HEIGHT / 2 + 7);
-
             gc.setFill(colorPrimary);
             gc.fillText("> ", x + BUTTON_WIDTH - 20, y + BUTTON_HEIGHT / 2 + 7);
-
         } else {
             gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.3));
             gc.setLineWidth(1);
             gc.strokeRect(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-
             gc.setTextAlign(TextAlignment.CENTER);
             gc.setFill(colorTextDisabled);
             gc.setFont(buttonFont);
             gc.fillText(text, x + BUTTON_WIDTH / 2, y + BUTTON_HEIGHT / 2 + 6);
-        }
-    }
-
-    private void renderScanlines(GraphicsContext gc, double boxX, double boxY) {
-        gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.03));
-        gc.setLineWidth(1);
-
-        for (int i = 0; i < BOX_SIZE; i += 3) {
-            gc.strokeLine(boxX, boxY + i, boxX + BOX_SIZE, boxY + i);
         }
     }
 }

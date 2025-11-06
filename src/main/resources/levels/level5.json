@@ -5,15 +5,14 @@
     "U": "unbreakable",
     " ": "empty",
     "E": "explode",
-    "M": "medium"
+    "M": "medium",
+    "S": "strong"
   },
   "layout": [
+    "      S     ",
     "            ",
     "            ",
-    "            ",
-    "            ",
-    "    N      ",
-    "",
-    "     "
+    "        SS  ",
+    "    S       "
   ]
 }

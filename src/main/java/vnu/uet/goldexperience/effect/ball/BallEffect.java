@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class BallEffect {
     private final List<BallBubbleTrail> bubbles;
+    private final List<BallFriction> frictions;
     private Random random;
     private BallTrail ballTrail;
     private BallGlow ballGlow;
@@ -16,14 +17,15 @@ public class BallEffect {
     private double ballW, ballH;
     private double centerX, centerY;
     private double glowPulse = 0;
+    private double frictionSpawnTimer = 0;
 
     public BallEffect() {
         this.random = new Random();
         this.ballGlow = new BallGlow();
         this.ballTrail = new BallTrail();
         this.bubbles = new ArrayList<>();
+        this.frictions = new ArrayList<>();
     }
-
 
     public void update(double x, double y, double deltaTime, double width, double height) {
         double vx = (x - lastX) / deltaTime;
@@ -36,12 +38,23 @@ public class BallEffect {
 
         if (speed > Constants.SPAWN_THRESHOLD) {
             spawnBubble(x, y, vx, vy);
-        }
 
+            // Spawn friction particles xung quanh đầu bóng
+            frictionSpawnTimer += deltaTime;
+            if (frictionSpawnTimer >= 0.012) { // Tăng tần suất spawn
+                spawnFrictionParticles(x, y, vx, vy, width);
+                frictionSpawnTimer = 0;
+            }
+        }
 
         bubbles.removeIf(b -> {
             b.update(deltaTime);
             return b.isDead();
+        });
+
+        frictions.removeIf(f -> {
+            f.update(deltaTime);
+            return f.isDead();
         });
 
         lastX = x;
@@ -57,6 +70,7 @@ public class BallEffect {
 
     public void clear() {
         bubbles.clear();
+        frictions.clear();
         ballTrail.getTrail().clear();
     }
 
@@ -66,10 +80,37 @@ public class BallEffect {
         bubbles.add(new BallBubbleTrail(x, y, angle, speed));
     }
 
+    private void spawnFrictionParticles(double x, double y, double vx, double vy, double width) {
+        double angle = Math.atan2(vy, vx);
+        int windCount = 3 + random.nextInt(3); // 3-5 vệt gió mỗi frame
+
+        for (int i = 0; i < windCount; i++) {
+            // cac line xung quanh bong có góc = spreadAngle
+            double spreadAngle = angle + (random.nextDouble() - 0.5) * Math.PI * 1.2; // ±108 độ
+            double distance = width * 0.5 + random.nextDouble() * width * 0.4; // 0.5-0.9 width
+
+            double px = x + Math.cos(spreadAngle) * distance;
+            double py = y + Math.sin(spreadAngle) * distance;
+
+            //trong update se lien tuc giam toc do bay cua các vệt gió
+            //nhung vẫn khởi tạo khác nhau de vx,vy của tất cả các object ko đồng nhất
+            double windSpeed = 0.7 + random.nextDouble() * 0.3;
+            double pvx = vx * windSpeed + (random.nextDouble() - 0.5) * 30;
+            double pvy = vy * windSpeed + (random.nextDouble() - 0.5) * 30;
+
+            frictions.add(new BallFriction(px, py, pvx, pvy));
+        }
+    }
+
     public void render(GraphicsContext gc) {
+        for (BallFriction f : frictions) {
+            f.render(gc);
+        }
+
         for (BallBubbleTrail b : bubbles) {
             b.render(gc);
         }
+
         ballTrail.render(gc, ballTrail.getTrail(), ballW, ballH);
         ballGlow.render(gc, centerX, centerY, ballW / 2, glowPulse);
     }

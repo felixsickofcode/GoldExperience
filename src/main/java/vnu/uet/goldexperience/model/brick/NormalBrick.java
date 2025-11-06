@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.manager.AssetsManager;
@@ -15,6 +15,7 @@ public class NormalBrick extends Brick {
         hitPoints--;
         if (isDestroyed()) {
             triggerDestroyEffect();
+            notifyDestroyed();
         }
     }
 

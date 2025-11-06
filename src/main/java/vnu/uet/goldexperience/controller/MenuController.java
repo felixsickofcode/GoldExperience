@@ -77,7 +77,6 @@ public class MenuController {
         menuContainer.getChildren().addAll(animBtn1, animBtn2, animBtn3);
     }
 
-    // HandleSound clicked
     @FXML
     private void handleSound(ActionEvent event) {
         System.out.println("Sound clicked");
@@ -116,6 +115,7 @@ public class MenuController {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
             controller.startGame();
+            controller.setSceneManager(sceneManager);
         }
     }
 

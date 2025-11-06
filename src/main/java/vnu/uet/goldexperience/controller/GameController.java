@@ -4,20 +4,29 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.core.GameEngine;
 import vnu.uet.goldexperience.core.GameState;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
 import vnu.uet.goldexperience.core.ChapterTheme;
-
-import java.util.concurrent.TransferQueue;
+import vnu.uet.goldexperience.view.GameUIComponents;
 
 public class GameController implements GameSession.GameSessionListener {
     @FXML
     private StackPane rootGamePane;
+
     @FXML
     private Canvas canvas;
+
+    @FXML
+    private Label scoreLabel;
+
+    @FXML
+    private HBox livesContainer;
 
     private GameEngine engine;
     private InputManager input;
@@ -26,6 +35,8 @@ public class GameController implements GameSession.GameSessionListener {
     private TransitionManager transitionManager;
     private SceneManager sceneManager;
     private GameStateManager gameStateManager;
+    private GameOverManager gameOverManager;
+    private ChapterTheme currentTheme;
 
     @FXML
     public void initialize() {
@@ -34,13 +45,27 @@ public class GameController implements GameSession.GameSessionListener {
         pauseMenu = engine.getPauseMenuManager();
         transitionManager = engine.getTransitionManager();
         gameStateManager = engine.getStateManager();
+        gameOverManager = engine.getGameOverManager();
 
         GameSession.getInstance().addListener(this);
         engine.setCursorChangeListener(() -> Platform.runLater(this::updateCursor));
 
+        engine.setUICallback(new GameEngine.GameUICallback() {
+            @Override
+            public void onScoreChanged(int score) {
+                updateScore(score);
+            }
+
+            @Override
+            public void onLivesChanged(int lives) {
+                updateLives(lives);
+            }
+        });
+
         Platform.runLater(() -> {
             setupBackground();
             setupInputHandlers();
+            updateScore(GameSession.getInstance().getScore());
         });
     }
 
@@ -50,8 +75,9 @@ public class GameController implements GameSession.GameSessionListener {
             engine.setSceneManager(sceneManager);
         }
     }
+
     private void setupBackground() {
-        background = new GameBackground(576, 720, rootGamePane);
+        background = new GameBackground(Constants.GAMEPLAYZONE_WIDTH, Constants.GAMEPLAYZONE_HEIGHT, rootGamePane);
         rootGamePane.getChildren().add(0, background.getCanvas());
         updateTheme(GameSession.getInstance().getCurrentChapter());
 
@@ -66,31 +92,34 @@ public class GameController implements GameSession.GameSessionListener {
         canvas.setOnMouseMoved(e -> {
             double canvasX = e.getX();
             double canvasY = e.getY();
-            input.mouseMoved(canvasX + canvas.getLayoutX());
+            input.mouseMoved(canvasX + canvas.getLayoutX()); 
             pauseMenu.handleMouseInput(canvasX, canvasY, false);
+            gameOverManager.handleMouseInput(canvasX, canvasY, false);
         });
 
         rootGamePane.setOnMouseDragged(e -> {
-            input.mouseMoved(e.getX());
+            input.mouseMoved(e.getX()); 
         });
 
         rootGamePane.setOnMousePressed(e -> {
             input.mouseClicked();
 
             if (engine != null && engine.getStateManager() != null) {
-                engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true);
+                if (engine.getStateManager().is(GameState.PAUSED))
+                    engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true); 
+                if (engine.getStateManager().is(GameState.GAME_OVER))
+                    engine.getGameOverManager().handleMouseInput(e.getX(), e.getY(), true); 
             }
         });
 
         rootGamePane.setOnMouseReleased(e -> input.mouseReleased());
-
         rootGamePane.requestFocus();
         rootGamePane.setOnMouseEntered(e -> updateCursor());
     }
 
     private void updateCursor() {
         if (engine != null && engine.getStateManager() != null) {
-            if (engine.getStateManager().is(GameState.PAUSED)) {
+            if (engine.getStateManager().is(GameState.PAUSED) || engine.getStateManager().is(GameState.GAME_OVER)) {
                 rootGamePane.setCursor(Cursor.DEFAULT);
             } else {
                 rootGamePane.setCursor(Cursor.NONE);
@@ -100,13 +129,38 @@ public class GameController implements GameSession.GameSessionListener {
         }
     }
 
+    public void updateScore(int score) {
+        if (scoreLabel != null) {
+            Platform.runLater(() ->
+                    GameUIComponents.updateScoreLabel(scoreLabel, score)
+            );
+        }
+    }
+
+    public void updateLives(int lives) {
+        if (livesContainer != null) {
+            Platform.runLater(() -> {
+                if (GameSession.getInstance().hasRecentlyLostLife()) {
+                    GameUIComponents.animateHPLoss(livesContainer, currentTheme);
+                    GameSession.getInstance().clearRecentLifeFlag();
+                } else {
+                    GameUIComponents.updateHPContainer(livesContainer, lives, 3, currentTheme);
+                }
+            });
+        }
+    }
+
     private void updateTheme(int chapter) {
         if (background != null) {
-            ChapterTheme theme = getThemeForChapter(chapter);
-            background.setTheme(theme);
-            pauseMenu.setTheme(theme);
-            transitionManager.setTheme(theme);
-            System.out.println("Background theme updated to: " + theme);
+            this.currentTheme = getThemeForChapter(chapter);
+
+            background.setTheme(currentTheme);
+            pauseMenu.setTheme(currentTheme);
+            gameOverManager.setTheme(currentTheme);
+            transitionManager.setTheme(currentTheme);
+
+            GameUIComponents.applyTheme(scoreLabel, currentTheme);
+            updateLives(GameSession.getInstance().getLives());
         }
     }
 

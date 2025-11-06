@@ -1,7 +1,7 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.ExplosionEffect;
+import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SpriteManager;
 
@@ -20,10 +20,9 @@ public class ExplodeBrick extends Brick {
         hitPoints--;
         if (isDestroyed()) {
             triggerDestroyEffect();
+            notifyDestroyed();
         }
     }
-
-
 
     @Override
     protected void triggerDestroyEffect() {

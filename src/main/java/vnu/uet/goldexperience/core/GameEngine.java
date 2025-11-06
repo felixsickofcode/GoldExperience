@@ -3,16 +3,16 @@ package vnu.uet.goldexperience.core;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import vnu.uet.goldexperience.effect.BorderFlashEffect;
-import vnu.uet.goldexperience.effect.ExplosionEffect;
+import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.Brick;
+import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameEngine {
+public class GameEngine implements Brick.BrickListener {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final InputManager input;
@@ -21,9 +21,12 @@ public class GameEngine {
     private final GameStateManager stateManager;
     private final TransitionManager transitionManager;
     private final PauseMenuManager pauseMenuManager;
+    private final GameOverManager gameOverManager;
+    private final LifeManager lifeManager;
 
     private SceneManager sceneManager;
     private CursorChangeListener cursorChangeListener;
+    private GameUICallback uiCallback;
 
     private Paddle paddle;
     private Ball ball;
@@ -37,19 +40,19 @@ public class GameEngine {
         this.gc = canvas.getGraphicsContext2D();
         this.input = input;
         this.levelManager = new LevelManager();
-
+        this.lifeManager = new LifeManager(canvas.getWidth(), canvas.getHeight());
         this.transitionManager = new TransitionManager(canvas.getWidth(), canvas.getHeight());
-        this.pauseMenuManager = new PauseMenuManager(canvas, null); // SceneManager set later
-        this.stateManager = new GameStateManager(transitionManager, pauseMenuManager);
+        this.pauseMenuManager = new PauseMenuManager(canvas, null);
+        this.gameOverManager = new GameOverManager(canvas, null);
+        this.stateManager = new GameStateManager(transitionManager, pauseMenuManager, gameOverManager);
 
         setupPauseMenuCallbacks();
+        setupGameOverCallbacks();
 
         initObjects();
     }
 
-    public void setSceneManager(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
-    }
+    public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
@@ -61,18 +64,35 @@ public class GameEngine {
 
     private void loadCurrentLevel() {
         int levelNumber = GameSession.getInstance().getLevelNumber();
+
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
 
+        // Load trước
         levelManager.loadLevel(levelNumber);
         bricks = levelManager.getActiveBricks();
+
+        // Rồi mới add listener
+        if (bricks != null) {
+            for (Brick brick : bricks) {
+                brick.addListener(this);
+            }
+        }
+
+        ball.reset(paddle);
+        paddle.reset();
+        GameSession.getInstance().resetLives();
+
+        if (uiCallback != null) {
+            uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+        }
     }
+
 
     public void reloadLevel() {
         loadCurrentLevel();
-        ball.reset(paddle);
-        paddle.reset();
         stateManager.setState(GameState.PLAYING);
     }
 
@@ -93,8 +113,8 @@ public class GameEngine {
             }
 
             @Override
-            public void onMainMenu() {
-                System.out.println("Main Menu clicked");
+            public void onLevelSelect() {
+                System.out.println("Level Select");
                 if (sceneManager != null) {
                     end();
                     sceneManager.switchTo("level");
@@ -105,6 +125,34 @@ public class GameEngine {
             public void onQuit() {
                 System.out.println("Quit clicked");
                 javafx.application.Platform.exit();
+            }
+        });
+    }
+
+    private void setupGameOverCallbacks() {
+        gameOverManager.setCallback(new GameOverManager.GameOverCallback() {
+            @Override
+            public void onRetry() {
+                System.out.println("Retry clicked");
+                reloadLevel();
+            }
+
+            @Override
+            public void onLevelSelect() {
+                System.out.println("Level Select clicked");
+                if (sceneManager != null) {
+                    end();
+                    sceneManager.switchTo("level");
+                }
+            }
+
+            @Override
+            public void onMainMenu() {
+                System.out.println("Main Menu clicked");
+                if (sceneManager != null) {
+                    end();
+                    sceneManager.switchTo("menu");
+                }
             }
         });
     }
@@ -156,6 +204,11 @@ public class GameEngine {
             pauseMenuManager.handleKeyInput(input);
             return;
         }
+        if (stateManager.is(GameState.GAME_OVER)) {
+            gameOverManager.handleKeyInput(input);
+            notifyCursorChange();
+            return;
+        }
 
         if (stateManager.shouldAcceptGameplayInput()) {
             handleGameplayInput();
@@ -166,8 +219,18 @@ public class GameEngine {
         void onCursorVisibilityChanged();
     }
 
+    //Observer
+    public interface GameUICallback {
+        void onScoreChanged(int score);
+        void onLivesChanged(int lives);
+    }
+
     public void setCursorChangeListener(CursorChangeListener listener) {
         this.cursorChangeListener = listener;
+    }
+
+    public void setUICallback(GameUICallback callback) {
+        this.uiCallback = callback;
     }
 
     private void notifyCursorChange() {
@@ -197,6 +260,11 @@ public class GameEngine {
     private void update(double deltaTime) {
         if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.update(deltaTime);
+            return;
+        }
+
+        if (stateManager.is(GameState.GAME_OVER)) {
+            gameOverManager.update(deltaTime);
             return;
         }
 
@@ -232,18 +300,28 @@ public class GameEngine {
 
         ball.bounceOffWithPaddle(paddle);
 
-        // Check collision (disable when transitioning and bricks outside screen)
         if (!transitionManager.shouldDisableCollision()) {
             for (Brick brick : bricks) {
                 if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
+                    boolean wasDestroyed = brick.isDestroyed();
+
                     brick.takeHit();
                     break;
                 }
             }
         }
 
-        if (ball.getY() >= canvas.getHeight()) {
-            ball.reset(paddle);
+        if (ball.getY() >= canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
+            GameSession.getInstance().loseLife();
+            if (uiCallback != null) {
+                uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+            }
+
+            if (GameSession.getInstance().stillAlive()) {
+                ball.reset(paddle);
+            } else {
+                stateManager.setState(GameState.GAME_OVER);
+            }
         }
 
         for (Brick brick : bricks) {
@@ -273,6 +351,8 @@ public class GameEngine {
             transitionManager.render(gc);
         } else if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.render(gc);
+        } else if (stateManager.is(GameState.GAME_OVER)) {
+            gameOverManager.render(gc);
         }
     }
 
@@ -341,6 +421,19 @@ public class GameEngine {
         return true;
     }
 
+    @Override
+    public void onBrickDestroyed(Brick brick) {
+        int points = 124;
+        GameSession.getInstance().addScore(points);
+
+        if (uiCallback != null) {
+            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+        }
+
+        System.out.println("Brick destroyed -> +"+points+" points! Total: " + GameSession.getInstance().getScore());
+    }
+
+
     public GameStateManager getStateManager() {
         return stateManager;
     }
@@ -352,4 +445,6 @@ public class GameEngine {
     public TransitionManager getTransitionManager() {
         return transitionManager;
     }
+
+    public GameOverManager getGameOverManager() { return gameOverManager; }
 }

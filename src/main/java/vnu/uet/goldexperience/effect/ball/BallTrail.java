@@ -25,8 +25,8 @@ public class BallTrail {
             double t = (double) i / trail.size();
             if (Math.random() < t * 0.25) continue;
 
-            double alpha = (1 - t * 0.8) * (0.4 + Math.random() * 0.2);
-            double scale = 0.8 - t * 0.7;
+            double alpha = (1 - Math.pow(t, 2.5) * 0.9) * (0.4 + Math.random() * 0.2);
+            double scale = 1.35 - t * 1.05;
 
             double w = width * scale;
             double h = height * scale;

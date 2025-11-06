@@ -3,6 +3,8 @@ package vnu.uet.goldexperience.manager;
 import com.google.gson.Gson;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.Brick;
+import vnu.uet.goldexperience.model.brickFactory.BrickType;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,38 +48,11 @@ public class LevelManager {
                     String typeString = key.get(String.valueOf(symbol));
                     double brickX = Constants.NORMAL_BRICK_WIDTH * col;
                     double brickY = Constants.NORMAL_BRICK_HEIGHT * row;
-                    Brick brick = null;
-                    if (typeString.startsWith("movable")) {
-                        Map<String, Double> conf = props != null ? props.get(typeString) : null;
-                        double dx = conf != null ? conf.getOrDefault("dx", 0.0) : 0.0;
-                        double dy = conf != null ? conf.getOrDefault("dy", 0.0) : 0.0;
-                        double rangeX = conf != null ? conf.getOrDefault("rangeX", 0.0) : 0.0;
-                        double rangeY = conf != null ? conf.getOrDefault("rangeY", 0.0) : 0.0;
-
-                        if (typeString.equals("movable_horizontal")) {
-                            brick = new MovableBrick(
-                                    brickX, brickY,
-                                    Constants.NORMAL_BRICK_WIDTH,
-                                    Constants.NORMAL_BRICK_HEIGHT,
-                                    dx, dy, rangeX, rangeY,PathType.HORIZONTAL
-                            );
-                        } else if (typeString.equals("movable_vertical")) {
-                            brick = new MovableBrick(
-                                    brickX, brickY,
-                                    Constants.NORMAL_BRICK_WIDTH,
-                                    Constants.NORMAL_BRICK_HEIGHT,
-                                    dx, dy, rangeX, rangeY,PathType.VERTICAL
-                            );
-                        }
-                        if (brick != null) {
-                            activeBricks.add(brick);
-                        }
-                    } else {
-                        BrickType brickType = BrickType.fromString(typeString);
-                        if (brickType != null) {
-                            brick = brickType.create(brickX, brickY);
-                            activeBricks.add(brick);
-                        }
+                    BrickType brickType = BrickType.fromString(typeString);
+                    if (brickType != null) {
+                        Map<String, Double> config = props != null ? props.get(typeString) : null;
+                        Brick brick = brickType.create(brickX, brickY, config);
+                        activeBricks.add(brick);
                     }
                 }
             }

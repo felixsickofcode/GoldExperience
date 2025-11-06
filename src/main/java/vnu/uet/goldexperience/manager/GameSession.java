@@ -9,6 +9,11 @@ public class GameSession {
     private int currentChapter = 1;
     private int currentLevel = 1;
 
+    private int lives = 1;
+    private boolean recentLifeLost = false;
+    private static final int MAX_LIVES = 3;
+    private int score = 0;
+
     private final List<GameSessionListener> listeners = new ArrayList<>();
 
     private GameSession() {}
@@ -33,8 +38,7 @@ public class GameSession {
         return mode;
     }
 
-
-    //OBSERVER
+    //OBSERVER + SINGLETON
     public static GameSession getInstance() {
         if (instance == null) {
             instance = new GameSession();
@@ -58,6 +62,52 @@ public class GameSession {
         listeners.remove(listener);
     }
 
+    public int getLives() {
+        return lives;
+    }
+
+    public boolean hasRecentlyLostLife() {
+        return recentLifeLost;
+    }
+
+    public void clearRecentLifeFlag() {
+        recentLifeLost = false;
+    }
+
+    public void loseLife() {
+        if (lives > 0) {
+            lives--;
+            recentLifeLost = true;
+            System.out.println("Lives remaining: " + lives);
+        }
+    }
+
+    public void resetLives() {
+        lives = MAX_LIVES;
+        score = 0;
+    }
+
+    public boolean stillAlive() {
+        return lives > 0;
+    }
+
+    public void addLife() {
+        if (lives < MAX_LIVES) {
+            lives++;
+        }
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void addScore(int points) {
+        score += points;
+    }
+
+    public void resetScore() {
+        score = 0;
+    }
     private void notifyChapterChanged() {
         for (GameSessionListener listener : listeners) {
             listener.onChapterChanged(currentChapter);
@@ -128,4 +178,5 @@ public class GameSession {
         }
         return false;
     }
+
 }

@@ -1,8 +1,8 @@
-package vnu.uet.goldexperience.effect;
+package vnu.uet.goldexperience.effect.brick;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import vnu.uet.goldexperience.model.Brick;
+import vnu.uet.goldexperience.model.brick.Brick;
 
 import java.util.Random;
 

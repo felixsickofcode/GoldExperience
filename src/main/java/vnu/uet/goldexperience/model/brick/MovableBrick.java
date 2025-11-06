@@ -1,11 +1,14 @@
-package vnu.uet.goldexperience.model;
-
+package vnu.uet.goldexperience.model.brick;
+import vnu.uet.goldexperience.model.Movable;
+import vnu.uet.goldexperience.model.brickFactory.MovableBrickFactory.PathType;
 public class MovableBrick extends MediumBrick implements Movable {
     protected double dx, dy;
-    private double originX, originY;
-    private double moveRangeX, moveRangeY;
-    private PathType pathType;
-    private double angle; // dùng cho circular
+    private final double originX;
+    private final double originY;
+    private final double moveRangeX;
+    private final double moveRangeY;
+    private final PathType pathType;
+    private double angle;
 
     public MovableBrick(double x, double y, double width, double height,
                         double dx, double dy, double moveRangeX, double moveRangeY,
@@ -33,34 +36,40 @@ public class MovableBrick extends MediumBrick implements Movable {
             case HORIZONTAL -> moveHorizontal(deltaTime);
             case VERTICAL -> moveVertical(deltaTime);
             case CIRCULAR -> moveCircular(deltaTime);
-            case ZIGZAG -> moveZigzag(deltaTime);
         }
     }
 
     private void moveHorizontal(double dt) {
         x += dx * dt;
-        if (x > originX + moveRangeX || x < originX - moveRangeX)
+        if (x > originX + moveRangeX) {
+            x = originX + moveRangeX;
             dx = -dx;
+        } else if (x < originX - moveRangeX) {
+            x = originX - moveRangeX;
+            dx = -dx;
+        }
     }
 
     private void moveVertical(double dt) {
         y += dy * dt;
-        if (y > originY + moveRangeY || y < originY - moveRangeY)
+        if (y > originY + moveRangeY) {
+            y = originY + moveRangeY;
             dy = -dy;
+        } else if (y < originY - moveRangeY) {
+            y = originY - moveRangeY;
+            dy = -dy;
+        }
     }
 
     private void moveCircular(double dt) {
-        angle += 1.5 * dt; // tốc độ góc
+        angle += 1.5 * dt;
+        if (angle > 2 * Math.PI) {
+            angle -= 2 * Math.PI;
+        }
         x = originX + moveRangeX * Math.cos(angle);
         y = originY + moveRangeY * Math.sin(angle);
     }
 
-    private void moveZigzag(double dt) {
-        x += dx * dt;
-        y = originY + moveRangeY * Math.sin((x - originX) / 40.0);
-        if (x > originX + moveRangeX || x < originX - moveRangeX)
-            dx = -dx;
-    }
 
     @Override
     public double getDx() {

@@ -1,9 +1,8 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.DebrisEffect;
-import vnu.uet.goldexperience.effect.DestructionEffect;
-import vnu.uet.goldexperience.effect.FlashEffect;
+import vnu.uet.goldexperience.effect.brick.DebrisEffect;
+import vnu.uet.goldexperience.effect.brick.DestructionEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SpriteManager;
 

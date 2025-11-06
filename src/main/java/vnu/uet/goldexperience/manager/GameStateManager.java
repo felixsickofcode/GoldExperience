@@ -10,11 +10,14 @@ public class GameStateManager {
 
     private final TransitionManager transitionManager;
     private final PauseMenuManager pauseMenuManager;
+    private final GameOverManager gameOverManager;
 
     public GameStateManager(TransitionManager transitionManager,
-                            PauseMenuManager pauseMenuManager) {
+                            PauseMenuManager pauseMenuManager,
+                            GameOverManager gameOverManager) {
         this.transitionManager = transitionManager;
         this.pauseMenuManager = pauseMenuManager;
+        this.gameOverManager = gameOverManager;
     }
 
     public void setState(GameState newState) {
@@ -38,6 +41,7 @@ public class GameStateManager {
                 break;
             case PLAYING:
             case GAME_OVER:
+                gameOverManager.hide();
             case VICTORY:
                 break;
         }
@@ -55,7 +59,7 @@ public class GameStateManager {
                 transitionManager.start();
                 break;
             case GAME_OVER:
-                System.out.println("GSM: GameOver");
+                gameOverManager.show();
                 break;
             case VICTORY:
                 System.out.println("GSM: Victory");
