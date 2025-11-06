@@ -85,3 +85,4 @@ http-client.private.env.json
 
 # Ignore all .gitkeep files
 .gitkeep
+.DS_Store

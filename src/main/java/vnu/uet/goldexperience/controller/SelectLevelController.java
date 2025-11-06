@@ -78,11 +78,11 @@ public class SelectLevelController {
     }
 
     @FXML
-    private void handleBackToMenu(ActionEvent event) {
-        System.out.println("Back to menu clicked");
+    private void handleBackToChapter(ActionEvent event) {
+        System.out.println("Back to chapter clicked");
         selectedLevel = 0;
         if (sceneManager != null) {
-            sceneManager.switchTo("menu");
+            sceneManager.switchTo("chapter");
         }
     }
 }
