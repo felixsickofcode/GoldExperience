@@ -396,7 +396,7 @@ public class GameEngine {
         double maxX = Constants.GAMEPLAYZONE_WIDTH - Constants.POWER_UP_ITEM_WIDTH;
         double spawnX = minX + Math.random() * (maxX - minX);
         double spawnY = -Constants.POWER_UP_ITEM_HEIGHT;
-        PowerUpType dropType = Math.random() < 0.5 ? PowerUpType.EXTEND : PowerUpType.TINY;
+        PowerUpType dropType = PowerUpType.randomDroppable();
         fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, dropType));
     }
 
