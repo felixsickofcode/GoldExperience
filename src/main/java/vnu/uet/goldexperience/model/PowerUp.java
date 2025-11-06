@@ -48,7 +48,11 @@ public abstract class PowerUp extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        if (image != null)
-            gc.drawImage(image, x, y);
+        if (image != null) {
+            gc.drawImage(image, x, y, width, height);
+        } else {
+            gc.setFill(javafx.scene.paint.Color.LIMEGREEN);
+            gc.fillOval(x, y, width, height);
+        }
     }
 }

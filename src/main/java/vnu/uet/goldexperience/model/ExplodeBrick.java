@@ -24,7 +24,6 @@ public class ExplodeBrick extends Brick {
     }
 
 
-
     @Override
     protected void triggerDestroyEffect() {
         if (playingExplosion) {
@@ -56,11 +55,7 @@ public class ExplodeBrick extends Brick {
             double srcX = frame * width;
             double srcY = row * height;
 
-            gc.drawImage(
-                    image,
-                    srcX, srcY, width, height,
-                    x, y, width, height
-            );
+            gc.drawImage(image, srcX, srcY, width, height, x, y, width, height);
         }
         if (playingExplosion && explosionEffect != null) {
             explosionEffect.render(gc);

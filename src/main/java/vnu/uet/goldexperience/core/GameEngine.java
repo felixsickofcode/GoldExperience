@@ -30,6 +30,12 @@ public class GameEngine {
     private Ball ball;
     private List<Brick> bricks;
 
+    // Power-ups and context
+    private final List<PowerUp> fallingPowerUps = new ArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Bullet> bullets = new ArrayList<>();
+    private PowerUpManager powerUpManager;
+
     private AnimationTimer loop;
     private long lastTime = 0;
 
@@ -50,7 +56,9 @@ public class GameEngine {
         initObjects();
     }
 
-    public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
@@ -77,6 +85,13 @@ public class GameEngine {
 
         levelManager.loadLevel(levelNumber);
         bricks = levelManager.getActiveBricks();
+
+        // Rebuild game context and managers
+        balls.clear();
+        balls.add(ball);
+        bullets.clear();
+        fallingPowerUps.clear();
+        powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
     }
 
     public void reloadLevel() {
@@ -210,6 +225,7 @@ public class GameEngine {
     //Observer
     public interface GameUICallback {
         void onScoreChanged(int score);
+
         void onLivesChanged(int lives);
     }
 
@@ -301,6 +317,14 @@ public class GameEngine {
                         if (uiCallback != null) {
                             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
                         }
+
+                        // Spawn a falling power-up when a StrongBrick is destroyed
+                        if (brick instanceof StrongBrick) {
+                            double size = Constants.POWER_UP_ITEM_SIZE;
+                            double spawnX = brick.getX() + brick.getWidth() / 2 - size / 2;
+                            double spawnY = brick.getY() + brick.getHeight() / 2 - size / 2;
+                            fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, PowerUpType.EXTEND));
+                        }
                     }
 
                     break;
@@ -325,6 +349,38 @@ public class GameEngine {
             brick.update(deltaTime);
         }
 
+        // Update active falling power-ups
+        if (!fallingPowerUps.isEmpty()) {
+            List<PowerUp> collected = new ArrayList<>();
+            for (PowerUp pu : fallingPowerUps) {
+                pu.update(deltaTime);
+
+                if (pu.getY() > canvas.getHeight()) {
+                    collected.add(pu);
+                    continue;
+                }
+
+                if (pu.getX() < paddle.getX() + paddle.getWidth() &&
+                        pu.getX() + pu.getWidth() > paddle.getX() &&
+                        pu.getY() < paddle.getY() + paddle.getHeight() &&
+                        pu.getY() + pu.getHeight() > paddle.getY()) {
+
+                    if (powerUpManager != null) {
+                        powerUpManager.activatePowerUp(pu);
+                    }
+                    collected.add(pu);
+                }
+            }
+            if (!collected.isEmpty()) {
+                fallingPowerUps.removeAll(collected);
+            }
+        }
+
+
+        if (powerUpManager != null) {
+            powerUpManager.update();
+        }
+
         checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
     }
@@ -337,6 +393,10 @@ public class GameEngine {
 
         for (Brick brick : bricks) {
             brick.render(gc);
+        }
+
+        for (PowerUp pu : fallingPowerUps) {
+            pu.render(gc);
         }
 
         gc.restore();
@@ -430,5 +490,7 @@ public class GameEngine {
         return transitionManager;
     }
 
-    public GameOverManager getGameOverManager() { return gameOverManager; }
+    public GameOverManager getGameOverManager() {
+        return gameOverManager;
+    }
 }

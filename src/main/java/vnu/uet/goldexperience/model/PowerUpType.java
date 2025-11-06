@@ -32,7 +32,7 @@ public enum PowerUpType {
                 paddle.extendPaddle();
             },
             null,
-            "images/powerUp_Extend.png",
+            "images/extend.png",
             Constants.EXTEND_DURATION
     ),
 
@@ -114,8 +114,9 @@ public enum PowerUpType {
 
     public Image getImage() {
         try {
-            URL imageURL = getClass().getResource(imagePath);
-            assert imageURL != null;
+            String path = imagePath.startsWith("/") ? imagePath : "/" + imagePath;
+            URL imageURL = getClass().getResource(path);
+            if (imageURL == null) return null;
             return new Image(imageURL.toExternalForm());
         } catch (Exception e) {
             return null;

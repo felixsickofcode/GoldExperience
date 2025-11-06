@@ -38,6 +38,7 @@ public class Constants {
     public static final double BULLET_SPEED = 450;
 
     // Power up constants
+    public static final double POWER_UP_ITEM_SIZE = 40;
     public static final double POWER_UP_DROP_SPEED = 50;
     public static final long THREE_BALLS_DURATION = 0;
     public static final long BULLETS_DURATION = 15_000;
