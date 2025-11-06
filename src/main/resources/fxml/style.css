@@ -1,14 +1,10 @@
-@font-face {
-    font-family: "Orbitron";
-    src: url("https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap");
-}
-
 .menu-root {
     -fx-background-image: url("../images/bg.png");
     -fx-background-size: cover;
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
     -fx-background-color: #0a0e27;
+    -fx-font-family: "Cynosure Straight";
 }
 
 .chapter-root {
@@ -20,17 +16,16 @@
 }
 
 .text {
-    -fx-font-family: "Orbitron", "W95FA";
+    -fx-font-family: "Cynosure Straight";
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
 
-/* Buttons - Y hệt như mẫu */
+/* Buttons */
 .menu-button {
     -fx-background-color: #1a1f3a;
     -fx-border-color: #00ff88;
     -fx-border-width: 2px;
-    -fx-font-family: "Orbitron", "W95FA";
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: #00ff88;
@@ -59,12 +54,14 @@
     -fx-scale-y: 0.98;
 }
 
-/* Title Label - Chữ "PAUSED" */
+/* Title Label */
 .title-label {
     -fx-text-fill: #ffffff;
-    -fx-font-family: "Orbitron", "W95FA";
+    -fx-font-family: "Cynosure Straight";
     -fx-font-size: 72px;
     -fx-font-weight: 900;
     -fx-effect: dropshadow(gaussian, #00ff88, 20, 0.8, 0, 0),
     dropshadow(gaussian, #00ff88, 40, 0.6, 0, 0);
 }
+
+.font

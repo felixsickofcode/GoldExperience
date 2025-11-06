@@ -1,126 +1,311 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vnu.uet.goldexperience.controller.SelectLevelController">
-    <style>-fx-background-image: url('../images/space.jpg')</style>
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #2a2a2a;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vnu.uet.goldexperience.controller.SelectLevelController">
     <children>
-        <Button fx:id="btnBack" layoutX="30.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleBackToMenu" style="-fx-background-color: #FFD700; -fx-cursor: hand; -fx-background-radius: 10;" prefWidth="100.0" prefHeight="40.0" text="◄ BACK">
-            <font>
-                <Font name="System Bold" size="16.0" />
-            </font>
+        <!-- Background Overlay -->
+        <Rectangle fill="#1a1a1a" height="720.0" opacity="0.5" width="1280.0" />
+
+        <!-- Back Button -->
+        <Button fx:id="btnBack" layoutX="35.0" layoutY="35.0" mnemonicParsing="false" onAction="#handleBackToChapter" prefHeight="50.0" prefWidth="135.0" style="-fx-background-color: transparent; -fx-border-color: #888888; -fx-border-width: 2; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-family: 'Cynosure Straight'; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #AAAAAA;" text="◄  BACK">
+            <effect>
+                <DropShadow color="#00000060" radius="8.0" />
+            </effect>
         </Button>
 
-        <Button fx:id="btnLevel1" layoutX="60.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleLevel1" prefHeight="460.0" prefWidth="210.0">
+        <!-- Title -->
+        <Text fill="#D0D0D0" layoutX="424.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure Straight'; -fx-font-size: 52px; -fx-font-weight: bold;" text="LEVEL SELECT" textAlignment="CENTER">
+            <effect>
+                <Glow level="0.2" />
+            </effect>
+        </Text>
+        <Rectangle fill="#FF8C00" height="4.0" layoutX="540.0" layoutY="95.0" width="200.0">
+            <effect>
+                <Glow level="0.3" />
+            </effect>
+        </Rectangle>
+
+        <!-- Level 1 -->
+        <Button fx:id="btnLevel1" layoutX="90.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleLevel1" prefHeight="460.0" prefWidth="210.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane prefHeight="450.0" prefWidth="200.0">
                     <children>
                         <AnchorPane prefHeight="450.0" prefWidth="200.0">
                             <children>
-                                <Text layoutX="40.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level 1">
-                                    <font>
-                                        <Font size="40.0" />
-                                    </font>
+                                <!-- Outer Border -->
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="450.0" stroke="#FF8C00" strokeWidth="3.0" width="200.0">
+                                    <effect>
+                                        <DropShadow color="#FF8C0060" radius="15.0" spread="0.3" />
+                                    </effect>
+                                </Rectangle>
+
+                                <!-- Inner Background -->
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="442.0" layoutX="4.0" layoutY="4.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.0" width="192.0">
+                                    <effect>
+                                        <DropShadow color="#00000080" radius="10.0" />
+                                    </effect>
+                                </Rectangle>
+
+                                <!-- Level Text -->
+                                <Text fill="#FF8C00" layoutX="27.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure Straight'; -fx-font-size: 36px; -fx-font-weight: bold;" text="LEVEL 1" textAlignment="CENTER">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
                                 </Text>
-                                <ImageView fitHeight="220.0" fitWidth="190.0" layoutX="2.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/cat.png" />
-                                    </image>
-                                </ImageView>
+
+                                <!-- Underline -->
+                                <Rectangle fill="#FF8C00" height="2.0" layoutX="50.0" layoutY="55.0" width="100.0" />
+
+                                <!-- Game Preview - Road with obstacles -->
+                                <Rectangle fill="#1a1a1a" height="320.0" layoutX="20.0" layoutY="90.0" stroke="#FF8C00" strokeWidth="1.5" width="160.0" />
+
+                                <!-- Road lanes -->
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="155.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="220.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="285.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="350.0" opacity="0.3" width="160.0" />
+
+                                <!-- Car (player) -->
+                                <Rectangle fill="#00BFFF" height="20.0" layoutX="70.0" layoutY="375.0" stroke="#FFFFFF" strokeWidth="1.5" width="30.0" />
+                                <Rectangle fill="#333333" height="10.0" layoutX="73.0" layoutY="378.0" width="24.0" />
+
+                                <!-- Obstacles -->
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="45.0" layoutY="130.0" rotate="45" stroke="#FFFFFF" strokeWidth="1.0" width="15.0" />
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="130.0" layoutY="200.0" stroke="#FFFFFF" strokeWidth="1.0" width="15.0">
+                                    <effect>
+                                        <Glow level="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="20.0" layoutX="80.0" layoutY="270.0" rotate="45" stroke="#FFFFFF" strokeWidth="1.0" width="12.0" />
                             </children>
                         </AnchorPane>
                     </children>
                 </StackPane>
             </graphic>
         </Button>
-        <Button fx:id="btnLevel2" layoutX="290.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleLevel2" prefHeight="460.0" prefWidth="210.0">
+
+        <!-- Level 2 -->
+        <Button fx:id="btnLevel2" layoutX="320.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleLevel2" prefHeight="460.0" prefWidth="210.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane prefHeight="450.0" prefWidth="200.0">
                     <children>
                         <AnchorPane prefHeight="450.0" prefWidth="200.0">
                             <children>
-                                <Text layoutX="39.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level 2">
-                                    <font>
-                                        <Font size="40.0" />
-                                    </font>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="450.0" stroke="#FF8C00" strokeWidth="3.0" width="200.0">
+                                    <effect>
+                                        <DropShadow color="#FF8C0060" radius="15.0" spread="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="442.0" layoutX="4.0" layoutY="4.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.0" width="192.0">
+                                    <effect>
+                                        <DropShadow color="#00000080" radius="10.0" />
+                                    </effect>
+                                </Rectangle>
+                                <Text fill="#FF8C00" layoutX="20.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure Straight'; -fx-font-size: 36px; -fx-font-weight: bold;" text="LEVEL 2" textAlignment="CENTER">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
                                 </Text>
-                                <ImageView fitHeight="220.0" fitWidth="190.0" layoutX="2.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/cat.png" />
-                                    </image>
-                                </ImageView>
+                                <Rectangle fill="#FF8C00" height="2.0" layoutX="50.0" layoutY="55.0" width="100.0" />
+
+                                <Rectangle fill="#1a1a1a" height="320.0" layoutX="20.0" layoutY="90.0" stroke="#FF8C00" strokeWidth="1.5" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="155.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="220.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="285.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="350.0" opacity="0.3" width="160.0" />
+
+                                <Rectangle fill="#00BFFF" height="20.0" layoutX="70.0" layoutY="375.0" stroke="#FFFFFF" strokeWidth="1.5" width="30.0" />
+                                <Rectangle fill="#333333" height="10.0" layoutX="73.0" layoutY="378.0" width="24.0" />
+
+                                <!-- More obstacles for level 2 -->
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="35.0" layoutY="120.0" rotate="30" stroke="#FFFFFF" strokeWidth="1.0" width="15.0" />
+                                <Rectangle fill="#FF8C00" height="18.0" layoutX="125.0" layoutY="180.0" stroke="#FFFFFF" strokeWidth="1.0" width="18.0">
+                                    <effect>
+                                        <Glow level="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="60.0" layoutY="245.0" rotate="-45" stroke="#FFFFFF" strokeWidth="1.0" width="15.0" />
+                                <Rectangle fill="#FF8C00" height="20.0" layoutX="140.0" layoutY="310.0" rotate="60" stroke="#FFFFFF" strokeWidth="1.0" width="12.0" />
                             </children>
                         </AnchorPane>
                     </children>
                 </StackPane>
             </graphic>
         </Button>
-        <Button fx:id="btnLevel3" layoutX="520.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleLevel3" prefHeight="460.0" prefWidth="210.0">
+
+        <!-- Level 3 -->
+        <Button fx:id="btnLevel3" layoutX="550.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleLevel3" prefHeight="460.0" prefWidth="210.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane prefHeight="450.0" prefWidth="200.0">
                     <children>
                         <AnchorPane prefHeight="450.0" prefWidth="200.0">
                             <children>
-                                <Text layoutX="41.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level 3">
-                                    <font>
-                                        <Font size="40.0" />
-                                    </font>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="450.0" stroke="#FF8C00" strokeWidth="3.0" width="200.0">
+                                    <effect>
+                                        <DropShadow color="#FF8C0060" radius="15.0" spread="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="442.0" layoutX="4.0" layoutY="4.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.0" width="192.0">
+                                    <effect>
+                                        <DropShadow color="#00000080" radius="10.0" />
+                                    </effect>
+                                </Rectangle>
+                                <Text fill="#FF8C00" layoutX="23.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure Straight'; -fx-font-size: 36px; -fx-font-weight: bold;" text="LEVEL 3" textAlignment="CENTER">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
                                 </Text>
-                                <ImageView fitHeight="220.0" fitWidth="190.0" layoutX="2.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/cat.png" />
-                                    </image>
-                                </ImageView>
+                                <Rectangle fill="#FF8C00" height="2.0" layoutX="50.0" layoutY="55.0" width="100.0" />
+
+                                <Rectangle fill="#1a1a1a" height="320.0" layoutX="20.0" layoutY="90.0" stroke="#FF8C00" strokeWidth="1.5" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="155.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="220.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="285.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="350.0" opacity="0.3" width="160.0" />
+
+                                <Rectangle fill="#00BFFF" height="20.0" layoutX="70.0" layoutY="375.0" stroke="#FFFFFF" strokeWidth="1.5" width="30.0" />
+                                <Rectangle fill="#333333" height="10.0" layoutX="73.0" layoutY="378.0" width="24.0" />
+
+                                <!-- Even more obstacles for level 3 -->
+                                <Rectangle fill="#FF8C00" height="16.0" layoutX="40.0" layoutY="115.0" rotate="20" stroke="#FFFFFF" strokeWidth="1.0" width="16.0" />
+                                <Rectangle fill="#FF8C00" height="18.0" layoutX="120.0" layoutY="165.0" rotate="-30" stroke="#FFFFFF" strokeWidth="1.0" width="18.0">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="55.0" layoutY="225.0" rotate="45" stroke="#FFFFFF" strokeWidth="1.0" width="15.0" />
+                                <Rectangle fill="#FF8C00" height="20.0" layoutX="135.0" layoutY="280.0" stroke="#FFFFFF" strokeWidth="1.0" width="15.0">
+                                    <effect>
+                                        <Glow level="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="17.0" layoutX="85.0" layoutY="335.0" rotate="-60" stroke="#FFFFFF" strokeWidth="1.0" width="13.0" />
                             </children>
                         </AnchorPane>
                     </children>
                 </StackPane>
             </graphic>
         </Button>
-        <Button fx:id="btnLevel4" layoutX="750.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleLevel4" prefHeight="460.0" prefWidth="210.0">
+
+        <!-- Level 4 -->
+        <Button fx:id="btnLevel4" layoutX="780.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleLevel4" prefHeight="460.0" prefWidth="210.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane prefHeight="450.0" prefWidth="200.0">
                     <children>
                         <AnchorPane prefHeight="450.0" prefWidth="200.0">
                             <children>
-                                <Text layoutX="39.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level 4">
-                                    <font>
-                                        <Font size="40.0" />
-                                    </font>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="450.0" stroke="#FF8C00" strokeWidth="3.0" width="200.0">
+                                    <effect>
+                                        <DropShadow color="#FF8C0060" radius="15.0" spread="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="442.0" layoutX="4.0" layoutY="4.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.0" width="192.0">
+                                    <effect>
+                                        <DropShadow color="#00000080" radius="10.0" />
+                                    </effect>
+                                </Rectangle>
+                                <Text fill="#FF8C00" layoutX="21.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure Straight'; -fx-font-size: 36px; -fx-font-weight: bold;" text="LEVEL 4" textAlignment="CENTER">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
                                 </Text>
-                                <ImageView fitHeight="220.0" fitWidth="190.0" layoutX="2.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/cat.png" />
-                                    </image>
-                                </ImageView>
+                                <Rectangle fill="#FF8C00" height="2.0" layoutX="50.0" layoutY="55.0" width="100.0" />
+
+                                <Rectangle fill="#1a1a1a" height="320.0" layoutX="20.0" layoutY="90.0" stroke="#FF8C00" strokeWidth="1.5" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="155.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="220.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="285.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="350.0" opacity="0.3" width="160.0" />
+
+                                <Rectangle fill="#00BFFF" height="20.0" layoutX="70.0" layoutY="375.0" stroke="#FFFFFF" strokeWidth="1.5" width="30.0" />
+                                <Rectangle fill="#333333" height="10.0" layoutX="73.0" layoutY="378.0" width="24.0" />
+
+                                <!-- Maximum obstacles for level 4 -->
+                                <Rectangle fill="#FF8C00" height="16.0" layoutX="35.0" layoutY="110.0" rotate="15" stroke="#FFFFFF" strokeWidth="1.0" width="16.0" />
+                                <Rectangle fill="#FF8C00" height="18.0" layoutX="115.0" layoutY="145.0" stroke="#FFFFFF" strokeWidth="1.0" width="18.0">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="50.0" layoutY="195.0" rotate="-45" stroke="#FFFFFF" strokeWidth="1.0" width="15.0" />
+                                <Rectangle fill="#FF8C00" height="20.0" layoutX="130.0" layoutY="235.0" rotate="30" stroke="#FFFFFF" strokeWidth="1.0" width="15.0">
+                                    <effect>
+                                        <Glow level="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="17.0" layoutX="70.0" layoutY="280.0" rotate="60" stroke="#FFFFFF" strokeWidth="1.0" width="13.0" />
+                                <Rectangle fill="#FF8C00" height="16.0" layoutX="140.0" layoutY="325.0" rotate="-30" stroke="#FFFFFF" strokeWidth="1.0" width="16.0">
+                                    <effect>
+                                        <Glow level="0.3" />
+                                    </effect>
+                                </Rectangle>
                             </children>
                         </AnchorPane>
                     </children>
                 </StackPane>
             </graphic>
         </Button>
-        <Button fx:id="btnLevel5" layoutX="980.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleLevel5" prefHeight="460.0" prefWidth="210.0">
+
+        <!-- Level 5 -->
+        <Button fx:id="btnLevel5" layoutX="1010.0" layoutY="160.0" mnemonicParsing="false" onAction="#handleLevel5" prefHeight="460.0" prefWidth="210.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane prefHeight="450.0" prefWidth="200.0">
                     <children>
                         <AnchorPane prefHeight="450.0" prefWidth="200.0">
                             <children>
-                                <Text layoutX="40.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Level 5">
-                                    <font>
-                                        <Font size="40.0" />
-                                    </font>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="450.0" stroke="#FF8C00" strokeWidth="3.0" width="200.0">
+                                    <effect>
+                                        <DropShadow color="#FF8C0060" radius="15.0" spread="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="442.0" layoutX="4.0" layoutY="4.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.0" width="192.0">
+                                    <effect>
+                                        <DropShadow color="#00000080" radius="10.0" />
+                                    </effect>
+                                </Rectangle>
+                                <Text fill="#FF8C00" layoutX="22.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure Straight'; -fx-font-size: 36px; -fx-font-weight: bold;" text="LEVEL 5">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
                                 </Text>
-                                <ImageView fitHeight="220.0" fitWidth="190.0" layoutX="2.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/cat.png" />
-                                    </image>
-                                </ImageView>
+                                <Rectangle fill="#FF8C00" height="2.0" layoutX="60.0" layoutY="55.0" width="80.0" />
+
+                                <Rectangle fill="#1a1a1a" height="320.0" layoutX="20.0" layoutY="90.0" stroke="#FF8C00" strokeWidth="1.5" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="155.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="220.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="285.0" opacity="0.3" width="160.0" />
+                                <Rectangle fill="#FF8C00" height="1.0" layoutX="20.0" layoutY="350.0" opacity="0.3" width="160.0" />
+
+                                <Rectangle fill="#00BFFF" height="20.0" layoutX="70.0" layoutY="375.0" stroke="#FFFFFF" strokeWidth="1.5" width="30.0" />
+                                <Rectangle fill="#333333" height="10.0" layoutX="73.0" layoutY="378.0" width="24.0" />
+
+                                <!-- Extreme obstacles for level 5 -->
+                                <Rectangle fill="#FF8C00" height="16.0" layoutX="30.0" layoutY="105.0" rotate="25" stroke="#FFFFFF" strokeWidth="1.0" width="16.0" />
+                                <Rectangle fill="#FF8C00" height="18.0" layoutX="110.0" layoutY="135.0" rotate="-20" stroke="#FFFFFF" strokeWidth="1.0" width="18.0">
+                                    <effect>
+                                        <Glow level="0.5" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="15.0" layoutX="45.0" layoutY="180.0" rotate="50" stroke="#FFFFFF" strokeWidth="1.0" width="15.0" />
+                                <Rectangle fill="#FF8C00" height="20.0" layoutX="125.0" layoutY="215.0" stroke="#FFFFFF" strokeWidth="1.0" width="15.0">
+                                    <effect>
+                                        <Glow level="0.4" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="17.0" layoutX="65.0" layoutY="260.0" rotate="-40" stroke="#FFFFFF" strokeWidth="1.0" width="13.0" />
+                                <Rectangle fill="#FF8C00" height="16.0" layoutX="135.0" layoutY="300.0" rotate="35" stroke="#FFFFFF" strokeWidth="1.0" width="16.0">
+                                    <effect>
+                                        <Glow level="0.3" />
+                                    </effect>
+                                </Rectangle>
+                                <Rectangle fill="#FF8C00" height="18.0" layoutX="80.0" layoutY="340.0" rotate="-55" stroke="#FFFFFF" strokeWidth="1.0" width="14.0" />
                             </children>
                         </AnchorPane>
                     </children>

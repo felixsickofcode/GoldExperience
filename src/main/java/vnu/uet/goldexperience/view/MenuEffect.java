@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.Button;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.input.MouseEvent;
 
 public class MenuEffect extends StackPane {
@@ -32,9 +31,25 @@ public class MenuEffect extends StackPane {
     private static final Color NEON_GREEN = Color.rgb(0, 255, 136);
     private static final Color DARK_BG = Color.rgb(26, 31, 58);
 
+    // Font (chỉ load một lần)
+    private static Font customFont;
+
     public MenuEffect(String text, double width, double height) {
         this.width = width;
         this.height = height;
+
+        // Load font 1 lần duy nhất
+        if (customFont == null) {
+            try {
+                customFont = Font.loadFont(
+                        getClass().getResourceAsStream("/font/cyber32.ttf"),
+                        24
+                );
+                System.out.println("Custom font loaded: " + (customFont != null ? customFont.getName() : "null"));
+            } catch (Exception e) {
+                System.out.println("Failed to load custom font: " + e.getMessage());
+            }
+        }
 
         // Create canvas for background effects
         canvas = new Canvas(width, height);
@@ -46,31 +61,24 @@ public class MenuEffect extends StackPane {
         button.setStyle(
                 "-fx-background-color: transparent;" +
                         "-fx-text-fill: #00ff88;" +
-                        "-fx-font-family: 'Orbitron', 'Arial';" +
-                        "-fx-font-size: 24px;" +
-                        "-fx-font-weight: bold;" +
                         "-fx-cursor: hand;"
         );
+
+        // Gán font custom (nếu có), fallback nếu không
+        if (customFont != null) {
+            button.setFont(customFont);
+        } else {
+            button.setFont(Font.font("Arial", 24));
+        }
 
         // Add both to stack
         this.getChildren().addAll(canvas, button);
 
         // Mouse events
-        button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
-            isHovered = true;
-        });
-
-        button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            isHovered = false;
-        });
-
-        button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
-            isPressed = true;
-        });
-
-        button.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
-            isPressed = false;
-        });
+        button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> isHovered = true);
+        button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> isHovered = false);
+        button.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> isPressed = true);
+        button.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> isPressed = false);
 
         setupAnimation();
     }
@@ -78,7 +86,6 @@ public class MenuEffect extends StackPane {
     private void setupAnimation() {
         animationTimer = new AnimationTimer() {
             private long lastUpdate = 0;
-
             @Override
             public void handle(long now) {
                 if (now - lastUpdate >= 33_333_333) {
@@ -91,42 +98,27 @@ public class MenuEffect extends StackPane {
     }
 
     private void render() {
-        // Clear canvas
         gc.clearRect(0, 0, width, height);
 
-        // Update hover intensity
-        if (isHovered) {
-            hoverIntensity = Math.min(1.0, hoverIntensity + 0.1);
-        } else {
-            hoverIntensity = Math.max(0.0, hoverIntensity - 0.1);
-        }
+        if (isHovered) hoverIntensity = Math.min(1.0, hoverIntensity + 0.1);
+        else hoverIntensity = Math.max(0.0, hoverIntensity - 0.1);
 
         // Background
-        if (isPressed) {
+        if (isPressed)
             gc.setFill(NEON_GREEN.deriveColor(0, 1, 1, 0.15));
-        } else if (isHovered) {
+        else if (isHovered)
             gc.setFill(NEON_GREEN.deriveColor(0, 1, 1, 0.1));
-        } else {
+        else
             gc.setFill(DARK_BG);
-        }
+
         gc.fillRect(0, 0, width, height);
 
-        // Update glitch
+        // Glitch + effects
         updateGlitch();
-        if (glitchActive && isHovered) {
-            drawGlitchEffect();
-        }
-
-        // Animated border
+        if (glitchActive && isHovered) drawGlitchEffect();
         drawAnimatedBorder();
-
-        // Corner accents
         drawCornerAccents();
-
-        // Inner shadow effect when hovered
-        if (hoverIntensity > 0) {
-            drawInnerGlow();
-        }
+        if (hoverIntensity > 0) drawInnerGlow();
     }
 
     private void updateGlitch() {
@@ -137,49 +129,36 @@ public class MenuEffect extends StackPane {
                 glitchTimer = 0;
             }
         }
-
-        if (glitchActive && glitchTimer > 3) {
-            glitchActive = false;
-        }
+        if (glitchActive && glitchTimer > 3) glitchActive = false;
     }
 
     private void drawGlitchEffect() {
         gc.save();
-
         for (int i = 0; i < 3; i++) {
             double y = Math.random() * height;
             double h = 3 + Math.random() * 10;
             double offset = (Math.random() - 0.5) * 8;
-
             gc.setFill(Color.rgb(255, 0, 0, 0.3));
             gc.fillRect(offset, y, width, h);
-
             gc.setFill(Color.rgb(0, 255, 255, 0.3));
             gc.fillRect(-offset, y + 1, width, h);
         }
-
         gc.restore();
     }
 
     private void drawAnimatedBorder() {
         borderPulse += 0.08;
         double pulse = 0.5 + Math.sin(borderPulse) * 0.3;
+        if (isHovered) pulse *= 1.5;
 
-        if (isHovered) {
-            pulse *= 1.5;
-        }
-
-        // Outer glow
         gc.setStroke(NEON_GREEN.deriveColor(0, 1, 1, pulse * 0.5 * hoverIntensity));
         gc.setLineWidth(6);
         gc.strokeRect(1, 1, width - 2, height - 2);
 
-        // Main border
         gc.setStroke(NEON_GREEN.deriveColor(0, 1, 1, pulse * 0.9));
         gc.setLineWidth(2);
         gc.strokeRect(1, 1, width - 2, height - 2);
 
-        // Inner bright line
         if (isHovered) {
             gc.setStroke(NEON_GREEN.deriveColor(1, 1, 1.5, pulse));
             gc.setLineWidth(1);
@@ -191,24 +170,18 @@ public class MenuEffect extends StackPane {
         double cornerSize = 15;
         double cornerThick = 2;
         int margin = 5;
-
         double alpha = 0.6 + hoverIntensity * 0.4;
+
         gc.setStroke(NEON_GREEN.deriveColor(0, 1, 1, alpha));
         gc.setLineWidth(cornerThick);
 
-        // Top-left
+        // 4 góc
         gc.strokeLine(margin, margin, margin + cornerSize, margin);
         gc.strokeLine(margin, margin, margin, margin + cornerSize);
-
-        // Top-right
         gc.strokeLine(width - margin, margin, width - margin - cornerSize, margin);
         gc.strokeLine(width - margin, margin, width - margin, margin + cornerSize);
-
-        // Bottom-left
         gc.strokeLine(margin, height - margin, margin + cornerSize, height - margin);
         gc.strokeLine(margin, height - margin, margin, height - margin - cornerSize);
-
-        // Bottom-right
         gc.strokeLine(width - margin, height - margin, width - margin - cornerSize, height - margin);
         gc.strokeLine(width - margin, height - margin, width - margin, height - margin - cornerSize);
     }
@@ -229,8 +202,6 @@ public class MenuEffect extends StackPane {
     }
 
     public void stop() {
-        if (animationTimer != null) {
-            animationTimer.stop();
-        }
+        if (animationTimer != null) animationTimer.stop();
     }
 }

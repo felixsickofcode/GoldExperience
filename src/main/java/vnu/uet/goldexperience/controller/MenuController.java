@@ -43,6 +43,7 @@ public class MenuController {
     @FXML
     private Label titleLabel;
 
+
     // Set scene manager
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
