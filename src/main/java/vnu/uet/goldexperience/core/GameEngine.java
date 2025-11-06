@@ -35,6 +35,7 @@ public class GameEngine {
     private final List<Ball> balls = new ArrayList<>();
     private final List<Bullet> bullets = new ArrayList<>();
     private PowerUpManager powerUpManager;
+    private int hitsSinceLastDrop = 0;
 
     private AnimationTimer loop;
     private long lastTime = 0;
@@ -92,6 +93,7 @@ public class GameEngine {
         bullets.clear();
         fallingPowerUps.clear();
         powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
+        hitsSinceLastDrop = 0;
     }
 
     public void reloadLevel() {
@@ -310,6 +312,13 @@ public class GameEngine {
                     boolean wasDestroyed = brick.isDestroyed();
 
                     brick.takeHit();
+
+                    hitsSinceLastDrop++;
+                    if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
+                        spawnRandomDrop();
+                        hitsSinceLastDrop = 0;
+                    }
+
                     if (!wasDestroyed && brick.isDestroyed()) {
                         int points = 124;
                         GameSession.getInstance().addScore(points);
@@ -320,10 +329,7 @@ public class GameEngine {
 
                         // Spawn a falling power-up when a StrongBrick is destroyed
                         if (brick instanceof StrongBrick) {
-                            double size = Constants.POWER_UP_ITEM_SIZE;
-                            double spawnX = brick.getX() + brick.getWidth() / 2 - size / 2;
-                            double spawnY = brick.getY() + brick.getHeight() / 2 - size / 2;
-                            fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, PowerUpType.EXTEND));
+                            spawnRandomDrop();
                         }
                     }
 
@@ -383,6 +389,15 @@ public class GameEngine {
 
         checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
+    }
+
+    private void spawnRandomDrop() {
+        double minX = 0;
+        double maxX = Constants.GAMEPLAYZONE_WIDTH - Constants.POWER_UP_ITEM_WIDTH;
+        double spawnX = minX + Math.random() * (maxX - minX);
+        double spawnY = -Constants.POWER_UP_ITEM_HEIGHT;
+        PowerUpType dropType = Math.random() < 0.5 ? PowerUpType.EXTEND : PowerUpType.TINY;
+        fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, dropType));
     }
 
     private void render() {

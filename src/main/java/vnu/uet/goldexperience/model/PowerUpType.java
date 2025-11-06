@@ -42,7 +42,7 @@ public enum PowerUpType {
                 paddle.narrowPaddle();
             },
             null,
-            "images/powerUp_Tiny.png",
+            "images/tiny.png",
             Constants.TINY_DURATION
     ),
 
