@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.core.Constants;
@@ -15,7 +15,7 @@ public class StrongBrick extends MediumBrick {
     public StrongBrick(double x, double y, double width, double height) {
         super(x, y, width, height);
         image = AssetsManager.bricks.get(5);
-        this.hitPoints = Math.random() < 0.8 ? 4 : 6;
+        this.hitPoints = Constants.MAX_HIT_POINTS;
         this.regenerateEffect = new RegenerateEffect(this);
         this.reviveEffect = new ReviveEffect(this);
     }
@@ -29,9 +29,10 @@ public class StrongBrick extends MediumBrick {
         regenerateEffect.end();
         if (isDestroyed() && !playingBreakEffect && !playingExplosion) {
             triggerDestroyEffect();
+            notifyDestroyed();
         } else if (!isDestroyed()) {
             triggerFlashEffect();
-
+            notifyDestroyed();
             if (hitPoints <= Constants.REGENERATION_THRESHOLD) {
                 image = AssetsManager.bricks.get(4);
                 isRegenerating = true;

@@ -3,6 +3,8 @@ package vnu.uet.goldexperience.manager;
 import com.google.gson.Gson;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.Brick;
+import vnu.uet.goldexperience.model.brickFactory.BrickType;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

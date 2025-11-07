@@ -5,7 +5,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.Brick;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

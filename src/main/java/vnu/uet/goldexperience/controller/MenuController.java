@@ -4,11 +4,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.view.MenuEffect;
 
 public class MenuController {
     private SceneManager sceneManager;
+
+    @FXML
+    private VBox menuContainer;
 
     @FXML
     private Button btnChooseStage;
@@ -38,6 +43,8 @@ public class MenuController {
     @FXML
     private Label titleLabel;
 
+
+    // Set scene manager
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
     }
@@ -45,6 +52,29 @@ public class MenuController {
     @FXML
     public void initialize() {
         System.out.println("Menu initialized");
+
+        // Replace standard buttons with animated buttons if VBox exists
+        if (menuContainer != null) {
+            replaceWithAnimatedButtons();
+        }
+    }
+
+    private void replaceWithAnimatedButtons() {
+        // Clear existing buttons
+        menuContainer.getChildren().clear();
+
+        // Create animated buttons
+        MenuEffect animBtn1 = new MenuEffect("STORY MODE", 340, 70);
+        MenuEffect animBtn2 = new MenuEffect("2 PLAYER MODE", 340, 70);
+        MenuEffect animBtn3 = new MenuEffect("SETTINGS", 340, 70);
+
+        // Set actions
+        animBtn1.setOnAction(this::handleStoryMode);
+        animBtn2.setOnAction(this::handle2PlayerMode);
+        animBtn3.setOnAction(this::handleMoveToSetting);
+
+        // Add to container with proper spacing (VBox already has spacing from FXML)
+        menuContainer.getChildren().addAll(animBtn1, animBtn2, animBtn3);
     }
 
     @FXML
@@ -59,7 +89,7 @@ public class MenuController {
         }
     }
 
-    // HandleSound clicked
+    // HandleStoryMode clicked
     @FXML
     private void handleStoryMode(ActionEvent event) {
         System.out.println("Story Mode clicked");
@@ -77,7 +107,7 @@ public class MenuController {
         }
     }
 
-    // HandleSound clicked
+    // Handle2PlayerMode clicked
     @FXML
     private void handle2PlayerMode(ActionEvent event) {
         System.out.println("2 Player Mode clicked");

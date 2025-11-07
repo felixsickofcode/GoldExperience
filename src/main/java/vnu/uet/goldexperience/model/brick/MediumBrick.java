@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.brick.FlashEffect;
@@ -20,8 +20,10 @@ public class MediumBrick extends Brick {
         hitPoints--;
         if (isDestroyed() && !playingBreakEffect && !playingExplosion) {
             triggerDestroyEffect();
+            notifyDestroyed();
         } else if (!isDestroyed()) {
             triggerFlashEffect();
+            notifyDestroyed();
         }
     }
 

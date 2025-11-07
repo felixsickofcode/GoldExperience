@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.controller.MenuController;
 import vnu.uet.goldexperience.controller.SelectChapterController;
@@ -15,6 +16,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Font.loadFont(getClass().getResourceAsStream("/font/cyber22.ttf"), 24);
+        Font font22 = Font.loadFont(getClass().getResourceAsStream("/font/cyber22.ttf"), 24);
+        Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 24);
+        Font font = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 24);
+        System.out.println("Font loaded: " + font);
+        System.out.println("Font name: " + font.getName());
+        System.out.println("Font family: " + font.getFamily());
+        System.out.println("Font loaded: " + font22);
+        System.out.println("Font name: " + font22.getName());
+        System.out.println("Font family: " + font22.getFamily());
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: black;");
 
@@ -52,8 +63,6 @@ public class Main extends Application {
         SelectChapterController chapterController = chapterLoader.getController();
         chapterController.setSceneManager(sceneManager);
 
-        sceneManager.switchTo("menu");
-
         Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(getClass().getResource("/fxml/style.css").toExternalForm());
 
@@ -61,6 +70,8 @@ public class Main extends Application {
 //        stage.setFullScreen(true);
 //        stage.setFullScreenExitHint("Nhấn F11 để thoát toàn màn hình");
         stage.show();
+
+        sceneManager.switchTo("menu");
         System.out.println("R:" + root.getWidth());
 //        double screenWidth = Screen.getPrimary().getBounds().getWidth();
 //        double screenHeight = Screen.getPrimary().getBounds().getHeight();

@@ -6,11 +6,13 @@ import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
+import vnu.uet.goldexperience.model.brick.*;
+import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameEngine {
+public class GameEngine implements Brick.BrickListener {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final InputManager input;
@@ -74,9 +76,20 @@ public class GameEngine {
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
+
+        // Load trước
+        levelManager.loadLevel(levelNumber);
+        bricks = levelManager.getActiveBricks();
+
+        // Rồi mới add listener
+        if (bricks != null) {
+            for (Brick brick : bricks) {
+                brick.addListener(this);
+            }
+        }
+
         ball.reset(paddle);
         paddle.reset();
-
         GameSession.getInstance().resetLives();
 
         if (uiCallback != null) {
@@ -303,7 +316,7 @@ public class GameEngine {
 
     private void updateGameplay(double deltaTime) {
         paddle.update(deltaTime);
-        
+
         // Update all balls
         for (Ball b : balls) {
             b.update(deltaTime);
@@ -320,7 +333,7 @@ public class GameEngine {
         if (!transitionManager.shouldDisableCollision()) {
             for (Ball b : balls) {
                 if (b.isReset()) continue;
-                
+
                 for (Brick brick : bricks) {
                     if (!brick.isDestroyed() && b.bounceOffWithBrick(brick)) {
                         boolean wasDestroyed = brick.isDestroyed();
@@ -349,6 +362,8 @@ public class GameEngine {
 
                         break;
                     }
+                    brick.takeHit();
+                    break;
                 }
             }
         }
@@ -360,11 +375,11 @@ public class GameEngine {
                 lostBalls.add(b);
             }
         }
-        
+
         // Remove lost balls
         if (!lostBalls.isEmpty()) {
             balls.removeAll(lostBalls);
-            
+
             // If no balls left (all lost), lose a life
             boolean anyActiveBalls = false;
             for (Ball b : balls) {
@@ -373,7 +388,7 @@ public class GameEngine {
                     break;
                 }
             }
-            
+
             if (!anyActiveBalls && stateManager.is(GameState.PLAYING)) {
                 GameSession.getInstance().loseLife();
                 if (uiCallback != null) {
@@ -454,7 +469,7 @@ public class GameEngine {
         gc.restore();
 
         paddle.render(gc);
-        
+
         // Render all balls
         for (Ball b : balls) {
             b.render(gc);
@@ -533,6 +548,19 @@ public class GameEngine {
         }
         return true;
     }
+
+    @Override
+    public void onBrickDestroyed(Brick brick) {
+        int points = 124;
+        GameSession.getInstance().addScore(points);
+
+        if (uiCallback != null) {
+            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+        }
+
+        System.out.println("Brick destroyed -> +"+points+" points! Total: " + GameSession.getInstance().getScore());
+    }
+
 
     public GameStateManager getStateManager() {
         return stateManager;
