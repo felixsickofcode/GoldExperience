@@ -9,7 +9,7 @@ public class Constants {
     public static final int GAME_OFFSET = (WINDOW_WIDTH - GAMEPLAYZONE_WIDTH) / 2;
 
     public static final double TINY_PADDLE_WIDTH = 51;
-    public static final double SMALL_PADDLE_WIDTH = 78;
+    public static final double SMALL_PADDLE_WIDTH = 72;
     public static final double MEDIUM_PADDLE_WIDTH = 95;
     public static final double LARGE_PADDLE_WIDTH = 120;
     public static final double BIG_PADDLE_WIDTH = 144;
