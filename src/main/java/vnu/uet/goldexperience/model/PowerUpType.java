@@ -14,17 +14,48 @@ public enum PowerUpType {
             (context) -> {
                 List<Ball> balls = context.balls();
 
+                // Find the first active ball to spawn from
                 for (Ball ball : balls) {
                     if (!ball.isReset()) {
+                        // Get current ball's velocity (this will be the angle bisector)
+                        double currentDx = ball.getDx();
+                        double currentDy = ball.getDy();
+                        double speed = Math.hypot(currentDx, currentDy);
+                        
+                        // Calculate current angle
+                        double currentAngle = Math.atan2(currentDy, currentDx);
+                        
+                        // Create angle spread: ±30 degrees from current angle
+                        double angleSpread = Math.toRadians(30);
+                        double angle1 = currentAngle - angleSpread;
+                        double angle2 = currentAngle + angleSpread;
+                        
+                        // Create two new balls at the current ball's position
                         Ball newBall1 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
                         Ball newBall2 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
+                        
+                        // Apply the current speed scale to new balls
+                        newBall1.applySpeedScale(ball.getSpeedScale());
+                        newBall2.applySpeedScale(ball.getSpeedScale());
+                        
+                        // Launch new balls with diagonal vectors
+                        newBall1.setDx(speed * Math.cos(angle1));
+                        newBall1.setDy(speed * Math.sin(angle1));
+                        
+                        newBall2.setDx(speed * Math.cos(angle2));
+                        newBall2.setDy(speed * Math.sin(angle2));
+                        
+                        // Add to balls list
                         balls.add(newBall1);
                         balls.add(newBall2);
+                        
+                        // Only spawn once from the first active ball
+                        break;
                     }
                 }
             },
             null,
-            "images/powerUp_BigBall.png",
+            "images/threeballs.png",
             Constants.THREE_BALLS_DURATION
     ),
 
@@ -78,7 +109,7 @@ public enum PowerUpType {
                     ball.applySpeedScale(Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
-            "images/powerUp_Slow.png",
+            "images/slow.png",
             Constants.SLOW_DURATION
     );
 

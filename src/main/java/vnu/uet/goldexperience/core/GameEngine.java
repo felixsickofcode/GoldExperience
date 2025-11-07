@@ -259,8 +259,14 @@ public class GameEngine {
                 paddle.stop();
         }
 
-        if (input.isActionActive(Action.SHOOT) && ball.isReset())
-            ball.shoot();
+        // Shoot all reset balls
+        if (input.isActionActive(Action.SHOOT)) {
+            for (Ball b : balls) {
+                if (b.isReset()) {
+                    b.shoot();
+                }
+            }
+        }
     }
 
     private void update(double deltaTime) {
@@ -297,57 +303,88 @@ public class GameEngine {
 
     private void updateGameplay(double deltaTime) {
         paddle.update(deltaTime);
-        ball.update(deltaTime);
+        
+        // Update all balls
+        for (Ball b : balls) {
+            b.update(deltaTime);
 
-        if (ball.isReset()) {
-            ball.setX(paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2);
-            ball.setY(paddle.getY() - ball.getHeight());
+            if (b.isReset()) {
+                b.setX(paddle.getX() + paddle.getWidth() / 2 - b.getWidth() / 2);
+                b.setY(paddle.getY() - b.getHeight());
+            }
+
+            b.bounceOffWithPaddle(paddle);
         }
 
-        ball.bounceOffWithPaddle(paddle);
-
+        // Check collisions for all balls
         if (!transitionManager.shouldDisableCollision()) {
-            for (Brick brick : bricks) {
-                if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                    boolean wasDestroyed = brick.isDestroyed();
+            for (Ball b : balls) {
+                if (b.isReset()) continue;
+                
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && b.bounceOffWithBrick(brick)) {
+                        boolean wasDestroyed = brick.isDestroyed();
 
-                    brick.takeHit();
+                        brick.takeHit();
 
-                    hitsSinceLastDrop++;
-                    if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
-                        spawnRandomDrop();
-                        hitsSinceLastDrop = 0;
-                    }
-
-                    if (!wasDestroyed && brick.isDestroyed()) {
-                        int points = 124;
-                        GameSession.getInstance().addScore(points);
-
-                        if (uiCallback != null) {
-                            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
-                        }
-
-                        // Spawn a falling power-up when a StrongBrick is destroyed
-                        if (brick instanceof StrongBrick) {
+                        hitsSinceLastDrop++;
+                        if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
                             spawnRandomDrop();
+                            hitsSinceLastDrop = 0;
                         }
-                    }
 
-                    break;
+                        if (!wasDestroyed && brick.isDestroyed()) {
+                            int points = 124;
+                            GameSession.getInstance().addScore(points);
+
+                            if (uiCallback != null) {
+                                uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+                            }
+
+                            // Spawn a falling power-up when a StrongBrick is destroyed
+                            if (brick instanceof StrongBrick) {
+                                spawnRandomDrop();
+                            }
+                        }
+
+                        break;
+                    }
                 }
             }
         }
 
-        if (ball.getY() >= canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
-            GameSession.getInstance().loseLife();
-            if (uiCallback != null) {
-                uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+        // Check if all balls are out of bounds; only lose life when ALL balls are lost
+        List<Ball> lostBalls = new ArrayList<>();
+        for (Ball b : balls) {
+            if (b.getY() >= canvas.getHeight() && !b.isReset()) {
+                lostBalls.add(b);
             }
+        }
+        
+        // Remove lost balls
+        if (!lostBalls.isEmpty()) {
+            balls.removeAll(lostBalls);
+            
+            // If no balls left (all lost), lose a life
+            boolean anyActiveBalls = false;
+            for (Ball b : balls) {
+                if (!b.isReset()) {
+                    anyActiveBalls = true;
+                    break;
+                }
+            }
+            
+            if (!anyActiveBalls && stateManager.is(GameState.PLAYING)) {
+                GameSession.getInstance().loseLife();
+                if (uiCallback != null) {
+                    uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+                }
 
-            if (GameSession.getInstance().stillAlive()) {
-                ball.reset(paddle);
-            } else {
-                stateManager.setState(GameState.GAME_OVER);
+                if (GameSession.getInstance().stillAlive()) {
+                    ball.reset(paddle);
+                } else {
+                    stateManager.setState(GameState.GAME_OVER);
+                }
             }
         }
 
@@ -417,7 +454,11 @@ public class GameEngine {
         gc.restore();
 
         paddle.render(gc);
-        ball.render(gc);
+        
+        // Render all balls
+        for (Ball b : balls) {
+            b.render(gc);
+        }
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             transitionManager.render(gc);
