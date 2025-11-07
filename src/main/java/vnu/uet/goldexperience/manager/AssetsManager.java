@@ -9,11 +9,13 @@ public class AssetsManager {
     public static List<Image> bricks = new ArrayList<>();
     public static List<Image> paddles = new ArrayList<>();
     public static List<Image> balls = new ArrayList<>();
+
     public static void loadAssets() {
         loadBricks();
         loadPaddles();
         loadBalls();
     }
+
     private static void loadBricks() {
         try {
             bricks.add(new Image(AssetsManager.class.getResource("/images/brick_15.png").toExternalForm()));

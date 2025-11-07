@@ -7,12 +7,13 @@ import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameSession;
 
 public class Ball extends MovableObject {
-    private double speed = Constants.BALL_SPEED; // viết nnay
     private final double radius;
     private boolean reset = true;
     private long lastCollisionTime = 0;
     static final double minDy = 80;
-    private BallEffect effect;
+    private final BallEffect effect;
+    // Multiplier applied by time-based power-ups like FAST/SLOW; persists across resets
+    private double speedScale = 1.0;
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
@@ -26,9 +27,26 @@ public class Ball extends MovableObject {
     }
 
     public void shoot() {
-        dx = 1;
-        dy = -speed;
+        // Launch with current speed scale so active FAST/SLOW effects apply across deaths
+        dx = 1 * speedScale;
+        // base launch speed
+        double speed = Constants.BALL_SPEED;
+        dy = -speed * speedScale;
         reset = false;
+    }
+
+    public void applySpeedScale(double factor) {
+        if (factor == 1.0) return;
+        speedScale *= factor;
+        if (!reset) {
+            setDx(getDx() * factor);
+            setDy(getDy() * factor);
+            normalizeSpeed(Constants.BALL_MAX_SPEED);
+        }
+    }
+
+    public double getSpeedScale() {
+        return speedScale;
     }
 
     public void reset(Paddle paddle) {

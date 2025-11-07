@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
-import vnu.uet.goldexperience.model.brick.Brick;
+import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
 
 import java.util.ArrayList;
@@ -32,6 +32,13 @@ public class GameEngine implements Brick.BrickListener {
     private Ball ball;
     private List<Brick> bricks;
 
+    // Power-ups and context
+    private final List<PowerUp> fallingPowerUps = new ArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Bullet> bullets = new ArrayList<>();
+    private PowerUpManager powerUpManager;
+    private int hitsSinceLastDrop = 0;
+
     private AnimationTimer loop;
     private long lastTime = 0;
 
@@ -52,7 +59,9 @@ public class GameEngine implements Brick.BrickListener {
         initObjects();
     }
 
-    public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
@@ -64,7 +73,6 @@ public class GameEngine implements Brick.BrickListener {
 
     private void loadCurrentLevel() {
         int levelNumber = GameSession.getInstance().getLevelNumber();
-
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
@@ -88,8 +96,18 @@ public class GameEngine implements Brick.BrickListener {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
-    }
 
+        levelManager.loadLevel(levelNumber);
+        bricks = levelManager.getActiveBricks();
+
+        // Rebuild game context and managers
+        balls.clear();
+        balls.add(ball);
+        bullets.clear();
+        fallingPowerUps.clear();
+        powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
+        hitsSinceLastDrop = 0;
+    }
 
     public void reloadLevel() {
         loadCurrentLevel();
@@ -222,6 +240,7 @@ public class GameEngine implements Brick.BrickListener {
     //Observer
     public interface GameUICallback {
         void onScoreChanged(int score);
+
         void onLivesChanged(int lives);
     }
 
@@ -253,8 +272,14 @@ public class GameEngine implements Brick.BrickListener {
                 paddle.stop();
         }
 
-        if (input.isActionActive(Action.SHOOT) && ball.isReset())
-            ball.shoot();
+        // Shoot all reset balls
+        if (input.isActionActive(Action.SHOOT)) {
+            for (Ball b : balls) {
+                if (b.isReset()) {
+                    b.shoot();
+                }
+            }
+        }
     }
 
     private void update(double deltaTime) {
@@ -291,36 +316,90 @@ public class GameEngine implements Brick.BrickListener {
 
     private void updateGameplay(double deltaTime) {
         paddle.update(deltaTime);
-        ball.update(deltaTime);
 
-        if (ball.isReset()) {
-            ball.setX(paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2);
-            ball.setY(paddle.getY() - ball.getHeight());
+        // Update all balls
+        for (Ball b : balls) {
+            b.update(deltaTime);
+
+            if (b.isReset()) {
+                b.setX(paddle.getX() + paddle.getWidth() / 2 - b.getWidth() / 2);
+                b.setY(paddle.getY() - b.getHeight());
+            }
+
+            b.bounceOffWithPaddle(paddle);
         }
 
-        ball.bounceOffWithPaddle(paddle);
-
+        // Check collisions for all balls
         if (!transitionManager.shouldDisableCollision()) {
-            for (Brick brick : bricks) {
-                if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                    boolean wasDestroyed = brick.isDestroyed();
+            for (Ball b : balls) {
+                if (b.isReset()) continue;
 
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && b.bounceOffWithBrick(brick)) {
+                        boolean wasDestroyed = brick.isDestroyed();
+
+                        brick.takeHit();
+
+                        hitsSinceLastDrop++;
+                        if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
+                            spawnRandomDrop();
+                            hitsSinceLastDrop = 0;
+                        }
+
+                        if (!wasDestroyed && brick.isDestroyed()) {
+                            int points = 124;
+                            GameSession.getInstance().addScore(points);
+
+                            if (uiCallback != null) {
+                                uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+                            }
+
+                            // Spawn a falling power-up when a StrongBrick is destroyed
+                            if (brick instanceof StrongBrick) {
+                                spawnRandomDrop();
+                            }
+                        }
+
+                        break;
+                    }
                     brick.takeHit();
                     break;
                 }
             }
         }
 
-        if (ball.getY() >= canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
-            GameSession.getInstance().loseLife();
-            if (uiCallback != null) {
-                uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+        // Check if all balls are out of bounds; only lose life when ALL balls are lost
+        List<Ball> lostBalls = new ArrayList<>();
+        for (Ball b : balls) {
+            if (b.getY() >= canvas.getHeight() && !b.isReset()) {
+                lostBalls.add(b);
+            }
+        }
+
+        // Remove lost balls
+        if (!lostBalls.isEmpty()) {
+            balls.removeAll(lostBalls);
+
+            // If no balls left (all lost), lose a life
+            boolean anyActiveBalls = false;
+            for (Ball b : balls) {
+                if (!b.isReset()) {
+                    anyActiveBalls = true;
+                    break;
+                }
             }
 
-            if (GameSession.getInstance().stillAlive()) {
-                ball.reset(paddle);
-            } else {
-                stateManager.setState(GameState.GAME_OVER);
+            if (!anyActiveBalls && stateManager.is(GameState.PLAYING)) {
+                GameSession.getInstance().loseLife();
+                if (uiCallback != null) {
+                    uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+                }
+
+                if (GameSession.getInstance().stillAlive()) {
+                    ball.reset(paddle);
+                } else {
+                    stateManager.setState(GameState.GAME_OVER);
+                }
             }
         }
 
@@ -328,8 +407,49 @@ public class GameEngine implements Brick.BrickListener {
             brick.update(deltaTime);
         }
 
+        // Update active falling power-ups
+        if (!fallingPowerUps.isEmpty()) {
+            List<PowerUp> collected = new ArrayList<>();
+            for (PowerUp pu : fallingPowerUps) {
+                pu.update(deltaTime);
+
+                if (pu.getY() > canvas.getHeight()) {
+                    collected.add(pu);
+                    continue;
+                }
+
+                if (pu.getX() < paddle.getX() + paddle.getWidth() &&
+                        pu.getX() + pu.getWidth() > paddle.getX() &&
+                        pu.getY() < paddle.getY() + paddle.getHeight() &&
+                        pu.getY() + pu.getHeight() > paddle.getY()) {
+
+                    if (powerUpManager != null) {
+                        powerUpManager.activatePowerUp(pu);
+                    }
+                    collected.add(pu);
+                }
+            }
+            if (!collected.isEmpty()) {
+                fallingPowerUps.removeAll(collected);
+            }
+        }
+
+
+        if (powerUpManager != null) {
+            powerUpManager.update();
+        }
+
         checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
+    }
+
+    private void spawnRandomDrop() {
+        double minX = 0;
+        double maxX = Constants.GAMEPLAYZONE_WIDTH - Constants.POWER_UP_ITEM_WIDTH;
+        double spawnX = minX + Math.random() * (maxX - minX);
+        double spawnY = -Constants.POWER_UP_ITEM_HEIGHT;
+        PowerUpType dropType = PowerUpType.randomDroppable();
+        fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, dropType));
     }
 
     private void render() {
@@ -342,10 +462,18 @@ public class GameEngine implements Brick.BrickListener {
             brick.render(gc);
         }
 
+        for (PowerUp pu : fallingPowerUps) {
+            pu.render(gc);
+        }
+
         gc.restore();
 
         paddle.render(gc);
-        ball.render(gc);
+
+        // Render all balls
+        for (Ball b : balls) {
+            b.render(gc);
+        }
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             transitionManager.render(gc);
@@ -446,5 +574,7 @@ public class GameEngine implements Brick.BrickListener {
         return transitionManager;
     }
 
-    public GameOverManager getGameOverManager() { return gameOverManager; }
+    public GameOverManager getGameOverManager() {
+        return gameOverManager;
+    }
 }
