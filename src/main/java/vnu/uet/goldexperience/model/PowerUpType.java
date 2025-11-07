@@ -51,18 +51,14 @@ public enum PowerUpType {
     FAST(
             (context) -> {
                 List<Ball> balls = context.balls();
-
                 for (Ball ball : balls) {
-                    ball.setDx(ball.getDx() * Constants.BALL_SPEED_AMPLIFIER);
-                    ball.setDy(ball.getDy() * Constants.BALL_SPEED_AMPLIFIER);
+                    ball.applySpeedScale(Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
             (context) -> {
                 List<Ball> balls = context.balls();
-
                 for (Ball ball : balls) {
-                    ball.setDx(ball.getDx() / Constants.BALL_SPEED_AMPLIFIER);
-                    ball.setDy(ball.getDy() / Constants.BALL_SPEED_AMPLIFIER);
+                    ball.applySpeedScale(1.0 / Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
             "images/fast.png",
@@ -72,18 +68,14 @@ public enum PowerUpType {
     SLOW(
             (context) -> {
                 List<Ball> balls = context.balls();
-
                 for (Ball ball : balls) {
-                    ball.setDx(ball.getDx() / Constants.BALL_SPEED_AMPLIFIER);
-                    ball.setDy(ball.getDy() / Constants.BALL_SPEED_AMPLIFIER);
+                    ball.applySpeedScale(1.0 / Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
             (context) -> {
                 List<Ball> balls = context.balls();
-
                 for (Ball ball : balls) {
-                    ball.setDx(ball.getDx() * Constants.BALL_SPEED_AMPLIFIER);
-                    ball.setDy(ball.getDy() * Constants.BALL_SPEED_AMPLIFIER);
+                    ball.applySpeedScale(Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
             "images/powerUp_Slow.png",
