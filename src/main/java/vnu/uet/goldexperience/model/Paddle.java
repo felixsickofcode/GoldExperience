@@ -13,7 +13,7 @@ public class Paddle extends MovableObject {
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
-        this.image = AssetsManager.paddles.get(2);
+        this.image = AssetsManager.paddles.get(12);
         effect = new PaddleEffect(width, height);
     }
 

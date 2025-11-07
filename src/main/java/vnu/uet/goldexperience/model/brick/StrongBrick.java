@@ -15,7 +15,7 @@ public class StrongBrick extends MediumBrick {
     public StrongBrick(double x, double y, double width, double height) {
         super(x, y, width, height);
         image = AssetsManager.bricks.get(5);
-        this.hitPoints = Math.random() < 0.8 ? 4 : 6;
+        this.hitPoints = Constants.MAX_HIT_POINTS;
         this.regenerateEffect = new RegenerateEffect(this);
         this.reviveEffect = new ReviveEffect(this);
     }
