@@ -1,7 +1,11 @@
 # GoldExperience# Test
 create database
-'''
-CREATE DATABASE IF NOT EXISTS gold_experience;   
+## 🗄️ Database Setup
+
+Run the following SQL commands to create and initialize the **gold_experience** database:
+
+```sql
+CREATE DATABASE IF NOT EXISTS gold_experience;
 USE gold_experience;
 
 CREATE TABLE IF NOT EXISTS players (
@@ -17,5 +21,6 @@ CREATE TABLE IF NOT EXISTS players (
 
 SELECT * FROM players ORDER BY score DESC;
 
+top 10 players
 SELECT name, score FROM players ORDER BY score DESC LIMIT 10;
-'''
+```
