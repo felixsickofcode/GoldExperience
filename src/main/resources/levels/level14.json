@@ -1,0 +1,32 @@
+{
+  "levelNumber": 4,
+  "key": {
+    "N": "normal",
+    "U": "unbreakable",
+    " ": "empty",
+    "M": "medium",
+    "H": "movable_unbreakable_horizontal",
+    "V": "movable_unbreakable_vertical"
+  },
+  "layout": [
+    "N   H   N   H",
+    " M H M H M H ",
+    "  N V N V N  ",
+    " M H M H M H ",
+    "N   H   N   H"
+  ],
+  "properties": {
+    "movable_unbreakable_horizontal": {
+      "dx": 48,
+      "dy": 0,
+      "rangeX": 144,
+      "rangeY": 0
+    },
+    "movable_unbreakable_vertical": {
+      "dx": 0,
+      "dy": 24,
+      "rangeX": 0,
+      "rangeY": 48
+    }
+  }
+}
