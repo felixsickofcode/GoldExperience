@@ -1,42 +1,46 @@
 {
   "key": {
     "N": "normal",
-    "U": "unbreakable",
+    "U": "movable_unbreakable_vertical",
     " ": "empty",
-    "E": "explode",
     "M": "medium",
-    "C": "movable_circular",
-    "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "H": "movable_horizontal",
+    "V": "movable_vertical"
   },
   "layout": [
+    "            ",
+    "      HH    ",
+    "     HHHH   ",
+    "      HH    ",
+    "",
+    "",
+    "  VV    UU  ",
+    " VVVV  UUUU ",
+    "  VV    UU  ",
     "",
     "",
     "",
-    "",
-    "",
-    "",
-    "",
-    "     N"
+    "NNNNNNNNNNNN",
+    "NNNNNNNNNNNN"
   ],
   "properties": {
-    "movable_circular": {
-      "dx": 0,
+    "movable_horizontal": {
+      "dx": 32,
       "dy": 0,
-      "rangeX": 100,
-      "rangeY": 100
-    },
-    "movable_unbreakable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 144,
+      "rangeX": 128,
       "rangeY": 0
+    },
+    "movable_vertical": {
+      "dx": 0,
+      "dy": 32,
+      "rangeX": 0,
+      "rangeY": 24
     },
     "movable_unbreakable_vertical": {
       "dx": 0,
-      "dy": 24,
+      "dy": 32,
       "rangeX": 0,
-      "rangeY": 48
+      "rangeY": 24
     }
   }
 }
