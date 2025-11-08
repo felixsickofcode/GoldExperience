@@ -7,10 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
-import vnu.uet.goldexperience.model.brick.Brick;
-import vnu.uet.goldexperience.model.brick.ExplodeBrick;
-import vnu.uet.goldexperience.model.brick.StrongBrick;
-import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
+import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
 
 import java.util.ArrayList;
@@ -380,7 +377,7 @@ private void updateGameplay(double deltaTime) {
                         }
 
                         // Spawn a falling power-up when a StrongBrick is destroyed
-                        if (brick instanceof StrongBrick) {
+                        if (brick instanceof MediumBrick) {
                             spawnRandomDrop();
                         }
                     }
