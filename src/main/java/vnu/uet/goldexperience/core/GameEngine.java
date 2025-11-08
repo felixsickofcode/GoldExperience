@@ -5,7 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import vnu.uet.goldexperience.effect.BorderFlashEffect;
-import vnu.uet.goldexperience.effect.ExplosionEffect;
+import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.model.brick.Brick;
@@ -29,7 +29,7 @@ public class GameEngine implements Brick.BrickListener {
     private final TransitionManager transitionManager;
     private final PauseMenuManager pauseMenuManager;
     private final GameOverManager gameOverManager;
-    private final LifeManager lifeManager;
+    private final DialogueSystem dialogueSystem;
 
     private SceneManager sceneManager;
     private CursorChangeListener cursorChangeListener;
@@ -39,8 +39,17 @@ public class GameEngine implements Brick.BrickListener {
     private Ball ball;
     private List<Brick> bricks;
 
+    private final List<PowerUp> fallingPowerUps = new ArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Bullet> bullets = new ArrayList<>();
+    private PowerUpManager powerUpManager;
+    private int hitsSinceLastDrop = 0;
+
     private AnimationTimer loop;
     private long lastTime = 0;
+
+    private GameSession.GameMode mode;
+    private int comboCount = 0;
 
     private boolean levelCompleteSoundPlayed = false;
     private Set<Brick> soundForExplosionChains = new HashSet<>();
@@ -50,12 +59,14 @@ public class GameEngine implements Brick.BrickListener {
         this.gc = canvas.getGraphicsContext2D();
         this.input = input;
         this.levelManager = new LevelManager();
-        this.lifeManager = new LifeManager(canvas.getWidth(), canvas.getHeight());
         this.transitionManager = new TransitionManager(canvas.getWidth(), canvas.getHeight());
         this.pauseMenuManager = new PauseMenuManager(canvas, null);
         this.gameOverManager = new GameOverManager(canvas, null);
         this.stateManager = new GameStateManager(transitionManager, pauseMenuManager, gameOverManager);
+        this.dialogueSystem = new DialogueSystem(canvas);
+        this.mode = GameSession.getInstance().getMode();
 
+        setupDialogueCallbacks();
         setupPauseMenuCallbacks();
         setupGameOverCallbacks();
 
@@ -367,6 +378,7 @@ private void setupGameOverCallbacks() {
         if (!transitionManager.shouldDisableCollision()) {
             for (Ball b : balls) {
                 if (b.isReset()) continue;
+            }
             for (Brick brick : bricks) {
                 if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
                     boolean wasDestroyed = brick.isDestroyed();
@@ -422,7 +434,7 @@ private void setupGameOverCallbacks() {
             brick.update(deltaTime);
         }
 
-    // Update active falling power-ups
+            // Update active falling power-ups
         if (!fallingPowerUps.isEmpty()) {
             List<PowerUp> collected = new ArrayList<>();
             for (PowerUp pu : fallingPowerUps) {
