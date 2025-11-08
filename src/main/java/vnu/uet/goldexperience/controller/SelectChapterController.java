@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.manager.GameSession;
 
@@ -173,6 +174,7 @@ public class SelectChapterController {
 
     @FXML
     public void onLeftClick(ActionEvent event) {
+        AssetsManager.playClickSound();
         if (currentCenterIndex > 0) {
             System.out.println("Moving left to Chapter " + chapters.get(currentCenterIndex - 1).chapterNumber);
             currentCenterIndex--;
@@ -184,6 +186,7 @@ public class SelectChapterController {
 
     @FXML
     public void onRightClick(ActionEvent event) {
+        AssetsManager.playClickSound();
         if (currentCenterIndex < TOTAL_CHAPTERS - 1) {
             System.out.println("Moving right to Chapter " + chapters.get(currentCenterIndex + 1).chapterNumber);
             currentCenterIndex++;
@@ -195,6 +198,7 @@ public class SelectChapterController {
 
     @FXML
     private void handleChooseChapter(ActionEvent event) {
+        AssetsManager.playClickSound();
         int selectedChapter = getCurrentChapterNumber();
         System.out.println("Choose Chapter " + selectedChapter + " clicked");
 
@@ -207,6 +211,7 @@ public class SelectChapterController {
 
     @FXML
     private void handleBackToMenu(ActionEvent event) {
+        AssetsManager.playClickSound();
         System.out.println("Back to menu clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("menu");
