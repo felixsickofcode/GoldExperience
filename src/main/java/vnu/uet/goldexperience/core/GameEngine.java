@@ -85,7 +85,6 @@ public class GameEngine implements Brick.BrickListener {
 
     private void loadCurrentLevel() {
         int levelNumber = GameSession.getInstance().getLevelNumber();
-
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
@@ -109,8 +108,23 @@ public class GameEngine implements Brick.BrickListener {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
-    }
+        soundForExplosionChains.clear();
+        levelCompleteSoundPlayed = false;
 
+
+        levelManager.loadLevel(levelNumber);
+        bricks = levelManager.getActiveBricks();
+
+        // Rebuild game context and managers
+        balls.clear();
+        balls.add(ball);
+        bullets.clear();
+        fallingPowerUps.clear();
+        powerUpManager = new
+
+                PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
+        hitsSinceLastDrop = 0;
+    }
 
     public void reloadLevel() {
         loadCurrentLevel();
