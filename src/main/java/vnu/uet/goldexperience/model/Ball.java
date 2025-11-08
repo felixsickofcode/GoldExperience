@@ -5,6 +5,7 @@ import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.ball.BallEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameSession;
+import vnu.uet.goldexperience.model.brick.Brick;
 
 public class Ball extends MovableObject {
     private double speed = Constants.BALL_SPEED; // viết nnay
@@ -40,7 +41,7 @@ public class Ball extends MovableObject {
         effect.clear();
     }
 
-    public void bounceOffWithPaddle(GameObject paddle) {
+    public boolean bounceOffWithPaddle(Paddle paddle) {
         long now = System.currentTimeMillis();
         if (paddle != null && checkCollision(paddle) && now - getLastCollisionTime() > 200) {
 
@@ -72,13 +73,14 @@ public class Ball extends MovableObject {
             increaseSpeedPercent(1.5);
             normalizeSpeed(Constants.BALL_MAX_SPEED);
             setLastCollisionTime(now);
-            Paddle paddle_ = (Paddle) paddle;
-            paddle_.onBallCollision(this);
+            paddle.onBallCollision(this);
+            return true;
         }
+        return false;
     }
 
-    public boolean bounceOffWithBrick(GameObject brick) {
-        if (brick == null || !checkCollision(brick)) {
+    public boolean bounceOffWithBrick(Brick brick) {
+        if (brick == null || brick.isDestroyed() || !checkCollision(brick)) {
             return false;
         }
 

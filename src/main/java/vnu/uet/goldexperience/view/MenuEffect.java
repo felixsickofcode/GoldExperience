@@ -1,6 +1,8 @@
 package vnu.uet.goldexperience.view;
 
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -8,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.control.Button;
 import javafx.scene.text.Font;
 import javafx.scene.input.MouseEvent;
+import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class MenuEffect extends StackPane {
 
@@ -197,7 +200,7 @@ public class MenuEffect extends StackPane {
         return button;
     }
 
-    public void setOnAction(javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
+    public void setOnAction(EventHandler<ActionEvent> handler) {
         button.setOnAction(handler);
     }
 

@@ -14,8 +14,9 @@ import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
 import vnu.uet.goldexperience.core.ChapterTheme;
 import vnu.uet.goldexperience.view.GameUIComponents;
+import vnu.uet.goldexperience.manager.GameSession.*;
 
-public class GameController implements GameSession.GameSessionListener {
+public class GameController implements GameSessionListener {
     @FXML
     private StackPane rootGamePane;
 

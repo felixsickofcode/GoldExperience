@@ -119,4 +119,8 @@ public abstract class Brick extends GameObject {
     public DebrisEffect getBreakEffect() {
         return breakEffect;
     }
+
+    public int getHitPoints() {
+        return hitPoints;
+    }
 }

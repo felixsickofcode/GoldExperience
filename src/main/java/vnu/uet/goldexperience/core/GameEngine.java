@@ -1,18 +1,23 @@
 package vnu.uet.goldexperience.core;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.model.brick.Brick;
+import vnu.uet.goldexperience.model.brick.ExplodeBrick;
 import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
+import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class GameEngine implements Brick.BrickListener {
+public class GameEngine implements BrickListener {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final InputManager input;
@@ -35,6 +40,8 @@ public class GameEngine implements Brick.BrickListener {
     private AnimationTimer loop;
     private long lastTime = 0;
 
+    private boolean levelCompleteSoundPlayed = false;
+    private Set<Brick> soundForExplosionChains = new HashSet<>();
     public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
@@ -50,6 +57,7 @@ public class GameEngine implements Brick.BrickListener {
         setupGameOverCallbacks();
 
         initObjects();
+
     }
 
     public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
@@ -88,6 +96,8 @@ public class GameEngine implements Brick.BrickListener {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
+        soundForExplosionChains.clear();
+        levelCompleteSoundPlayed = false;
     }
 
 
@@ -100,6 +110,7 @@ public class GameEngine implements Brick.BrickListener {
         pauseMenuManager.setCallback(new PauseMenuManager.PauseMenuCallback() {
             @Override
             public void onResume() {
+                AssetsManager.playClickSound();
                 System.out.println("Resume clicked");
                 stateManager.setState(GameState.PLAYING);
                 notifyCursorChange();
@@ -107,6 +118,7 @@ public class GameEngine implements Brick.BrickListener {
 
             @Override
             public void onRestart() {
+                AssetsManager.playClickSound();
                 System.out.println("Restart clicked");
                 reloadLevel();
                 notifyCursorChange();
@@ -114,6 +126,7 @@ public class GameEngine implements Brick.BrickListener {
 
             @Override
             public void onLevelSelect() {
+                AssetsManager.playClickSound();
                 System.out.println("Level Select");
                 if (sceneManager != null) {
                     end();
@@ -123,8 +136,9 @@ public class GameEngine implements Brick.BrickListener {
 
             @Override
             public void onQuit() {
+                AssetsManager.playClickSound();
                 System.out.println("Quit clicked");
-                javafx.application.Platform.exit();
+                Platform.exit();
             }
         });
     }
@@ -133,12 +147,14 @@ public class GameEngine implements Brick.BrickListener {
         gameOverManager.setCallback(new GameOverManager.GameOverCallback() {
             @Override
             public void onRetry() {
+                AssetsManager.playClickSound();
                 System.out.println("Retry clicked");
                 reloadLevel();
             }
 
             @Override
             public void onLevelSelect() {
+                AssetsManager.playClickSound();
                 System.out.println("Level Select clicked");
                 if (sceneManager != null) {
                     end();
@@ -148,6 +164,7 @@ public class GameEngine implements Brick.BrickListener {
 
             @Override
             public void onMainMenu() {
+                AssetsManager.playClickSound();
                 System.out.println("Main Menu clicked");
                 if (sceneManager != null) {
                     end();
@@ -298,15 +315,23 @@ public class GameEngine implements Brick.BrickListener {
             ball.setY(paddle.getY() - ball.getHeight());
         }
 
-        ball.bounceOffWithPaddle(paddle);
-
+        if(ball.bounceOffWithPaddle(paddle)) {
+            AssetsManager.playHitPaddleSound();
+        }
         if (!transitionManager.shouldDisableCollision()) {
             for (Brick brick : bricks) {
-                if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                    boolean wasDestroyed = brick.isDestroyed();
-
-                    brick.takeHit();
-                    break;
+                if (ball.bounceOffWithBrick(brick)) {
+                    if (!brick.isDestroyed()) {
+                        brick.takeHit();
+                        if (brick instanceof ExplodeBrick) {
+                            AssetsManager.playExplosionSound();
+                        } else if (brick.getHitPoints() == 0||brick instanceof UnbreakableBrick) {
+                            AssetsManager.playBreakBrickSound();
+                        } else {
+                            AssetsManager.playHitBrickSound();
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -316,10 +341,9 @@ public class GameEngine implements Brick.BrickListener {
             if (uiCallback != null) {
                 uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             }
-
-            if (GameSession.getInstance().stillAlive()) {
-                ball.reset(paddle);
-            } else {
+            ball.reset(paddle);
+            if (!GameSession.getInstance().stillAlive()) {
+                AssetsManager.playLoseSound();
                 stateManager.setState(GameState.GAME_OVER);
             }
         }
@@ -370,9 +394,13 @@ public class GameEngine implements Brick.BrickListener {
                 }
             }
         }
-
         for (Brick brick : newlyExploded) {
             brick.explodeByChainReaction();
+
+            if (!soundForExplosionChains.contains(brick)) {
+                AssetsManager.playExplosionSound();
+                soundForExplosionChains.add(brick);
+            }
         }
     }
 
@@ -388,10 +416,17 @@ public class GameEngine implements Brick.BrickListener {
     }
 
     private void handleLevelComplete() {
+        boolean hasUnbreakableBricks = false;
         for (Brick brick : bricks) {
             if (brick instanceof UnbreakableBrick) {
                 ((UnbreakableBrick) brick).destroy();
+                hasUnbreakableBricks = true;
             }
+        }
+
+        if (hasUnbreakableBricks && !levelCompleteSoundPlayed) {
+            AssetsManager.playBreakBrickSound();
+            levelCompleteSoundPlayed = true;
         }
         if (areAllEffectsFinished()) {
             System.out.println("Level Complete!");
@@ -430,7 +465,7 @@ public class GameEngine implements Brick.BrickListener {
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
 
-        System.out.println("Brick destroyed -> +"+points+" points! Total: " + GameSession.getInstance().getScore());
+//        System.out.println("Brick destroyed -> +"+points+" points! Total: " + GameSession.getInstance().getScore());
     }
 
 
