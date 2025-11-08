@@ -1,5 +1,6 @@
-package vnu.uet.goldexperience.model;
-
+package vnu.uet.goldexperience.model.brick;
+import vnu.uet.goldexperience.model.Movable;
+import vnu.uet.goldexperience.model.brickFactory.MovableBrickFactory.PathType;
 public class UnbreakableMovableBrick extends UnbreakableBrick implements Movable {
     protected double dx, dy;
     private double originX, originY;

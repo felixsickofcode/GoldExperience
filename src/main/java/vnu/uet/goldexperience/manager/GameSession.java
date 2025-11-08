@@ -121,6 +121,7 @@ public class GameSession {
     }
 
     public void notifyBallHitWall(HitSide hitSide) {
+        AssetsManager.playHitWallSound();
         for (GameSessionListener listener : listeners) {
             listener.onBallHitWall(hitSide);
         }

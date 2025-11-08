@@ -1,9 +1,8 @@
-package vnu.uet.goldexperience.model;
+package vnu.uet.goldexperience.model.brick;
 
 import javafx.scene.canvas.GraphicsContext;
-import vnu.uet.goldexperience.effect.DebrisEffect;
-import vnu.uet.goldexperience.effect.DestructionEffect;
-import vnu.uet.goldexperience.effect.FlashEffect;
+import vnu.uet.goldexperience.effect.brick.DebrisEffect;
+import vnu.uet.goldexperience.effect.brick.DestructionEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SpriteManager;
 
@@ -11,7 +10,6 @@ public class UnbreakableBrick extends Brick {
     private final SpriteManager spriteLoader;
     private boolean hitAnimating = false;
     private DestructionEffect destructionEffect;
-
 
 
     private boolean playingDestructionEffect;
@@ -48,6 +46,7 @@ public class UnbreakableBrick extends Brick {
             playingBreakEffect = true;
         }
     }
+
     public void destroy() {
         hitPoints = 0;
         triggerDestructionEffect();
@@ -92,7 +91,7 @@ public class UnbreakableBrick extends Brick {
                 playingBreakEffect = false;
             }
         }
-        if (playingDestructionEffect && destructionEffect !=null) {
+        if (playingDestructionEffect && destructionEffect != null) {
             destructionEffect.update(deltaTime);
             if (destructionEffect.isFinished()) {
                 playingDestructionEffect = false;
@@ -118,7 +117,7 @@ public class UnbreakableBrick extends Brick {
         if (playingBreakEffect && breakEffect != null) {
             breakEffect.render(gc);
         }
-        if (playingDestructionEffect ) {
+        if (playingDestructionEffect) {
             destructionEffect.render(gc);
         }
     }

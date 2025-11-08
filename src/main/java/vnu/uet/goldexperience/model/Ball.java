@@ -5,14 +5,16 @@ import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.ball.BallEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameSession;
+import vnu.uet.goldexperience.model.brick.Brick;
 
 public class Ball extends MovableObject {
-    private double speed = Constants.BALL_SPEED; // viết nnay
     private final double radius;
     private boolean reset = true;
     private long lastCollisionTime = 0;
     static final double minDy = 80;
-    private BallEffect effect;
+    private final BallEffect effect;
+    // Multiplier applied by time-based power-ups like FAST/SLOW; persists across resets
+    private double speedScale = 1.0;
 
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
@@ -26,9 +28,26 @@ public class Ball extends MovableObject {
     }
 
     public void shoot() {
-        dx = 1;
-        dy = -speed;
+        // Launch with current speed scale so active FAST/SLOW effects apply across deaths
+        dx = 1 * speedScale;
+        // base launch speed
+        double speed = Constants.BALL_SPEED;
+        dy = -speed * speedScale;
         reset = false;
+    }
+
+    public void applySpeedScale(double factor) {
+        if (factor == 1.0) return;
+        speedScale *= factor;
+        if (!reset) {
+            setDx(getDx() * factor);
+            setDy(getDy() * factor);
+            normalizeSpeed(Constants.BALL_MAX_SPEED);
+        }
+    }
+
+    public double getSpeedScale() {
+        return speedScale;
     }
 
     public void reset(Paddle paddle) {
@@ -40,7 +59,7 @@ public class Ball extends MovableObject {
         effect.clear();
     }
 
-    public void bounceOffWithPaddle(GameObject paddle) {
+    public boolean bounceOffWithPaddle(Paddle paddle) {
         long now = System.currentTimeMillis();
         if (paddle != null && checkCollision(paddle) && now - getLastCollisionTime() > 200) {
 
@@ -72,13 +91,14 @@ public class Ball extends MovableObject {
             increaseSpeedPercent(1.5);
             normalizeSpeed(Constants.BALL_MAX_SPEED);
             setLastCollisionTime(now);
-            Paddle paddle_ = (Paddle) paddle;
-            paddle_.onBallCollision(this);
+            paddle.onBallCollision(this);
+            return true;
         }
+        return false;
     }
 
-    public boolean bounceOffWithBrick(GameObject brick) {
-        if (brick == null || !checkCollision(brick)) {
+    public boolean bounceOffWithBrick(Brick brick) {
+        if (brick == null || brick.isDestroyed() || !checkCollision(brick)) {
             return false;
         }
 
@@ -213,7 +233,6 @@ public class Ball extends MovableObject {
     @Override
     public void render(GraphicsContext gc) {
         effect.render(gc);
-        // ball
         gc.setGlobalAlpha(1.0);
         if (image != null)
             gc.drawImage(image, x, y, width, height);

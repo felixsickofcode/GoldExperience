@@ -4,12 +4,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.manager.GameSession;
+import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.view.MenuEffect;
 
 public class MenuController {
     private SceneManager sceneManager;
+
+    @FXML
+    private VBox menuContainer;
 
     @FXML
     private Button btnChooseStage;
@@ -39,6 +45,8 @@ public class MenuController {
     @FXML
     private Label titleLabel;
 
+
+    // Set scene manager
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
     }
@@ -46,21 +54,50 @@ public class MenuController {
     @FXML
     public void initialize() {
         System.out.println("Menu initialized");
+
+        // Replace standard buttons with animated buttons if VBox exists
+        if (menuContainer != null) {
+            replaceWithAnimatedButtons();
+        }
     }
+
+    private void replaceWithAnimatedButtons() {
+        // Clear existing buttons
+        menuContainer.getChildren().clear();
+
+        // Create animated buttons
+        MenuEffect animBtn1 = new MenuEffect("STORY MODE", 340, 70);
+        MenuEffect animBtn2 = new MenuEffect("2 PLAYER MODE", 340, 70);
+        MenuEffect animBtn3 = new MenuEffect("SETTINGS", 340, 70);
+
+        if (soundOn) {
+            animBtn1.getButton().setOnMousePressed(e -> AssetsManager.playClickSound());
+            animBtn2.getButton().setOnMousePressed(e -> AssetsManager.playClickSound());
+            animBtn3.getButton().setOnMousePressed(e -> AssetsManager.playClickSound());
+        }
+        // Set actions
+        animBtn1.setOnAction(this::handleStoryMode);
+        animBtn2.setOnAction(this::handle2PlayerMode);
+        animBtn3.setOnAction(this::handleMoveToSetting);
+
+        // Add to container with proper spacing (VBox already has spacing from FXML)
+        menuContainer.getChildren().addAll(animBtn1, animBtn2, animBtn3);
+    }
+
 
     @FXML
     private void handleSound(ActionEvent event) {
+        AssetsManager.playClickSound();
         System.out.println("Sound clicked");
         soundOn = !soundOn;
         if (soundOn) {
             btnSound.setText("Sound ON");
-        }
-        else {
+        } else {
             btnSound.setText("Sound OFF");
         }
     }
 
-    // HandleSound clicked
+    // HandleStoryMode clicked
     @FXML
     private void handleStoryMode(ActionEvent event) {
         System.out.println("Story Mode clicked");
@@ -78,7 +115,7 @@ public class MenuController {
         }
     }
 
-    // HandleSound clicked
+    // Handle2PlayerMode clicked
     @FXML
     private void handle2PlayerMode(ActionEvent event) {
         GameSession.getInstance().setMode(GameSession.GameMode.ENDLESS);
@@ -87,6 +124,7 @@ public class MenuController {
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
+            controller.startGame();
             controller.setSceneManager(sceneManager);
             controller.startGame();
         }
@@ -95,6 +133,7 @@ public class MenuController {
     // When click on tutorial
     @FXML
     private void handleTutorial(ActionEvent event) {
+        AssetsManager.playClickSound();
         System.out.println("Tutorial clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("tutorial");
@@ -104,6 +143,7 @@ public class MenuController {
     // Handle back to menu
     @FXML
     private void handleBackToMenu(ActionEvent event) {
+        AssetsManager.playClickSound();
         System.out.println("Back to menu clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("menu");
@@ -113,6 +153,7 @@ public class MenuController {
     // Handle back to setting
     @FXML
     private void handleBackToSetting(ActionEvent event) {
+        AssetsManager.playClickSound();
         System.out.println("Back to setting clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("setting");
@@ -122,6 +163,7 @@ public class MenuController {
     // When click on exit
     @FXML
     private void handleExit(ActionEvent event) {
+        AssetsManager.playClickSound();
         System.out.println("Exit clicked");
         Stage stage = (Stage) btnExit.getScene().getWindow();
         stage.close();

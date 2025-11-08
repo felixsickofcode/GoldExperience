@@ -4,7 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import vnu.uet.goldexperience.controller.LoginController;
 import vnu.uet.goldexperience.controller.MenuController;
 import vnu.uet.goldexperience.controller.SelectChapterController;
 import vnu.uet.goldexperience.controller.SelectLevelController;
@@ -15,6 +17,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // Load fonts
+        Font.loadFont(getClass().getResourceAsStream("/font/cyber22.ttf"), 24);
+        Font font22 = Font.loadFont(getClass().getResourceAsStream("/font/cyber22.ttf"), 24);
+        Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 24);
+        Font font = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 24);
+
+        System.out.println("Font loaded: " + font);
+        System.out.println("Font name: " + font.getName());
+        System.out.println("Font family: " + font.getFamily());
+        System.out.println("Font loaded: " + font22);
+        System.out.println("Font name: " + font22.getName());
+        System.out.println("Font family: " + font22.getFamily());
+
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: black;");
 
@@ -23,7 +38,8 @@ public class Main extends Application {
         // Load assets
         AssetsManager.loadAssets();
 
-        // Preload FXML
+        // Preload FXML (including login)
+        sceneManager.PreloadScene("login", "/fxml/login.fxml");
         sceneManager.PreloadScene("menu", "/fxml/menu-view.fxml");
         sceneManager.PreloadScene("tutorial", "/fxml/tutorial-view.fxml");
         sceneManager.PreloadScene("game", "/fxml/game.fxml");
@@ -31,7 +47,12 @@ public class Main extends Application {
         sceneManager.PreloadScene("chapter", "/fxml/chapter.fxml");
         sceneManager.PreloadScene("level", "/fxml/level.fxml");
 
-        // Setup controllers
+        // Setup login controller
+        FXMLLoader loginLoader = sceneManager.getScreens().get("login");
+        LoginController loginController = loginLoader.getController();
+        loginController.setSceneManager(sceneManager);
+
+        // Setup other controllers
         FXMLLoader menuLoader = sceneManager.getScreens().get("menu");
         MenuController menuController = menuLoader.getController();
         menuController.setSceneManager(sceneManager);
@@ -52,23 +73,18 @@ public class Main extends Application {
         SelectChapterController chapterController = chapterLoader.getController();
         chapterController.setSceneManager(sceneManager);
 
-        sceneManager.switchTo("menu");
-
         Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(getClass().getResource("/fxml/style.css").toExternalForm());
 
         stage.setScene(scene);
+        stage.setTitle("Gold Experience");
 //        stage.setFullScreen(true);
 //        stage.setFullScreenExitHint("Nhấn F11 để thoát toàn màn hình");
         stage.show();
+
+        // Start with login screen
+        sceneManager.switchTo("login");
         System.out.println("R:" + root.getWidth());
-//        double screenWidth = Screen.getPrimary().getBounds().getWidth();
-//        double screenHeight = Screen.getPrimary().getBounds().getHeight();
-//        double scaleX = screenWidth / 1280.0;
-//        double scaleY = screenHeight / 720.0;
-//        double scale = Math.min(scaleX, scaleY);
-//        root.setScaleX(scale);
-//        root.setScaleY(scale);
     }
 
     public static void main(String[] args) {
