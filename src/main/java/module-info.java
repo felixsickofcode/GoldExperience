@@ -13,7 +13,7 @@ module vnu.uet.goldexperience {
     requires java.desktop;
     requires javafx.graphics;
     requires com.google.gson;
-
+    requires java.sql;
 
 
     opens vnu.uet.goldexperience.model to com.google.gson;
