@@ -36,6 +36,7 @@ public class GameController implements GameSession.GameSessionListener {
     private SceneManager sceneManager;
     private GameStateManager gameStateManager;
     private GameOverManager gameOverManager;
+    private DialogueSystem dialogueSystem;
     private ChapterTheme currentTheme;
 
     @FXML
@@ -46,6 +47,7 @@ public class GameController implements GameSession.GameSessionListener {
         transitionManager = engine.getTransitionManager();
         gameStateManager = engine.getStateManager();
         gameOverManager = engine.getGameOverManager();
+        dialogueSystem = engine.getDialogueSystem();
 
         GameSession.getInstance().addListener(this);
         engine.setCursorChangeListener(() -> Platform.runLater(this::updateCursor));
@@ -79,9 +81,6 @@ public class GameController implements GameSession.GameSessionListener {
     private void setupBackground() {
         background = new GameBackground(Constants.GAMEPLAYZONE_WIDTH, Constants.GAMEPLAYZONE_HEIGHT, rootGamePane);
         rootGamePane.getChildren().add(0, background.getCanvas());
-        updateTheme(GameSession.getInstance().getCurrentChapter());
-
-        background.start();
     }
 
     private void setupInputHandlers() {
@@ -153,11 +152,14 @@ public class GameController implements GameSession.GameSessionListener {
     private void updateTheme(int chapter) {
         if (background != null) {
             this.currentTheme = getThemeForChapter(chapter);
-
+            if ( GameSession.getInstance().getMode()
+                    .equals(GameSession.GameMode.ENDLESS))
+                this.currentTheme =  ChapterTheme.ORIGINAL;
             background.setTheme(currentTheme);
             pauseMenu.setTheme(currentTheme);
             gameOverManager.setTheme(currentTheme);
             transitionManager.setTheme(currentTheme);
+            dialogueSystem.setTheme(currentTheme);
 
             GameUIComponents.applyTheme(scoreLabel, currentTheme);
             updateLives(GameSession.getInstance().getLives());
@@ -176,13 +178,13 @@ public class GameController implements GameSession.GameSessionListener {
     }
 
     public void onChapterChanged(int newChapter) {
-        System.out.println("GameController: Chapter changed to " + newChapter);
+        System.out.println("GC: Chapter changed to " + newChapter);
         Platform.runLater(() -> updateTheme(newChapter));
     }
 
     @Override
     public void onLevelChanged(int newLevel) {
-        System.out.println("GameController: Level changed to " + newLevel);
+        System.out.println("GC: Level changed to " + newLevel);
     }
 
     public GameEngine getEngine() {
@@ -194,7 +196,11 @@ public class GameController implements GameSession.GameSessionListener {
     }
 
     public void startGame() {
+        updateTheme(GameSession.getInstance().getCurrentChapter());
+        background.start();
+        System.out.println("startGame() - Mode: " + GameSession.getInstance().getMode());
         if (engine != null) {
+            engine.refreshMode();
             engine.start();
             updateCursor();
         }

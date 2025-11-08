@@ -12,8 +12,9 @@ public class GameOverManager {
 
     private enum MenuOption {
         RETRY(0, "RETRY"),
-        LEVEL_SELECT(1, "LEVEL SELECT"),
-        MAIN_MENU(2, "MAIN MENU");
+        MAIN_MENU(1, "MAIN MENU"),
+        QUIT(2, "QUIT");
+
 
         final int index;
         final String label;
@@ -66,7 +67,7 @@ public class GameOverManager {
 
     public interface GameOverCallback {
         void onRetry();
-        void onLevelSelect();
+        void onQuit();
         void onMainMenu();
     }
     private GameOverCallback callback;
@@ -219,8 +220,8 @@ public class GameOverManager {
             case RETRY:
                 callback.onRetry();
                 break;
-            case LEVEL_SELECT:
-                callback.onLevelSelect();
+            case QUIT:
+                callback.onQuit();
                 break;
             case MAIN_MENU:
                 callback.onMainMenu();

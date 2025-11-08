@@ -1,17 +1,17 @@
+
 {
   "levelNumber": 1,
   "key": {
     "N": "normal",
-    "U": "unbreakable",
-    " ": "empty",
-    "E": "explode",
-    "M": "medium"
+    " ": "empty"
   },
   "layout": [
     "            ",
     "            ",
     "            ",
     "            ",
-    "     N   "
+    "            ",
+    "            ",
+    "      N"
   ]
 }

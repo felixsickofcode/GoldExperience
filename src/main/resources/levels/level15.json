@@ -1,0 +1,26 @@
+{
+  "levelNumber": 5,
+  "key": {
+    "N": "normal",
+    "U": "unbreakable",
+    " ": "empty",
+    "E": "explode",
+    "M": "medium",
+    "C": "movable_circular"
+  },
+  "layout": [
+    "     C   C     ",
+    "    MMMMMMM    ",
+    "   MMEEUEEMM   ",
+    "    MMMMMMM    ",
+    "     C   C     "
+  ],
+  "properties": {
+    "movable_circular": {
+      "dx": 0,
+      "dy": 0,
+      "rangeX": 120,
+      "rangeY": 80
+    }
+  }
+}

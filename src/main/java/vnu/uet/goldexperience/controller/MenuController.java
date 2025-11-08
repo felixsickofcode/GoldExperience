@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.SceneManager;
 
 public class MenuController {
@@ -80,12 +81,14 @@ public class MenuController {
     // HandleSound clicked
     @FXML
     private void handle2PlayerMode(ActionEvent event) {
+        GameSession.getInstance().setMode(GameSession.GameMode.ENDLESS);
         System.out.println("2 Player Mode clicked");
+        System.out.println(GameSession.getInstance().getMode());
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
-            controller.startGame();
             controller.setSceneManager(sceneManager);
+            controller.startGame();
         }
     }
 

@@ -3,8 +3,6 @@ package vnu.uet.goldexperience.core;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import vnu.uet.goldexperience.effect.BorderFlashEffect;
 import vnu.uet.goldexperience.effect.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
@@ -22,7 +20,7 @@ public class GameEngine implements Brick.BrickListener {
     private final TransitionManager transitionManager;
     private final PauseMenuManager pauseMenuManager;
     private final GameOverManager gameOverManager;
-    private final LifeManager lifeManager;
+    private final DialogueSystem dialogueSystem;
 
     private SceneManager sceneManager;
     private CursorChangeListener cursorChangeListener;
@@ -35,6 +33,7 @@ public class GameEngine implements Brick.BrickListener {
     private AnimationTimer loop;
     private long lastTime = 0;
 
+    private GameSession.GameMode mode;
     private int comboCount = 0;
 
     public GameEngine(Canvas canvas, InputManager input) {
@@ -42,12 +41,13 @@ public class GameEngine implements Brick.BrickListener {
         this.gc = canvas.getGraphicsContext2D();
         this.input = input;
         this.levelManager = new LevelManager();
-        this.lifeManager = new LifeManager(canvas.getWidth(), canvas.getHeight());
         this.transitionManager = new TransitionManager(canvas.getWidth(), canvas.getHeight());
         this.pauseMenuManager = new PauseMenuManager(canvas, null);
         this.gameOverManager = new GameOverManager(canvas, null);
         this.stateManager = new GameStateManager(transitionManager, pauseMenuManager, gameOverManager);
-
+        this.mode = GameSession.getInstance().getMode();
+        this.dialogueSystem = new DialogueSystem(canvas);
+        setupDialogueCallbacks();
         setupPauseMenuCallbacks();
         setupGameOverCallbacks();
 
@@ -65,6 +65,10 @@ public class GameEngine implements Brick.BrickListener {
     }
 
     private void loadCurrentLevel() {
+//        if ( mode.equals(GameSession.GameMode.ENDLESS)) {
+//            loadEndlessLevel();
+//            return;
+//        }
         int levelNumber = GameSession.getInstance().getLevelNumber();
 
         System.out.println("Loading level: " + levelNumber +
@@ -76,6 +80,28 @@ public class GameEngine implements Brick.BrickListener {
         bricks = levelManager.getActiveBricks();
 
         // Rồi mới add listener
+        if (bricks != null) {
+            for (Brick brick : bricks) {
+                brick.addListener(this);
+            }
+        }
+
+        ball.reset(paddle);
+        paddle.reset();
+
+        if (uiCallback != null) {
+            uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+        }
+    }
+
+    private void loadEndlessLevel() {
+        int min = 1;
+        int max = 25;
+        int randomValue = min + (int)(Math.random() * (max - min + 1));
+        levelManager.loadLevel(randomValue);
+        bricks = levelManager.getActiveBricks();
+
         if (bricks != null) {
             for (Brick brick : bricks) {
                 brick.addListener(this);
@@ -115,11 +141,14 @@ public class GameEngine implements Brick.BrickListener {
             }
 
             @Override
-            public void onLevelSelect() {
-                System.out.println("Level Select");
+            public void onBack() {
+                System.out.println("Back");
                 if (sceneManager != null) {
                     end();
-                    sceneManager.switchTo("level");
+                    if ( mode.equals(GameSession.GameMode.STORY))
+                        sceneManager.switchTo("level");
+                    else
+                        sceneManager.switchTo("menu");
                 }
             }
 
@@ -140,15 +169,6 @@ public class GameEngine implements Brick.BrickListener {
             }
 
             @Override
-            public void onLevelSelect() {
-                System.out.println("Level Select clicked");
-                if (sceneManager != null) {
-                    end();
-                    sceneManager.switchTo("level");
-                }
-            }
-
-            @Override
             public void onMainMenu() {
                 System.out.println("Main Menu clicked");
                 if (sceneManager != null) {
@@ -156,12 +176,43 @@ public class GameEngine implements Brick.BrickListener {
                     sceneManager.switchTo("menu");
                 }
             }
+
+            @Override
+            public void onQuit() {
+                System.out.println("Quit clicked");
+                javafx.application.Platform.exit();
+            }
+        });
+    }
+
+    private void setupDialogueCallbacks() {
+        dialogueSystem.setCallback(new DialogueSystem.DialogueCallback() {
+            @Override
+            public void onDialogueComplete() {
+                System.out.println("Dialogue complete");
+                if (stateManager.is(GameState.STORY)) {
+                    if (dialogueSystem.isAfterLevelDialogue()) {
+                        boolean hasNext = GameSession.getInstance().nextLevel();
+                        if (hasNext) {
+                            stateManager.setState(GameState.TRANSITIONING);
+                        } else {
+                            if (sceneManager != null) {
+                                end();
+                                sceneManager.switchTo("menu");
+                            }
+                        }
+                    } else {
+                        stateManager.setState(GameState.PLAYING);
+                    }
+                }
+                notifyCursorChange();
+            }
         });
     }
 
     public void start() {
         loadCurrentLevel();
-        stateManager.reset();
+        checkAndShowBeforeDialogue();
 
         loop = new AnimationTimer() {
             @Override
@@ -201,7 +252,10 @@ public class GameEngine implements Brick.BrickListener {
             }
             return;
         }
-
+        if (stateManager.is(GameState.STORY)) {
+            dialogueSystem.handleInput(input);
+            return;
+        }
         if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.handleKeyInput(input);
             return;
@@ -265,6 +319,14 @@ public class GameEngine implements Brick.BrickListener {
             return;
         }
 
+        System.out.print(stateManager.getCurrentState());
+        System.out.print(" ");
+        System.out.println(mode);
+        if (stateManager.is(GameState.STORY)) {
+            dialogueSystem.update(deltaTime);
+            return;
+        }
+
         if (stateManager.is(GameState.GAME_OVER)) {
             gameOverManager.update(deltaTime);
             return;
@@ -278,7 +340,7 @@ public class GameEngine implements Brick.BrickListener {
             }
 
             if (!transitionManager.isActive()) {
-                stateManager.setState(GameState.PLAYING);
+                checkAndShowBeforeDialogue();
             }
         }
 
@@ -292,6 +354,8 @@ public class GameEngine implements Brick.BrickListener {
     }
 
     private void updateGameplay(double deltaTime) {
+        mode = GameSession.getInstance().getMode();
+
         paddle.update(deltaTime);
         ball.update(deltaTime);
 
@@ -349,7 +413,9 @@ public class GameEngine implements Brick.BrickListener {
 
         paddle.render(gc);
         ball.render(gc);
-
+        if (stateManager.is(GameState.STORY)) {
+            dialogueSystem.render(gc);
+        }
         if (stateManager.is(GameState.TRANSITIONING)) {
             transitionManager.render(gc);
         } else if (stateManager.is(GameState.PAUSED)) {
@@ -391,6 +457,7 @@ public class GameEngine implements Brick.BrickListener {
     }
 
     private void handleLevelComplete() {
+
         for (Brick brick : bricks) {
             if (brick instanceof UnbreakableBrick) {
                 ((UnbreakableBrick) brick).destroy();
@@ -398,11 +465,15 @@ public class GameEngine implements Brick.BrickListener {
         }
         if (areAllEffectsFinished()) {
             System.out.println("Level Complete!");
+
+            checkAndShowAfterDialogue();
+
             boolean hasNext = GameSession.getInstance().nextLevel();
+
             if (hasNext) {
-                stateManager.setState(GameState.TRANSITIONING);
+                    stateManager.setState(GameState.TRANSITIONING);
             } else {
-                System.out.println("Game Complete! All levels finished!");
+                System.out.println("Game Complete!");
                 stateManager.setState(GameState.VICTORY);
             }
         }
@@ -435,6 +506,38 @@ public class GameEngine implements Brick.BrickListener {
         }
     }
 
+    private void checkAndShowBeforeDialogue() {
+        if ( mode.equals(GameSession.GameMode.ENDLESS)) {
+            stateManager.setState(GameState.PLAYING);
+            return;
+        }
+        int levelNumber = GameSession.getInstance().getLevelNumber();
+        if (Story.hasDialogue(levelNumber)) {
+            Story.DialogueData dialogue = Story.getDialogue(levelNumber);
+            dialogueSystem.show(dialogue);
+            stateManager.setState(GameState.STORY);
+            return;
+        }
+        stateManager.setState(GameState.PLAYING);
+    }
+
+    private void checkAndShowAfterDialogue() {
+        if ( mode.equals(GameSession.GameMode.ENDLESS)) {
+            stateManager.setState(GameState.PLAYING);
+            return;
+        }
+        int currentLevelNumber = GameSession.getInstance().getLevelNumber();
+        if (Story.hasAfterDialogue(currentLevelNumber)) {
+            Story.DialogueData afterDialogue = Story.getAfterDialogue(currentLevelNumber);
+            dialogueSystem.show(afterDialogue);
+            stateManager.setState(GameState.STORY);
+            return;
+        }
+    }
+
+    public void refreshMode() {
+        this.mode = GameSession.getInstance().getMode();
+    }
 
     public GameStateManager getStateManager() {
         return stateManager;
@@ -448,5 +551,11 @@ public class GameEngine implements Brick.BrickListener {
         return transitionManager;
     }
 
-    public GameOverManager getGameOverManager() { return gameOverManager; }
+    public GameOverManager getGameOverManager() {
+        return gameOverManager;
+    }
+
+    public DialogueSystem getDialogueSystem() {
+        return dialogueSystem;
+    }
 }

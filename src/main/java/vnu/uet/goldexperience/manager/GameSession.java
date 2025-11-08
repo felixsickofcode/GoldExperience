@@ -13,6 +13,7 @@ public class GameSession {
     private boolean recentLifeLost = false;
     private static final int MAX_LIVES = 3;
     private int score = 0;
+    private GameMode mode;
 
     private final List<GameSessionListener> listeners = new ArrayList<>();
 
@@ -26,16 +27,6 @@ public class GameSession {
         TOP,
         LEFT,
         RIGHT
-    }
-
-    private GameMode mode = GameMode.STORY;
-
-    public void setMode(GameMode mode) {
-        this.mode = mode;
-    }
-
-    public GameMode getMode() {
-        return mode;
     }
 
     //OBSERVER + SINGLETON
@@ -108,6 +99,15 @@ public class GameSession {
     public void resetScore() {
         score = 0;
     }
+
+    public GameMode getMode() {
+        return (mode == null) ? GameMode.STORY : mode;
+    }
+
+    public void setMode(GameMode mode) {
+        this.mode = mode;
+    }
+
     private void notifyChapterChanged() {
         for (GameSessionListener listener : listeners) {
             listener.onChapterChanged(currentChapter);

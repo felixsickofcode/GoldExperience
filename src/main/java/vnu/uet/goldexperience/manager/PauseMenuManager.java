@@ -13,8 +13,8 @@ public class PauseMenuManager {
     private enum MenuOption {
         RESUME(0, "RESUME"),
         RESTART(1, "RESTART"),
-        LEVEL_SELECT(2, "LEVEL SELECT"),
-        QUIT(3, "QUIT");
+        BACK(2, "BACK"),
+        QUIT(3, "QUIT GAME");
 
         final int index;
         final String label;
@@ -24,7 +24,6 @@ public class PauseMenuManager {
             this.label = label;
         }
     }
-
     private final Canvas canvas;
     private final SceneManager sceneManager;
 
@@ -53,13 +52,12 @@ public class PauseMenuManager {
     private Color colorOverlay;
     private Font titleFont;
     private Font buttonFont;
-
     private double animationTimer = 0;
 
     public interface PauseMenuCallback {
         void onResume();
         void onRestart();
-        void onLevelSelect();
+        void onBack();
         void onQuit();
     }
 
@@ -145,7 +143,6 @@ public class PauseMenuManager {
 
     public void update(double deltaTime) {
         if (isVisible) {
-            System.out.println(animationTimer);
             animationTimer += deltaTime;
         }
     }
@@ -211,8 +208,8 @@ public class PauseMenuManager {
             case RESTART:
                 callback.onRestart();
                 break;
-            case LEVEL_SELECT:
-                callback.onLevelSelect();
+            case BACK:
+                callback.onBack();
                 break;
             case QUIT:
                 callback.onQuit();

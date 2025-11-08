@@ -1,21 +1,42 @@
 {
-  "levelNumber": 2,
   "key": {
     "N": "normal",
     "U": "unbreakable",
     " ": "empty",
     "E": "explode",
-    "M": "medium"
+    "M": "medium",
+    "C": "movable_circular",
+    "H": "movable_unbreakable_horizontal",
+    "V": "movable_unbreakable_vertical"
   },
   "layout": [
-    "            ",
-    "            ",
-    "            ",
-    "            ",
-    "  EEEEEEEE  ",
-    "            ",
-    "EMUEUUUUEUME",
-    "NMUENMMNEUMN",
-    "NMUEEUUEEUMN"
-  ]
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "     N"
+  ],
+  "properties": {
+    "movable_circular": {
+      "dx": 0,
+      "dy": 0,
+      "rangeX": 100,
+      "rangeY": 100
+    },
+    "movable_unbreakable_horizontal": {
+      "dx": 48,
+      "dy": 0,
+      "rangeX": 144,
+      "rangeY": 0
+    },
+    "movable_unbreakable_vertical": {
+      "dx": 0,
+      "dy": 24,
+      "rangeX": 0,
+      "rangeY": 48
+    }
+  }
 }
