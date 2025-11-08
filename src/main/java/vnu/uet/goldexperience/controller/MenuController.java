@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.AssetsManager;
+import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.view.MenuEffect;
 
@@ -118,9 +118,8 @@ public class MenuController {
     // Handle2PlayerMode clicked
     @FXML
     private void handle2PlayerMode(ActionEvent event) {
-        GameSession.getInstance().setMode(GameSession.GameMode.ENDLESS);
         System.out.println("2 Player Mode clicked");
-        System.out.println(GameSession.getInstance().getMode());
+        GameSession.getInstance().setMode(GameSession.GameMode.ENDLESS);
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
