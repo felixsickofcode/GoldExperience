@@ -79,8 +79,6 @@ public class LoginUI {
                         "-fx-effect: dropshadow(gaussian, #ff006e, 20, 0.6, 0, 0);"
         );
 
-
-
         // Subtitle
         Label subtitleLabel = new Label("Enter Player Name");
         subtitleLabel.setFont(Font.font("Monospace", FontWeight.NORMAL, 14));
@@ -252,19 +250,10 @@ public class LoginUI {
         gc.setFill(DARK_BG);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Draw grid
         drawPerspectiveGrid();
 
-        // Update glitch
-        updateGlitch();
-        if (glitchActive) {
-            drawGlitchEffect();
-        }
-
-        // Draw border
         drawNeonBorder();
 
-        // Draw corner accents
         drawCornerAccents();
     }
 
@@ -285,38 +274,6 @@ public class LoginUI {
             gc.strokeLine(10, y, WIDTH - 10, y);
             gc.setLineWidth(1.5);
         }
-    }
-
-    private void updateGlitch() {
-        glitchTimer++;
-        if (glitchTimer > 120) {
-            if (Math.random() < 0.3) {
-                glitchActive = true;
-                glitchTimer = 0;
-            }
-        }
-
-        if (glitchActive && glitchTimer > 5) {
-            glitchActive = false;
-        }
-    }
-
-    private void drawGlitchEffect() {
-        gc.save();
-
-        for (int i = 0; i < 5; i++) {
-            double y = Math.random() * HEIGHT;
-            double h = 5 + Math.random() * 20;
-            double offset = (Math.random() - 0.5) * 20;
-
-            gc.setFill(Color.rgb(255, 0, 0, 0.3));
-            gc.fillRect(offset, y, WIDTH, h);
-
-            gc.setFill(Color.rgb(0, 255, 255, 0.3));
-            gc.fillRect(-offset, y + 2, WIDTH, h);
-        }
-
-        gc.restore();
     }
 
     private void drawNeonBorder() {

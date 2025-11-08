@@ -216,7 +216,6 @@ public class Story {
         return null;
     }
 
-    // Lấy dialogue SAU khi hoàn thành màn
     public static DialogueData getAfterDialogue(int levelNumber) {
         List<DialogueData> dialogues = STORY_MAP.get(levelNumber);
         if (dialogues != null) {
@@ -227,11 +226,6 @@ public class Story {
             }
         }
         return null;
-    }
-
-    // Deprecated - giữ để tương thích code cũ
-    public static DialogueData getDialogue(int levelNumber) {
-        return getBeforeDialogue(levelNumber);
     }
 
     public static boolean hasDialogue(int levelNumber) {
