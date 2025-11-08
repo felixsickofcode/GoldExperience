@@ -12,7 +12,6 @@ public class UnbreakableBrick extends Brick {
     private DestructionEffect destructionEffect;
 
 
-
     private boolean playingDestructionEffect;
 
     public UnbreakableBrick(double x, double y, double width, double height) {
@@ -47,6 +46,7 @@ public class UnbreakableBrick extends Brick {
             playingBreakEffect = true;
         }
     }
+
     public void destroy() {
         hitPoints = 0;
         triggerDestructionEffect();
@@ -91,7 +91,7 @@ public class UnbreakableBrick extends Brick {
                 playingBreakEffect = false;
             }
         }
-        if (playingDestructionEffect && destructionEffect !=null) {
+        if (playingDestructionEffect && destructionEffect != null) {
             destructionEffect.update(deltaTime);
             if (destructionEffect.isFinished()) {
                 playingDestructionEffect = false;
@@ -117,7 +117,7 @@ public class UnbreakableBrick extends Brick {
         if (playingBreakEffect && breakEffect != null) {
             breakEffect.render(gc);
         }
-        if (playingDestructionEffect ) {
+        if (playingDestructionEffect) {
             destructionEffect.render(gc);
         }
     }

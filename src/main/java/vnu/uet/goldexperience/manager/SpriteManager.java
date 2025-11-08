@@ -1,9 +1,9 @@
 package vnu.uet.goldexperience.manager;
 
 public class SpriteManager {
-    private int frameCount;
-    private int row;
-    private double frameDuration;
+    private final int frameCount;
+    private final int row;
+    private final double frameDuration;
     private double timeSinceLastFrame;
     private int currentFrame = 0;
 

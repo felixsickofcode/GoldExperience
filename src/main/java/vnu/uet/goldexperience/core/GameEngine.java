@@ -37,6 +37,13 @@ public class GameEngine implements BrickListener {
     private Ball ball;
     private List<Brick> bricks;
 
+    // Power-ups and context
+    private final List<PowerUp> fallingPowerUps = new ArrayList<>();
+    private final List<Ball> balls = new ArrayList<>();
+    private final List<Bullet> bullets = new ArrayList<>();
+    private PowerUpManager powerUpManager;
+    private int hitsSinceLastDrop = 0;
+
     private AnimationTimer loop;
     private long lastTime = 0;
 
@@ -60,7 +67,9 @@ public class GameEngine implements BrickListener {
 
     }
 
-    public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
@@ -72,7 +81,6 @@ public class GameEngine implements BrickListener {
 
     private void loadCurrentLevel() {
         int levelNumber = GameSession.getInstance().getLevelNumber();
-
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
@@ -100,6 +108,17 @@ public class GameEngine implements BrickListener {
         levelCompleteSoundPlayed = false;
     }
 
+        levelManager.loadLevel(levelNumber);
+        bricks = levelManager.getActiveBricks();
+
+        // Rebuild game context and managers
+        balls.clear();
+        balls.add(ball);
+        bullets.clear();
+        fallingPowerUps.clear();
+        powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
+        hitsSinceLastDrop = 0;
+    }
 
     public void reloadLevel() {
         loadCurrentLevel();
@@ -239,6 +258,7 @@ public class GameEngine implements BrickListener {
     //Observer
     public interface GameUICallback {
         void onScoreChanged(int score);
+
         void onLivesChanged(int lives);
     }
 
@@ -270,8 +290,14 @@ public class GameEngine implements BrickListener {
                 paddle.stop();
         }
 
-        if (input.isActionActive(Action.SHOOT) && ball.isReset())
-            ball.shoot();
+        // Shoot all reset balls
+        if (input.isActionActive(Action.SHOOT)) {
+            for (Ball b : balls) {
+                if (b.isReset()) {
+                    b.shoot();
+                }
+            }
+        }
     }
 
     private void update(double deltaTime) {
@@ -308,52 +334,142 @@ public class GameEngine implements BrickListener {
 
     private void updateGameplay(double deltaTime) {
         paddle.update(deltaTime);
-        ball.update(deltaTime);
 
-        if (ball.isReset()) {
-            ball.setX(paddle.getX() + paddle.getWidth() / 2 - ball.getWidth() / 2);
-            ball.setY(paddle.getY() - ball.getHeight());
-        }
+        // Update all balls
+        for (Ball b : balls) {
+            b.update(deltaTime);
 
-        if(ball.bounceOffWithPaddle(paddle)) {
+            if (b.isReset()) {
+                b.setX(paddle.getX() + paddle.getWidth() / 2 - b.getWidth() / 2);
+                b.setY(paddle.getY() - b.getHeight());
+            }
+
+
+            if(ball.bounceOffWithPaddle(paddle)) {
             AssetsManager.playHitPaddleSound();
+            }
         }
+
+        // Check collisions for all balls
         if (!transitionManager.shouldDisableCollision()) {
-            for (Brick brick : bricks) {
-                if (ball.bounceOffWithBrick(brick)) {
-                    if (!brick.isDestroyed()) {
+            for (Ball b : balls) {
+                if (b.isReset()) continue;
+    
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && b.bounceOffWithBrick(brick)) {
+                        boolean wasDestroyed = brick.isDestroyed();
+
                         brick.takeHit();
-                        if (brick instanceof ExplodeBrick) {
-                            AssetsManager.playExplosionSound();
-                        } else if (brick.getHitPoints() == 0||brick instanceof UnbreakableBrick) {
-                            AssetsManager.playBreakBrickSound();
-                        } else {
-                            AssetsManager.playHitBrickSound();
+
+                        hitsSinceLastDrop++;
+                        if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
+                            spawnRandomDrop();
+                            hitsSinceLastDrop = 0;
                         }
-                        break;
-                    }
+
+                        if (!wasDestroyed && brick.isDestroyed()) {
+                            int points = 124;
+                            GameSession.getInstance().addScore(points);
+
+                            if (uiCallback != null) {
+                                uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+                            }
+
+                            // Spawn a falling power-up when a StrongBrick is destroyed
+                            if (brick instanceof StrongBrick) {
+                                spawnRandomDrop();
+                            }
+                        }
+                        if (brick instanceof ExplodeBrick) {
+                    AssetsManager.playExplosionSound();
+                } else if (brick.getHitPoints() == 0 || brick instanceof UnbreakableBrick) {
+                    AssetsManager.playBreakBrickSound();
+                } else {
+                    AssetsManager.playHitBrickSound();
+                }
+                    
+                    break;
                 }
             }
         }
 
-        if (ball.getY() >= canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
-            GameSession.getInstance().loseLife();
-            if (uiCallback != null) {
-                uiCallback.onLivesChanged(GameSession.getInstance().getLives());
-            }
-            ball.reset(paddle);
-            if (!GameSession.getInstance().stillAlive()) {
-                AssetsManager.playLoseSound();
-                stateManager.setState(GameState.GAME_OVER);
-            }
-        }
+
+        // Check lost balls
+List<Ball> lostBalls = new ArrayList<>();
+for (Ball b : balls) {
+    if (b.getY() >= canvas.getHeight() && !b.isReset()) {
+        lostBalls.add(b);
+    }
+}
+
+// Remove lost balls
+balls.removeAll(lostBalls);
+
+// If no balls left, lose a life
+if (balls.isEmpty() && stateManager.is(GameState.PLAYING)) {
+    GameSession.getInstance().loseLife();
+    if (uiCallback != null) {
+        uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+    }
+
+    if (GameSession.getInstance().stillAlive()) {
+        // reset one ball
+        ball.reset(paddle)
+        newBall.reset(paddle);
+        balls.add(newBall);
+    } else {
+        AssetsManager.playLoseSound();
+        stateManager.setState(GameState.GAME_OVER);
+    }
+}
 
         for (Brick brick : bricks) {
             brick.update(deltaTime);
         }
 
+        // Update active falling power-ups
+        if (!fallingPowerUps.isEmpty()) {
+            List<PowerUp> collected = new ArrayList<>();
+            for (PowerUp pu : fallingPowerUps) {
+                pu.update(deltaTime);
+
+                if (pu.getY() > canvas.getHeight()) {
+                    collected.add(pu);
+                    continue;
+                }
+
+                if (pu.getX() < paddle.getX() + paddle.getWidth() &&
+                        pu.getX() + pu.getWidth() > paddle.getX() &&
+                        pu.getY() < paddle.getY() + paddle.getHeight() &&
+                        pu.getY() + pu.getHeight() > paddle.getY()) {
+
+                    if (powerUpManager != null) {
+                        powerUpManager.activatePowerUp(pu);
+                    }
+                    collected.add(pu);
+                }
+            }
+            if (!collected.isEmpty()) {
+                fallingPowerUps.removeAll(collected);
+            }
+        }
+
+
+        if (powerUpManager != null) {
+            powerUpManager.update();
+        }
+
         checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
+    }
+
+    private void spawnRandomDrop() {
+        double minX = 0;
+        double maxX = Constants.GAMEPLAYZONE_WIDTH - Constants.POWER_UP_ITEM_WIDTH;
+        double spawnX = minX + Math.random() * (maxX - minX);
+        double spawnY = -Constants.POWER_UP_ITEM_HEIGHT;
+        PowerUpType dropType = PowerUpType.randomDroppable();
+        fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, dropType));
     }
 
     private void render() {
@@ -366,10 +482,18 @@ public class GameEngine implements BrickListener {
             brick.render(gc);
         }
 
+        for (PowerUp pu : fallingPowerUps) {
+            pu.render(gc);
+        }
+
         gc.restore();
 
         paddle.render(gc);
-        ball.render(gc);
+
+        // Render all balls
+        for (Ball b : balls) {
+            b.render(gc);
+        }
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             transitionManager.render(gc);
@@ -481,5 +605,7 @@ public class GameEngine implements BrickListener {
         return transitionManager;
     }
 
-    public GameOverManager getGameOverManager() { return gameOverManager; }
+    public GameOverManager getGameOverManager() {
+        return gameOverManager;
+    }
 }

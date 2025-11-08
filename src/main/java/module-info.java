@@ -14,6 +14,7 @@ module vnu.uet.goldexperience {
     requires javafx.graphics;
     requires com.google.gson;
     requires javafx.media;
+    requires java.sql;
 
 
     opens vnu.uet.goldexperience.model to com.google.gson;

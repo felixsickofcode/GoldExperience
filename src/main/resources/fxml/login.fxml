@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="loginContainer"
+           xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="vnu.uet.goldexperience.controller.LoginController"
+           prefWidth="1280"
+           prefHeight="720"
+           style="-fx-background-color: black;">
+</StackPane>
