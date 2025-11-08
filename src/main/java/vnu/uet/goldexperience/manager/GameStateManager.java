@@ -37,6 +37,8 @@ public class GameStateManager {
             case PAUSED:
                 pauseMenuManager.hide();
                 break;
+            case STORY:
+                break;
             case TRANSITIONING:
                 break;
             case PLAYING:
@@ -63,6 +65,9 @@ public class GameStateManager {
                 break;
             case VICTORY:
                 System.out.println("GSM: Victory");
+                break;
+            case STORY:
+                System.out.println("GSM: Story mode");
                 break;
         }
     }

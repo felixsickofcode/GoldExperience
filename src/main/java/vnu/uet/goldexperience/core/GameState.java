@@ -5,5 +5,6 @@ public enum GameState {
     PAUSED,
     TRANSITIONING,
     GAME_OVER,
+    STORY,
     VICTORY
 }

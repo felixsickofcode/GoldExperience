@@ -69,12 +69,11 @@ public class SelectLevelController {
     }
 
     private void playLevel(int level) {
+        GameSession.getInstance().setMode(GameSession.GameMode.STORY);
         System.out.println("Level " + level + " clicked");
-
         GameSession.getInstance().setLevel(level);
 
         System.out.println("Loading: " + GameSession.getInstance().getLevelFileName());
-
         if (sceneManager != null) {
             sceneManager.switchTo("game");
             GameController controller = (GameController) sceneManager.getController("game");
