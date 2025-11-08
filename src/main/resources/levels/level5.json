@@ -9,10 +9,20 @@
     "S": "strong"
   },
   "layout": [
-    "           ",
     "            ",
     "            ",
-    "          ",
-    "    SE       "
+    "            ",
+    "            ",
+    "  M M  M M  ",
+    "  EEEEEEEE  ",
+    "  UUUUUUUU  ",
+    "            ",
+    "    E  E    ",
+    "   NMMMMN   ",
+    "   NNNNNN   ",
+    "   UMMMMU   ",
+    "   NNNNNN   ",
+    " MMMMMMMMMM "
+
   ]
 }

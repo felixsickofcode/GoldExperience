@@ -495,22 +495,23 @@ private void setupGameOverCallbacks() {
 
         gc.save();
         transitionManager.applySlideTransform(gc);
-
+        for (PowerUp pu : fallingPowerUps) {
+            pu.render(gc);
+        }
+        for (Ball b : balls) {
+            b.render(gc);
+        }
         for (Brick brick : bricks) {
             brick.render(gc);
         }
 
-        for (PowerUp pu : fallingPowerUps) {
-            pu.render(gc);
-        }
+
 
         gc.restore();
 
         paddle.render(gc);
 
-        for (Ball b : balls) {
-            b.render(gc);
-        }
+
 
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.render(gc);

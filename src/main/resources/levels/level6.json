@@ -4,49 +4,24 @@
     "U": "unbreakable",
     " ": "empty",
     "E": "explode",
-    "M": "medium",
-    "C": "movable_circular",
-    "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "M": "medium"
   },
   "layout": [
     "            ",
-    "   HHHHHH   ",
-    "            ",
-    "  EEEEEEEE  ",
     "            ",
     "            ",
+    "  NNNNNNNN  ",
     "            ",
-    "   V   V    ",
+    "  UNNNNNNU  ",
+    "            ",
+    "            ",
+    "            ",
+    "  MMMMMMMM  ",
     "            ",
     "            ",
     "            ",
     "EMUEUUUUEUME",
     "NMUENMMNEUMN",
-    " MUEEUUEEUM",
-    "            ",
-    "            ",
-    "            ",
-    "   HHHHHH   "
-  ],
-  "properties": {
-    "movable_circular": {
-      "dx": 0,
-      "dy": 0,
-      "rangeX": 100,
-      "rangeY": 100
-    },
-    "movable_unbreakable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 144,
-      "rangeY": 0
-    },
-    "movable_unbreakable_vertical": {
-      "dx": 0,
-      "dy": 24,
-      "rangeX": 0,
-      "rangeY": 48
-    }
-  }
+    " MUEEUUEEUM "
+  ]
 }
