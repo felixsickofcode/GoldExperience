@@ -84,13 +84,22 @@ public class GameEngine implements Brick.BrickListener {
     }
 
     private void loadCurrentLevel() {
+
         int levelNumber = GameSession.getInstance().getLevelNumber();
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
 
         // Load trước
-        levelManager.loadLevel(levelNumber);
+        if ( mode.equals(GameSession.GameMode.STORY)) {
+            levelManager.loadLevel(levelNumber);
+        }
+        else {
+            int min = 1;
+            int max = 25;
+            int randomValue = min + (int)(Math.random() * (max - min + 1));
+            levelManager.loadLevel(randomValue);
+        }
         bricks = levelManager.getActiveBricks();
 
         // Rồi mới add listener
@@ -102,7 +111,13 @@ public class GameEngine implements Brick.BrickListener {
 
         ball.reset(paddle);
         paddle.reset();
-        GameSession.getInstance().resetLives();
+
+        if (mode.equals(GameSession.GameMode.ENDLESS)) {
+            GameSession.getInstance().addLife();
+        }
+        else {
+            GameSession.getInstance().resetLives();
+        }
 
         if (uiCallback != null) {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
@@ -111,18 +126,11 @@ public class GameEngine implements Brick.BrickListener {
         soundForExplosionChains.clear();
         levelCompleteSoundPlayed = false;
 
-
-        levelManager.loadLevel(levelNumber);
-        bricks = levelManager.getActiveBricks();
-
-        // Rebuild game context and managers
         balls.clear();
         balls.add(ball);
         bullets.clear();
         fallingPowerUps.clear();
-        powerUpManager = new
-
-                PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
+        powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
         hitsSinceLastDrop = 0;
     }
 
@@ -175,6 +183,7 @@ private void setupGameOverCallbacks() {
         public void onRetry() {
             AssetsManager.playClickSound();
             System.out.println("Retry clicked");
+            GameSession.getInstance().resetLives();
             reloadLevel();
         }
 
@@ -406,14 +415,6 @@ private void setupGameOverCallbacks() {
                     }
 
                     if (!wasDestroyed && brick.isDestroyed()) {
-                        int points = 124;
-                        GameSession.getInstance().addScore(points);
-
-                        if (uiCallback != null) {
-                            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
-                        }
-
-                        // Spawn a falling power-up when a StrongBrick is destroyed
                         if (brick instanceof StrongBrick) {
                             spawnRandomDrop();
                         }
@@ -575,15 +576,31 @@ private void setupGameOverCallbacks() {
             AssetsManager.playBreakBrickSound();
             levelCompleteSoundPlayed = true;
         }
+
         if (areAllEffectsFinished()) {
             System.out.println("Level Complete!");
-            checkAndShowAfterDialogue();
-            boolean hasNext = GameSession.getInstance().nextLevel();
-            if (hasNext) {
-                stateManager.setState(GameState.TRANSITIONING);
+
+            if (mode.equals(GameSession.GameMode.ENDLESS)) {
+                boolean hasNext = GameSession.getInstance().nextLevel();
+                if (hasNext) {
+                    stateManager.setState(GameState.TRANSITIONING);
+                } else {
+                    stateManager.setState(GameState.VICTORY);
+                }
+                return;
+            }
+
+            int currentLevelNumber = GameSession.getInstance().getLevelNumber();
+            if (Story.hasAfterDialogue(currentLevelNumber)) {
+                checkAndShowAfterDialogue();
             } else {
-                System.out.println("Game Complete! All levels finished!");
-                stateManager.setState(GameState.VICTORY);
+                boolean hasNext = GameSession.getInstance().nextLevel();
+                if (hasNext) {
+                    stateManager.setState(GameState.TRANSITIONING);
+                } else {
+                    System.out.println("Game Complete! All levels finished!");
+                    stateManager.setState(GameState.VICTORY);
+                }
             }
         }
     }
@@ -616,33 +633,38 @@ private void setupGameOverCallbacks() {
     }
 
     private void checkAndShowBeforeDialogue() {
-        if ( mode.equals(GameSession.GameMode.ENDLESS)) {
+        if (mode.equals(GameSession.GameMode.ENDLESS)) {
             stateManager.setState(GameState.PLAYING);
             return;
         }
+
         int levelNumber = GameSession.getInstance().getLevelNumber();
-        if (Story.hasDialogue(levelNumber)) {
-            Story.DialogueData dialogue = Story.getDialogue(levelNumber);
+        Story.DialogueData dialogue = Story.getBeforeDialogue(levelNumber);
+
+        if (dialogue != null) {
             dialogueSystem.show(dialogue);
             stateManager.setState(GameState.STORY);
-            return;
+        } else {
+            stateManager.setState(GameState.PLAYING);
         }
-        stateManager.setState(GameState.PLAYING);
     }
 
     private void checkAndShowAfterDialogue() {
-        if ( mode.equals(GameSession.GameMode.ENDLESS)) {
+        if (mode.equals(GameSession.GameMode.ENDLESS)) {
             stateManager.setState(GameState.PLAYING);
             return;
         }
+
         int currentLevelNumber = GameSession.getInstance().getLevelNumber();
-        if (Story.hasAfterDialogue(currentLevelNumber)) {
-            Story.DialogueData afterDialogue = Story.getAfterDialogue(currentLevelNumber);
-            dialogueSystem.show(afterDialogue);
+        Story.DialogueData dialogue = Story.getAfterDialogue(currentLevelNumber);
+
+        if (dialogue != null) {
+            System.out.println(dialogue);
+            dialogueSystem.show(dialogue);
             stateManager.setState(GameState.STORY);
-            return;
         }
     }
+
 
     public void refreshMode() {
         this.mode = GameSession.getInstance().getMode();

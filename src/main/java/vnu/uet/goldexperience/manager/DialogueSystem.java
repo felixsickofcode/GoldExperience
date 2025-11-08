@@ -93,7 +93,7 @@ public class DialogueSystem {
                 colorSecondary = ChapterTheme.PURE_WHITE;
                 colorBackground = ChapterTheme.DARK_BG_CH5;
                 colorBackgroundSecondary = ChapterTheme.DARK_BG_CH5.brighter();
-                colorText = Color.BLACK;
+                colorText = ChapterTheme.PURE_WHITE;
                 colorTextDisabled = ChapterTheme.MEDIUM_GRAY;
                 colorOverlay = Color.rgb(15, 15, 25, 0.7);
                 break;

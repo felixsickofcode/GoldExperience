@@ -1,5 +1,4 @@
 .menu-root {
-    -fx-background-image: url("../images/bg.png");
     -fx-background-size: cover;
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
@@ -13,6 +12,11 @@
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
     -fx-background-color: #0a0e27;
+}
+
+.game-ui-label {
+    -fx-font-family: "Cynosure Straight";
+    -fx-font-size: 32px;
 }
 
 .text {

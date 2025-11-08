@@ -24,8 +24,6 @@ public class MenuEffect extends StackPane {
 
     // Animation state
     private double borderPulse = 0;
-    private double glitchTimer = 0;
-    private boolean glitchActive = false;
     private boolean isHovered = false;
     private boolean isPressed = false;
     private double hoverIntensity = 0;
@@ -34,31 +32,15 @@ public class MenuEffect extends StackPane {
     private static final Color NEON_GREEN = Color.rgb(0, 255, 136);
     private static final Color DARK_BG = Color.rgb(26, 31, 58);
 
-    // Font (chỉ load một lần)
     private static Font customFont;
 
     public MenuEffect(String text, double width, double height) {
         this.width = width;
         this.height = height;
 
-        // Load font 1 lần duy nhất
-        if (customFont == null) {
-            try {
-                customFont = Font.loadFont(
-                        getClass().getResourceAsStream("/font/cyber32.ttf"),
-                        24
-                );
-                System.out.println("Custom font loaded: " + (customFont != null ? customFont.getName() : "null"));
-            } catch (Exception e) {
-                System.out.println("Failed to load custom font: " + e.getMessage());
-            }
-        }
-
-        // Create canvas for background effects
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
 
-        // Create button
         button = new Button(text);
         button.setPrefSize(width, height);
         button.setStyle(
@@ -116,37 +98,9 @@ public class MenuEffect extends StackPane {
 
         gc.fillRect(0, 0, width, height);
 
-        // Glitch + effects
-        updateGlitch();
-        if (glitchActive && isHovered) drawGlitchEffect();
         drawAnimatedBorder();
         drawCornerAccents();
         if (hoverIntensity > 0) drawInnerGlow();
-    }
-
-    private void updateGlitch() {
-        glitchTimer++;
-        if (glitchTimer > 60) {
-            if (Math.random() < 0.2) {
-                glitchActive = true;
-                glitchTimer = 0;
-            }
-        }
-        if (glitchActive && glitchTimer > 3) glitchActive = false;
-    }
-
-    private void drawGlitchEffect() {
-        gc.save();
-        for (int i = 0; i < 3; i++) {
-            double y = Math.random() * height;
-            double h = 3 + Math.random() * 10;
-            double offset = (Math.random() - 0.5) * 8;
-            gc.setFill(Color.rgb(255, 0, 0, 0.3));
-            gc.fillRect(offset, y, width, h);
-            gc.setFill(Color.rgb(0, 255, 255, 0.3));
-            gc.fillRect(-offset, y + 1, width, h);
-        }
-        gc.restore();
     }
 
     private void drawAnimatedBorder() {
@@ -178,7 +132,6 @@ public class MenuEffect extends StackPane {
         gc.setStroke(NEON_GREEN.deriveColor(0, 1, 1, alpha));
         gc.setLineWidth(cornerThick);
 
-        // 4 góc
         gc.strokeLine(margin, margin, margin + cornerSize, margin);
         gc.strokeLine(margin, margin, margin, margin + cornerSize);
         gc.strokeLine(width - margin, margin, width - margin - cornerSize, margin);
