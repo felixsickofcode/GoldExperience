@@ -14,17 +14,29 @@
     "",
     "",
     "",
+    "            ",
+    "     CC     ",
+    "     CC     ",
     "",
     "",
     "",
-    "     N"
+    "            ",
+    "   NMUUMN   ",
+    "   NUUUUN   ",
+    " EEEEEEEEEE ",
+    "   NUUUUN   ",
+    "   NMUUMN   ",
+    "",
+    "",
+    "UUUU    UUUU"
   ],
+
   "properties": {
     "movable_circular": {
       "dx": 0,
       "dy": 0,
-      "rangeX": 100,
-      "rangeY": 100
+      "rangeX": 50,
+      "rangeY": 50
     },
     "movable_unbreakable_horizontal": {
       "dx": 48,
