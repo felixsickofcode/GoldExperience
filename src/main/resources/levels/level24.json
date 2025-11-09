@@ -7,7 +7,10 @@
     "M": "medium",
     "C": "movable_circular",
     "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "V": "movable_unbreakable_vertical",
+    "X": "movable_vertical",
+    "Y": "movable_horizontal",
+    "S": "strong"
   },
   "layout": [
     "",
@@ -15,9 +18,16 @@
     "",
     "",
     "",
-    "",
-    "",
-    "     N"
+    "  SSSSSSSS  ",
+    "  SEEEEEMS  ",
+    "  SEMMMEMS  ",
+    "   SEMEMS   ",
+    "    SMMS    ",
+    "   SEMEMS   ",
+    "  SEMMMEMS  ",
+    "  SEEEEEMS  ",
+    "  SSSSSSSS  ",
+    ""
   ],
   "properties": {
     "movable_circular": {

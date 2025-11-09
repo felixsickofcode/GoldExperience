@@ -7,36 +7,32 @@
     "M": "medium",
     "C": "movable_circular",
     "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "V": "movable_unbreakable_vertical",
+    "X": "movable_vertical",
+    "Y": "movable_horizontal",
+    "S": "strong"
   },
   "layout": [
     "",
     "",
     "",
-    "",
-    "",
-    "",
-    "",
-    "     N"
+    "  Y   Y   Y  ",
+    "   M M M M   ",
+    "  M E S E M  ",
+    " M E M M E M ",
+    "M S M E M S M",
+    " M E M M E M ",
+    "  M E S E M  ",
+    "   M M M M   ",
+    "  Y   Y   Y  ",
+    ""
   ],
   "properties": {
-    "movable_circular": {
-      "dx": 0,
-      "dy": 0,
-      "rangeX": 100,
-      "rangeY": 100
-    },
-    "movable_unbreakable_horizontal": {
+    "movable_horizontal": {
       "dx": 48,
       "dy": 0,
       "rangeX": 144,
       "rangeY": 0
-    },
-    "movable_unbreakable_vertical": {
-      "dx": 0,
-      "dy": 24,
-      "rangeX": 0,
-      "rangeY": 48
     }
   }
 }

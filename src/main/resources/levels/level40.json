@@ -18,23 +18,22 @@
     "",
     "",
     "",
-    "SSSSSSSSSSSS",
-    "SSSSSSSSSSSS",
-    "EUEUEUEUEUEU",
-    "HHHHH  HHHHH",
-    "YYY      YYY",
+    "N M N M N MU",
+    " M N M N M U",
+    "N M N M N MU",
+    " M N M N M U",
+    "N M N M N MU",
+    "           U",
+    "   S   S   U",
+    "  S S S S  U",
+    "           U",
+    "S S S S S SU",
     "",
+    " MMMMMMMMMMU",
     "",
-    "     XX     "
-
+    "YYYYYYYYYYY "
   ],
   "properties": {
-    "movable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 96,
-      "rangeY": 0
-    },
     "movable_unbreakable_horizontal": {
       "dx": 48,
       "dy": 0,
@@ -46,6 +45,24 @@
       "dy": 24,
       "rangeX": 0,
       "rangeY": 48
+    },
+    "movable_horizontal": {
+      "dx": 48,
+      "dy": 0,
+      "rangeX": 144,
+      "rangeY": 0
+    },
+    "movable_vertical": {
+      "dx": 0,
+      "dy": 24,
+      "rangeX": 0,
+      "rangeY": 48
+    },
+    "movable_circular": {
+      "dx": 0,
+      "dy": 0,
+      "rangeX": 40,
+      "rangeY": 40
     }
   }
 }

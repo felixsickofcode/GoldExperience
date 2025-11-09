@@ -9,7 +9,7 @@ public class GameSession {
     private int currentChapter = 1;
     private int currentLevel = 1;
 
-    private int lives = 1;
+    private int lives = 0 ;
     private boolean recentLifeLost = false;
     private static final int MAX_LIVES = 3;
     private int score = 0;
