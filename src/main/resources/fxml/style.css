@@ -1,71 +1,9 @@
-.menu-root {
-    -fx-background-size: cover;
-    -fx-background-position: center center;
-    -fx-background-repeat: no-repeat;
-    -fx-background-color: #0a0e27;
-    -fx-font-family: "Cynosure Straight";
-}
 
-.chapter-root {
-    -fx-background-image: url("../images/space.jpg");
-    -fx-background-size: cover;
-    -fx-background-position: center center;
-    -fx-background-repeat: no-repeat;
-    -fx-background-color: #0a0e27;
-}
 
 .game-ui-label {
     -fx-font-family: "Cynosure Straight";
     -fx-font-size: 32px;
 }
 
-.text {
-    -fx-font-family: "Cynosure Straight";
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-}
 
-/* Buttons */
-.menu-button {
-    -fx-background-color: #1a1f3a;
-    -fx-border-color: #00ff88;
-    -fx-border-width: 2px;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #00ff88;
-    -fx-cursor: hand;
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
-    -fx-padding: 18px 40px;
-    -fx-effect: innershadow(gaussian, rgba(0, 255, 136, 0.1), 15, 0.5, 0, 0);
-}
 
-.menu-button:hover {
-    -fx-background-color: rgba(0, 255, 136, 0.1);
-    -fx-border-color: #00ff88;
-    -fx-text-fill: #00ff88;
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 136, 0.5), 20, 0.7, 0, 0),
-    innershadow(gaussian, rgba(0, 255, 136, 0.2), 20, 0.6, 0, 0);
-}
-
-.menu-button:pressed {
-    -fx-background-color: rgba(0, 255, 136, 0.15);
-    -fx-border-color: #00ff88;
-    -fx-text-fill: #00ff88;
-    -fx-effect: dropshadow(gaussian, rgba(0, 255, 136, 0.8), 15, 0.8, 0, 0),
-    innershadow(gaussian, rgba(0, 255, 136, 0.3), 15, 0.7, 0, 0);
-    -fx-scale-x: 0.98;
-    -fx-scale-y: 0.98;
-}
-
-/* Title Label */
-.title-label {
-    -fx-text-fill: #ffffff;
-    -fx-font-family: "Cynosure Straight";
-    -fx-font-size: 72px;
-    -fx-font-weight: 900;
-    -fx-effect: dropshadow(gaussian, #00ff88, 20, 0.8, 0, 0),
-    dropshadow(gaussian, #00ff88, 40, 0.6, 0, 0);
-}
-
-.font

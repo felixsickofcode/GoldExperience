@@ -79,7 +79,7 @@ public class GameEngine implements BrickListener {
     }
 
     private void loadCurrentLevel() {
-
+        comboCount = 0;
         int levelNumber = GameSession.getInstance().getLevelNumber();
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
