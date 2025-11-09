@@ -5,38 +5,36 @@
     " ": "empty",
     "E": "explode",
     "M": "medium",
-    "C": "movable_circular",
-    "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "S": "strong",
+    "V": "movable_vertical"
   },
   "layout": [
     "",
+    "  NENEENEN  ",
+    " N        N ",
+    "N   UUUU   N",
+    " N        N ",
+    "  NENEENEN  ",
+    "",
+    "    MMMM    ",
+    "  SMNUUNMS  ",
+    " SMNUUUUNMS ",
+    " SMNNNNNNMS ",
+    "",
+    " E        E ",
     "",
     "",
     "",
     "",
-    "",
-    "",
-    "     N"
+    " V        V ",
+    " V        V "
   ],
   "properties": {
-    "movable_circular": {
+    "movable_vertical": {
       "dx": 0,
-      "dy": 0,
-      "rangeX": 100,
-      "rangeY": 100
-    },
-    "movable_unbreakable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 144,
-      "rangeY": 0
-    },
-    "movable_unbreakable_vertical": {
-      "dx": 0,
-      "dy": 24,
+      "dy": 48,
       "rangeX": 0,
-      "rangeY": 48
+      "rangeY": 96
     }
   }
 }
