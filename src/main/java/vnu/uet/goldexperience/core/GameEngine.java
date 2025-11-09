@@ -3,15 +3,10 @@ package vnu.uet.goldexperience.core;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import vnu.uet.goldexperience.effect.BorderFlashEffect;
 import vnu.uet.goldexperience.effect.brick.ExplosionEffect;
 import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
-import vnu.uet.goldexperience.model.brick.Brick;
-import vnu.uet.goldexperience.model.brick.ExplodeBrick;
-import vnu.uet.goldexperience.model.brick.StrongBrick;
-import vnu.uet.goldexperience.model.brick.UnbreakableBrick;
+import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
 
 import java.util.ArrayList;
@@ -19,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GameEngine implements Brick.BrickListener {
+public class GameEngine implements BrickListener {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final InputManager input;
@@ -415,7 +410,7 @@ private void setupGameOverCallbacks() {
                     }
 
                     if (!wasDestroyed && brick.isDestroyed()) {
-                        if (brick instanceof StrongBrick) {
+                        if (brick instanceof MediumBrick) {
                             spawnRandomDrop();
                         }
                     }
@@ -499,22 +494,23 @@ private void setupGameOverCallbacks() {
 
         gc.save();
         transitionManager.applySlideTransform(gc);
-
+        for (PowerUp pu : fallingPowerUps) {
+            pu.render(gc);
+        }
+        for (Ball b : balls) {
+            b.render(gc);
+        }
         for (Brick brick : bricks) {
             brick.render(gc);
         }
 
-        for (PowerUp pu : fallingPowerUps) {
-            pu.render(gc);
-        }
+
 
         gc.restore();
 
         paddle.render(gc);
 
-        for (Ball b : balls) {
-            b.render(gc);
-        }
+
 
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.render(gc);

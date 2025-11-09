@@ -6,18 +6,28 @@
     "E": "explode",
     "M": "medium",
     "C": "movable_circular",
-    "H": "movable_unbreakable_horizontal",
+    "H": "movable_horizontal",
     "V": "movable_unbreakable_vertical"
   },
   "layout": [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "     N"
+    "            ",
+    "   HHHHHH   ",
+    "            ",
+    "  EEEEEEEE  ",
+    "            ",
+    "            ",
+    "            ",
+    "   V   V    ",
+    "            ",
+    "            ",
+    "            ",
+    "UUUEMMMMEUUU",
+    "EMUENNNNEUME",
+    " MUEMUUMEUM",
+    "            ",
+    "            ",
+    "            ",
+    "   HHHHHH   "
   ],
   "properties": {
     "movable_circular": {
@@ -26,7 +36,7 @@
       "rangeX": 100,
       "rangeY": 100
     },
-    "movable_unbreakable_horizontal": {
+    "movable_horizontal": {
       "dx": 48,
       "dy": 0,
       "rangeX": 144,

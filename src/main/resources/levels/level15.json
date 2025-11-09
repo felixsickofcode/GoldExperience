@@ -9,11 +9,21 @@
     "C": "movable_circular"
   },
   "layout": [
-    "     C   C     ",
-    "    MMMMMMM    ",
-    "   MMEEUEEMM   ",
-    "    MMMMMMM    ",
-    "     C   C     "
+    "",
+    "     EEEEE    ",
+    "",
+    "",
+    "",
+    "",
+    "  MMMMMMM    ",
+    " MMEEUEEMM   ",
+    "  MMMMMMM    ",
+    "",
+    "",
+    "",
+    "",
+    "    CC CC   ",
+    "    CC CC   "
   ],
   "properties": {
     "movable_circular": {

@@ -1,5 +1,4 @@
 {
-  "levelNumber": 4,
   "key": {
     "N": "normal",
     "U": "unbreakable",
@@ -9,6 +8,8 @@
     "V": "movable_unbreakable_vertical"
   },
   "layout": [
+    "",
+    "",
     "N   H   N   H",
     " M H M H M H ",
     "  N V N V N  ",

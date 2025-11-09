@@ -4,39 +4,24 @@
     "U": "unbreakable",
     " ": "empty",
     "E": "explode",
-    "M": "medium",
-    "C": "movable_circular",
-    "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "M": "medium"
   },
   "layout": [
-    "",
-    "",
-    "",
-    "",
-    "",
-    " NNNNNNNNNN ",
-    "  C      C  ",
-
-  ],
-  "properties": {
-    "movable_circular": {
-      "dx": 0,
-      "dy": 0,
-      "rangeX": 80,
-      "rangeY": 80
-    },
-    "movable_unbreakable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 144,
-      "rangeY": 0
-    },
-    "movable_unbreakable_vertical": {
-      "dx": 0,
-      "dy": 24,
-      "rangeX": 0,
-      "rangeY": 48
-    }
-  }
+    "            ",
+    "            ",
+    "            ",
+    "  NNNNNNNN  ",
+    "            ",
+    "  UNNNNNNU  ",
+    "            ",
+    "MEMEMEMEMEME",
+    "ENENENENENEN",
+    "  MMMMMMMM  ",
+    "NNNNNNNNNNNN",
+    "NEEEEEEEEEEN",
+    "NNNNNNNNNNNN",
+    "EMUEUUUUEUME",
+    "NNNNNNNNNNNN",
+    " NNNNNNNNNN "
+  ]
 }
