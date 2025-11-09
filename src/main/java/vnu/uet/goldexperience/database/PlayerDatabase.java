@@ -16,7 +16,7 @@ public class PlayerDatabase {
     // Thông tin kết nối database
     private static final String DB_URL = "jdbc:mysql://localhost:3306/gold_experience";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "p1h2o3n4g5";
+    private static final String DB_PASSWORD = "";
 
     private PlayerDatabase() {
         try {
