@@ -68,7 +68,10 @@ public class GameEngine implements BrickListener {
         initObjects();
     }
 
-    public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+
+    }
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,

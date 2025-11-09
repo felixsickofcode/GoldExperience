@@ -14,6 +14,8 @@ import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
 import vnu.uet.goldexperience.core.ChapterTheme;
 import vnu.uet.goldexperience.view.GameUIComponents;
+import vnu.uet.goldexperience.view.ScoreboardPanel;
+import vnu.uet.goldexperience.database.PlayerDatabase;
 import vnu.uet.goldexperience.manager.GameSession.*;
 
 public class GameController implements GameSessionListener {
@@ -28,6 +30,9 @@ public class GameController implements GameSessionListener {
 
     @FXML
     private HBox livesContainer;
+
+    @FXML
+    private ScoreboardPanel scoreboardPanel;
 
     private GameEngine engine;
     private InputManager input;
@@ -50,6 +55,10 @@ public class GameController implements GameSessionListener {
         gameOverManager = engine.getGameOverManager();
         dialogueSystem = engine.getDialogueSystem();
 
+        gameOverManager.setScoreSaveCallback((playerName, score) -> {
+            savePlayerScore(playerName, score);
+        });
+
         GameSession.getInstance().addListener(this);
         engine.setCursorChangeListener(() -> Platform.runLater(this::updateCursor));
 
@@ -68,6 +77,7 @@ public class GameController implements GameSessionListener {
         Platform.runLater(() -> {
             setupBackground();
             setupInputHandlers();
+            setupScoreboard();
             updateScore(GameSession.getInstance().getScore());
         });
     }
@@ -84,6 +94,13 @@ public class GameController implements GameSessionListener {
         rootGamePane.getChildren().add(0, background.getCanvas());
     }
 
+    private void setupScoreboard() {
+        if (scoreboardPanel != null && currentTheme != null) {
+            scoreboardPanel.applyTheme(currentTheme);
+            scoreboardPanel.updateScoreboard();
+        }
+    }
+
     private void setupInputHandlers() {
         rootGamePane.setFocusTraversable(true);
         rootGamePane.setOnKeyPressed(e -> input.keyPressed(e.getCode()));
@@ -92,13 +109,13 @@ public class GameController implements GameSessionListener {
         canvas.setOnMouseMoved(e -> {
             double canvasX = e.getX();
             double canvasY = e.getY();
-            input.mouseMoved(canvasX + canvas.getLayoutX()); 
+            input.mouseMoved(canvasX + canvas.getLayoutX());
             pauseMenu.handleMouseInput(canvasX, canvasY, false);
             gameOverManager.handleMouseInput(canvasX, canvasY, false);
         });
 
         rootGamePane.setOnMouseDragged(e -> {
-            input.mouseMoved(e.getX()); 
+            input.mouseMoved(e.getX());
         });
 
         rootGamePane.setOnMousePressed(e -> {
@@ -106,9 +123,9 @@ public class GameController implements GameSessionListener {
 
             if (engine != null && engine.getStateManager() != null) {
                 if (engine.getStateManager().is(GameState.PAUSED))
-                    engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true); 
+                    engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true);
                 if (engine.getStateManager().is(GameState.GAME_OVER))
-                    engine.getGameOverManager().handleMouseInput(e.getX(), e.getY(), true); 
+                    engine.getGameOverManager().handleMouseInput(e.getX(), e.getY(), true);
             }
         });
 
@@ -153,9 +170,10 @@ public class GameController implements GameSessionListener {
     private void updateTheme(int chapter) {
         if (background != null) {
             this.currentTheme = getThemeForChapter(chapter);
-            if ( GameSession.getInstance().getMode()
+            if (GameSession.getInstance().getMode()
                     .equals(GameSession.GameMode.ENDLESS))
-                this.currentTheme =  ChapterTheme.ORIGINAL;
+                this.currentTheme = ChapterTheme.ORIGINAL;
+
             background.setTheme(currentTheme);
             pauseMenu.setTheme(currentTheme);
             gameOverManager.setTheme(currentTheme);
@@ -164,6 +182,11 @@ public class GameController implements GameSessionListener {
 
             GameUIComponents.applyTheme(scoreLabel, currentTheme);
             updateLives(GameSession.getInstance().getLives());
+
+            // Update scoreboard theme
+            if (scoreboardPanel != null) {
+                scoreboardPanel.applyTheme(currentTheme);
+            }
         }
     }
 
@@ -217,8 +240,49 @@ public class GameController implements GameSessionListener {
         }
     }
 
+    /**
+     * Save player score to database and update scoreboard
+     * Call this when game ends or player achieves new high score
+     */
+    public void savePlayerScore(String playerName, int finalScore) {
+        if (playerName == null || playerName.trim().isEmpty()) {
+            System.err.println("Cannot save score: invalid player name");
+            return;
+        }
+
+        PlayerDatabase db = PlayerDatabase.getInstance();
+
+        try {
+            if (db.playerExists(playerName)) {
+                int currentScore = db.getPlayerScore(playerName);
+                if (finalScore > currentScore) {
+                    db.updateScore(playerName, finalScore);
+                    System.out.println("✓ Updated " + playerName + "'s high score: " + currentScore + " → " + finalScore);
+                } else {
+                    System.out.println("Score " + finalScore + " not higher than current " + currentScore);
+                }
+            } else {
+                db.addOrUpdatePlayer(playerName, finalScore);
+                System.out.println("✓ Added new player: " + playerName + " with score " + finalScore);
+            }
+
+            // Refresh scoreboard immediately
+            if (scoreboardPanel != null) {
+                Platform.runLater(() -> scoreboardPanel.updateScoreboard());
+            }
+        } catch (Exception e) {
+            System.err.println("Error saving player score: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public void cleanup() {
         GameSession.getInstance().removeListener(this);
+
+        if (scoreboardPanel != null) {
+            scoreboardPanel.stop();
+        }
+
         endGame();
     }
 
