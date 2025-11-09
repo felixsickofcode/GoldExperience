@@ -46,7 +46,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         setMinWidth(280);
 
         titleLabel = new Label("TOP PLAYERS");
-        titleLabel.setFont(Font.font("Monospaced", FontWeight.BOLD, 18));
+        titleLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 30));
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -202,16 +202,16 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
             setMaxWidth(Double.MAX_VALUE);
 
             rankLabel = new Label(rank + ".");
-            rankLabel.setFont(Font.font("Monospaced", FontWeight.BOLD, 13));
+            rankLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 20));
             rankLabel.setMinWidth(30);
 
             nameLabel = new Label("---");
-            nameLabel.setFont(Font.font("Monospaced", FontWeight.NORMAL, 12));
+            nameLabel.setFont(Font.font("Cynosure Straight", FontWeight.NORMAL, 19));
             nameLabel.setMaxWidth(110);
             nameLabel.setMinWidth(110);
 
             scoreLabel = new Label("0");
-            scoreLabel.setFont(Font.font("Monospaced", FontWeight.BOLD, 12));
+            scoreLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 19));
             scoreLabel.setAlignment(Pos.CENTER_RIGHT);
             scoreLabel.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(scoreLabel, javafx.scene.layout.Priority.ALWAYS);
