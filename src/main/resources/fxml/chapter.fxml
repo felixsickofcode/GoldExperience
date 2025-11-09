@@ -11,54 +11,108 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #2a2a2a;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vnu.uet.goldexperience.controller.SelectChapterController">
+<AnchorPane prefHeight="720.0"
+            prefWidth="1280.0"
+            style="-fx-background-color: #000000;"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="vnu.uet.goldexperience.controller.SelectChapterController">
     <children>
         <Rectangle fill="#1a1a1a" height="720.0" opacity="0.5" width="1280.0" />
 
-        <Button fx:id="btnBack" layoutX="35.0" layoutY="35.0" mnemonicParsing="false" onAction="#handleBackToMenu" prefHeight="50.0" prefWidth="135.0" style="-fx-background-color: transparent; -fx-border-color: #888888; -fx-border-width: 2; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-family: 'Xirod'; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #AAAAAA;" text="◄  BACK">
-            <effect>
-                <DropShadow color="#00000060" radius="8.0" />
-            </effect>
-        </Button>
+        <!-- Back Button -->
+        <Button fx:id="btnBack"
+                layoutX="35.0"
+                layoutY="35.0"
+                mnemonicParsing="false"
+                onAction="#handleBackToMenu"
+                text="◄  BACK" />
 
-        <Text fill="#D0D0D0" layoutX="390.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Cynosure'; -fx-font-size: 52px; -fx-font-weight: bold;" text="CHAPTER SELECT" textAlignment="CENTER">
-            <effect>
-                <Glow level="0.2" />
-            </effect>
-        </Text>
+        <!-- Title -->
+        <Text fill="#FFFFFF"
+              layoutX="345.0"
+              layoutY="100.0"
+              strokeType="OUTSIDE"
+              strokeWidth="0.0"
+              styleClass="chapter-title"
+              text="CHAPTER SELECT"
+              textAlignment="CENTER" />
 
-        <AnchorPane fx:id="leftStack" layoutX="70.0" layoutY="160.0" prefHeight="400.0" prefWidth="440.0">
+        <!-- Left Stack -->
+        <AnchorPane fx:id="leftStack"
+                    layoutX="70.0"
+                    layoutY="160.0"
+                    prefHeight="400.0"
+                    prefWidth="440.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#onLeftClick" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                <Button mnemonicParsing="false"
+                        onAction="#onLeftClick"
+                        style="-fx-background-color: transparent; -fx-cursor: hand;">
                     <graphic>
                         <AnchorPane prefHeight="380.0" prefWidth="420.0">
                             <children>
-                                <Text fx:id="leftChapterText" fill="#FF8C00" layoutX="103.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 27px; -fx-font-weight: bold;" text="Chapter 2" textAlignment="CENTER">
+                                <Text fx:id="leftChapterText"
+                                      fill="#00f5ff"
+                                      layoutX="103.0"
+                                      layoutY="45.0"
+                                      strokeType="OUTSIDE"
+                                      strokeWidth="0.0"
+                                      style="-fx-font-family: 'Xirod'; -fx-font-size: 27px; -fx-font-weight: bold;"
+                                      text="Chapter 1"
+                                      textAlignment="CENTER">
                                     <effect>
                                         <Glow level="0.5" />
                                     </effect>
                                 </Text>
-                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="280.0" layoutX="10.0" layoutY="60.0" stroke="#FF8C00" strokeWidth="4.0" width="400.0">
+                                <Rectangle arcHeight="8.0"
+                                           arcWidth="8.0"
+                                           fill="transparent"
+                                           height="280.0"
+                                           layoutX="10.0"
+                                           layoutY="60.0"
+                                           stroke="#ff006e"
+                                           strokeWidth="4.0"
+                                           width="400.0">
                                     <effect>
-                                        <DropShadow color="#FF8C00" offsetY="8.0" radius="30.0" spread="0.5" />
+                                        <DropShadow color="#ff006e"
+                                                    offsetY="8.0"
+                                                    radius="30.0"
+                                                    spread="0.5" />
                                     </effect>
                                 </Rectangle>
-                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="268.0" layoutX="16.0" layoutY="66.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.5" width="388.0">
+                                <Rectangle arcHeight="8.0"
+                                           arcWidth="8.0"
+                                           fill="#1a1a1a"
+                                           height="268.0"
+                                           layoutX="16.0"
+                                           layoutY="66.0"
+                                           opacity="0.95"
+                                           stroke="#00f5ff"
+                                           strokeWidth="2.5"
+                                           width="388.0">
                                     <effect>
                                         <DropShadow color="#00000090" radius="20.0" />
                                     </effect>
                                 </Rectangle>
-                                <ImageView fitHeight="200.0" fitWidth="340.0" layoutX="40.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="200.0"
+                                           fitWidth="340.0"
+                                           layoutX="40.0"
+                                           layoutY="95.0"
+                                           pickOnBounds="true"
+                                           preserveRatio="true">
                                     <image>
                                         <Image url="@../images/menu-background.jpg" />
                                     </image>
                                 </ImageView>
-                                <Text fill="#AAAAAA" layoutX="110.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 10px;" text="◄  Navigate chapters  ►" textAlignment="CENTER" wrappingWidth="200.0" />
-                                <Text fill="#FF8C00" layoutX="365.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 28px; -fx-font-weight: bold;" text="►" textAlignment="CENTER">
-                                    <effect>
-                                        <Glow level="0.6" />
-                                    </effect>
-                                </Text>
+                                <Text fill="#AAAAAA"
+                                      layoutX="110.0"
+                                      layoutY="315.0"
+                                      strokeType="OUTSIDE"
+                                      strokeWidth="0.0"
+                                      style="-fx-font-family: 'Xirod'; -fx-font-size: 10px;"
+                                      text="◄  Navigate chapters  ►"
+                                      textAlignment="CENTER"
+                                      wrappingWidth="200.0" />
                             </children>
                         </AnchorPane>
                     </graphic>
@@ -66,38 +120,80 @@
             </children>
         </AnchorPane>
 
-        <AnchorPane fx:id="centerChapter" layoutX="430.0" layoutY="160.0" prefHeight="400.0" prefWidth="440.0">
+        <!-- Center Chapter -->
+        <AnchorPane fx:id="centerChapter"
+                    layoutX="430.0"
+                    layoutY="160.0"
+                    prefHeight="400.0"
+                    prefWidth="440.0">
             <children>
-                <Button mnemonicParsing="false" style="-fx-background-color: transparent;">
+                <Button mnemonicParsing="false"
+                        style="-fx-background-color: transparent;">
                     <graphic>
                         <AnchorPane prefHeight="380.0" prefWidth="420.0">
                             <children>
-                                <Text fx:id="centerChapterText" fill="#FF8C00" layoutX="103.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 27px; -fx-font-weight: bold;" text="Chapter 3" textAlignment="CENTER">
+                                <Text fx:id="centerChapterText"
+                                      fill="#00f5ff"
+                                      layoutX="103.0"
+                                      layoutY="45.0"
+                                      strokeType="OUTSIDE"
+                                      strokeWidth="0.0"
+                                      style="-fx-font-family: 'Xirod'; -fx-font-size: 27px; -fx-font-weight: bold;"
+                                      text="Chapter 1"
+                                      textAlignment="CENTER">
                                     <effect>
                                         <Glow level="0.5" />
                                     </effect>
                                 </Text>
-                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="280.0" layoutX="10.0" layoutY="60.0" stroke="#FF8C00" strokeWidth="4.0" width="400.0">
+                                <Rectangle arcHeight="8.0"
+                                           arcWidth="8.0"
+                                           fill="transparent"
+                                           height="280.0"
+                                           layoutX="10.0"
+                                           layoutY="60.0"
+                                           stroke="#ff006e"
+                                           strokeWidth="4.0"
+                                           width="400.0">
                                     <effect>
-                                        <DropShadow color="#FF8C00" offsetY="8.0" radius="30.0" spread="0.5" />
+                                        <DropShadow color="#ff006e"
+                                                    offsetY="8.0"
+                                                    radius="30.0"
+                                                    spread="0.5" />
                                     </effect>
                                 </Rectangle>
-                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="268.0" layoutX="16.0" layoutY="66.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.5" width="388.0">
+                                <Rectangle arcHeight="8.0"
+                                           arcWidth="8.0"
+                                           fill="#1a1a1a"
+                                           height="268.0"
+                                           layoutX="16.0"
+                                           layoutY="66.0"
+                                           opacity="0.95"
+                                           stroke="#00f5ff"
+                                           strokeWidth="2.5"
+                                           width="388.0">
                                     <effect>
                                         <DropShadow color="#00000090" radius="20.0" />
                                     </effect>
                                 </Rectangle>
-                                <ImageView fitHeight="200.0" fitWidth="340.0" layoutX="40.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="200.0"
+                                           fitWidth="340.0"
+                                           layoutX="40.0"
+                                           layoutY="95.0"
+                                           pickOnBounds="true"
+                                           preserveRatio="true">
                                     <image>
                                         <Image url="@../images/menu-background.jpg" />
                                     </image>
                                 </ImageView>
-                                <Text fill="#AAAAAA" layoutX="110.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 10px;" text="◄  Navigate chapters  ►" textAlignment="CENTER" wrappingWidth="200.0" />
-                                <Text fill="#FF8C00" layoutX="365.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 28px; -fx-font-weight: bold;" text="►" textAlignment="CENTER">
-                                    <effect>
-                                        <Glow level="0.6" />
-                                    </effect>
-                                </Text>
+                                <Text fill="#AAAAAA"
+                                      layoutX="110.0"
+                                      layoutY="315.0"
+                                      strokeType="OUTSIDE"
+                                      strokeWidth="0.0"
+                                      style="-fx-font-family: 'Xirod'; -fx-font-size: 10px;"
+                                      text="◄  Navigate chapters  ►"
+                                      textAlignment="CENTER"
+                                      wrappingWidth="200.0" />
                             </children>
                         </AnchorPane>
                     </graphic>
@@ -105,38 +201,81 @@
             </children>
         </AnchorPane>
 
-        <AnchorPane fx:id="rightStack" layoutX="790.0" layoutY="160.0" prefHeight="400.0" prefWidth="440.0">
+        <!-- Right Stack -->
+        <AnchorPane fx:id="rightStack"
+                    layoutX="790.0"
+                    layoutY="160.0"
+                    prefHeight="400.0"
+                    prefWidth="440.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#onRightClick" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                <Button mnemonicParsing="false"
+                        onAction="#onRightClick"
+                        style="-fx-background-color: transparent; -fx-cursor: hand;">
                     <graphic>
                         <AnchorPane prefHeight="380.0" prefWidth="420.0">
                             <children>
-                                <Text fx:id="rightChapterText" fill="#FF8C00" layoutX="103.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 27px; -fx-font-weight: bold;" text="Chapter 4" textAlignment="CENTER">
+                                <Text fx:id="rightChapterText"
+                                      fill="#00f5ff"
+                                      layoutX="103.0"
+                                      layoutY="45.0"
+                                      strokeType="OUTSIDE"
+                                      strokeWidth="0.0"
+                                      style="-fx-font-family: 'Xirod'; -fx-font-size: 27px; -fx-font-weight: bold;"
+                                      text="Chapter 2"
+                                      textAlignment="CENTER">
                                     <effect>
                                         <Glow level="0.5" />
                                     </effect>
                                 </Text>
-                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="transparent" height="280.0" layoutX="10.0" layoutY="60.0" stroke="#FF8C00" strokeWidth="4.0" width="400.0">
+                                <Rectangle arcHeight="8.0"
+                                           arcWidth="8.0"
+                                           fill="transparent"
+                                           height="280.0"
+                                           layoutX="10.0"
+                                           layoutY="60.0"
+                                           stroke="#ff006e"
+                                           strokeWidth="4.0"
+                                           width="400.0">
                                     <effect>
-                                        <DropShadow color="#FF8C00" offsetY="8.0" radius="30.0" spread="0.5" />
+                                        <DropShadow color="#ff006e"
+                                                    offsetY="8.0"
+                                                    radius="30.0"
+                                                    spread="0.5" />
                                     </effect>
                                 </Rectangle>
-                                <Rectangle arcHeight="8.0" arcWidth="8.0" fill="#1a1a1a" height="268.0" layoutX="16.0" layoutY="66.0" opacity="0.95" stroke="#FF8C00" strokeWidth="2.5" width="388.0">
+                                <Rectangle arcHeight="8.0"
+                                           arcWidth="8.0"
+                                           fill="#1a1a1a"
+                                           height="268.0"
+                                           layoutX="16.0"
+                                           layoutY="66.0"
+                                           opacity="0.95"
+                                           stroke="#00f5ff"
+                                           strokeWidth="2.5"
+                                           width="388.0">
                                     <effect>
                                         <DropShadow color="#00000090" radius="20.0" />
                                     </effect>
                                 </Rectangle>
-                                <ImageView fitHeight="200.0" fitWidth="340.0" layoutX="40.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="200.0"
+                                           fitWidth="340.0"
+                                           layoutX="40.0"
+                                           layoutY="95.0"
+                                           pickOnBounds="true"
+                                           preserveRatio="true">
                                     <image>
                                         <Image url="@../images/menu-background.jpg" />
                                     </image>
                                 </ImageView>
-                                <Text fill="#AAAAAA" layoutX="110.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 10px;" text="◄  Navigate chapters  ►" textAlignment="CENTER" wrappingWidth="200.0" />
-                                <Text fill="#FF8C00" layoutX="365.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: 'Xirod'; -fx-font-size: 28px; -fx-font-weight: bold;" text="►" textAlignment="CENTER">
-                                    <effect>
-                                        <Glow level="0.6" />
-                                    </effect>
-                                </Text>
+                                <Text fill="#AAAAAA"
+                                      layoutX="110.0"
+                                      layoutY="315.0"
+                                      strokeType="OUTSIDE"
+                                      strokeWidth="0.0"
+                                      style="-fx-font-family: 'Xirod'; -fx-font-size: 10px;"
+                                      text="◄  Navigate chapters  ►"
+                                      textAlignment="CENTER"
+                                      wrappingWidth="200.0" />
                             </children>
                         </AnchorPane>
                     </graphic>
@@ -144,32 +283,52 @@
             </children>
         </AnchorPane>
 
-        <Button layoutX="380.0" layoutY="330.0" mnemonicParsing="false" onAction="#onLeftClick" prefHeight="60.0" prefWidth="60.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
+        <!-- Left Navigation Button -->
+        <Button layoutX="380.0"
+                layoutY="330.0"
+                mnemonicParsing="false"
+                onAction="#onLeftClick"
+                prefHeight="60.0"
+                prefWidth="60.0"
+                style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane>
-                    <Polygon fill="#FF8C00" points="20,30, 40,15, 40,45" style="-fx-effect: dropshadow(gaussian, #FF8C00, 2, 0.6, 0, 0);" />
+                    <Polygon fill="#00f5ff"
+                             points="20,30, 40,15, 40,45"
+                             style="-fx-effect: dropshadow(gaussian, #00f5ff, 2, 0.6, 0, 0);" />
                 </StackPane>
             </graphic>
             <effect>
-                <DropShadow color="#FF8C00" radius="20.0" spread="0.4" />
+                <DropShadow color="#00f5ff" radius="20.0" spread="0.4" />
             </effect>
         </Button>
 
-        <Button layoutX="854.0" layoutY="330.0" mnemonicParsing="false" onAction="#onRightClick" prefHeight="60.0" prefWidth="60.0" style="-fx-background-color: transparent; -fx-cursor: hand;">
+        <!-- Right Navigation Button -->
+        <Button layoutX="854.0"
+                layoutY="330.0"
+                mnemonicParsing="false"
+                onAction="#onRightClick"
+                prefHeight="60.0"
+                prefWidth="60.0"
+                style="-fx-background-color: transparent; -fx-cursor: hand;">
             <graphic>
                 <StackPane>
-                    <Polygon fill="#FF8C00" points="40,30, 20,15, 20,45" style="-fx-effect: dropshadow(gaussian, #FF8C00, 2, 0.6, 0, 0);" />
+                    <Polygon fill="#00f5ff"
+                             points="40,30, 20,15, 20,45"
+                             style="-fx-effect: dropshadow(gaussian, #00f5ff, 2, 0.6, 0, 0);" />
                 </StackPane>
             </graphic>
             <effect>
-                <DropShadow color="#FF8C00" radius="20.0" spread="0.4" />
+                <DropShadow color="#00f5ff" radius="20.0" spread="0.4" />
             </effect>
         </Button>
 
-        <Button fx:id="btnChooseChapter" layoutX="465.0" layoutY="615.0" mnemonicParsing="false" onAction="#handleChooseChapter" prefHeight="60.0" prefWidth="350.0" style="-fx-background-color: #FF8C00; -fx-cursor: hand; -fx-background-radius: 8; -fx-font-family: 'Xirod'; -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: gray;" text="CHOOSE CHAPTER">
-            <effect>
-                <DropShadow color="#FF8C00" radius="25.0" spread="0.5" />
-            </effect>
-        </Button>
+        <!-- Choose Chapter Button -->
+        <Button fx:id="btnChooseChapter"
+                layoutX="465.0"
+                layoutY="615.0"
+                mnemonicParsing="false"
+                onAction="#handleChooseChapter"
+                text="CHOOSE CHAPTER" />
     </children>
 </AnchorPane>
