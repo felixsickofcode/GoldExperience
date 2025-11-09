@@ -7,7 +7,7 @@
     "M": "medium",
     "C": "movable_circular",
     "H": "movable_unbreakable_horizontal",
-    "V": "movable_unbreakable_vertical"
+    "V": "movable_vertical"
   },
   "layout": [
     "",
@@ -15,28 +15,29 @@
     "",
     "",
     "",
+    " VVVVVVVVVV ",
     "",
     "",
-    "     N"
+    "",
+    "",
+    "UUUMMMMMMUUU",
+    "MMMMMMMMMMMM",
+    "ENENENENENEN",
+    "NENENENENENE",
+    "NNNNNNNNNNNN"
   ],
   "properties": {
     "movable_circular": {
       "dx": 0,
       "dy": 0,
-      "rangeX": 100,
-      "rangeY": 100
+      "rangeX": 50,
+      "rangeY": 50
     },
-    "movable_unbreakable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 144,
-      "rangeY": 0
-    },
-    "movable_unbreakable_vertical": {
+    "movable_vertical": {
       "dx": 0,
-      "dy": 24,
+      "dy": 48,
       "rangeX": 0,
-      "rangeY": 48
+      "rangeY": 96
     }
   }
 }

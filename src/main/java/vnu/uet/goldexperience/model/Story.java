@@ -87,7 +87,7 @@ public class Story {
                         "They build light to remember what it felt like to be seen.",
                         "Be gentle, ARKA-9. Even illusions have purpose."
                 },
-                true
+                false
         ));
 
         addDialogue(9, new DialogueData(
@@ -108,7 +108,7 @@ public class Story {
                         "The data references Verdant Core — a sanctuary of synthetic nature.",
                         "It seems humanity once tried to rebuild the Earth... from code."
                 },
-                true
+                false
         ));
 
         // === CHAPTER 3: VERDANT CORE ===
@@ -129,7 +129,7 @@ public class Story {
                         "Verdant Core's data confirms — Elyra planned for this. Artificial rebirth, guided by code.",
                         "The next signal originates underground — the *Cathedral of Steel*."
                 },
-                true  // AFTER
+                false  // AFTER
         ));
 
         // === CHAPTER 4: CATHEDRAL OF STEEL ===

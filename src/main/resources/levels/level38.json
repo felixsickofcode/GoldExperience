@@ -15,26 +15,22 @@
   "layout": [
     "",
     "",
+    "XXX     XXX",
     "",
     "",
     "",
-    "SSSSSSSSSSSS",
-    "SSSSSSSSSSSS",
-    "EUEUEUEUEUEU",
-    "HHHHH  HHHHH",
-    "YYY      YYY",
     "",
+    "UUUUMMMMEEEE",
+    "UUUUMMMMEEEE",
+    "MMMMEEEEMMMM",
+    "MMMMEEEEMMMM",
+    "MMMMEEEEMMMM",
+    "EEEEMMMMUUUU",
+    "EEEEMMMMUUUU",
     "",
-    "     XX     "
-
+    "    YYYY"
   ],
   "properties": {
-    "movable_horizontal": {
-      "dx": 48,
-      "dy": 0,
-      "rangeX": 96,
-      "rangeY": 0
-    },
     "movable_unbreakable_horizontal": {
       "dx": 48,
       "dy": 0,
@@ -46,6 +42,24 @@
       "dy": 24,
       "rangeX": 0,
       "rangeY": 48
+    },
+    "movable_horizontal": {
+      "dx": 48,
+      "dy": 0,
+      "rangeX": 144,
+      "rangeY": 0
+    },
+    "movable_vertical": {
+      "dx": 0,
+      "dy": 24,
+      "rangeX": 0,
+      "rangeY": 48
+    },
+    "movable_circular": {
+      "dx": 0,
+      "dy": 0,
+      "rangeX": 40,
+      "rangeY": 40
     }
   }
 }
