@@ -65,6 +65,13 @@ public class GameOverManager {
     private static final double TITLE_FADE_DURATION = 1.5;
     private static final double MENU_FADE_DURATION = 0.5;
 
+    private boolean scoreSaved = false;
+
+    public interface ScoreSaveCallback {
+        void saveScore(String playerName, int score);
+    }
+    private ScoreSaveCallback scoreSaveCallback;
+
     public interface GameOverCallback {
         void onRetry();
         void onQuit();
@@ -139,12 +146,18 @@ public class GameOverManager {
         this.callback = callback;
     }
 
+    public void setScoreSaveCallback(ScoreSaveCallback callback) {
+        this.scoreSaveCallback = callback;
+    }
+
     public void show() {
         if (currentPhase != Phase.HIDDEN) return;
         currentPhase = Phase.FADING_IN_TITLE;
         transitionTimer = 0;
         selectedIndex = 0;
         animationTimer = 0;
+        scoreSaved = false;
+        saveScore();
     }
 
     public void hide() {
@@ -344,6 +357,35 @@ public class GameOverManager {
             gc.setFill(colorTextDisabled);
             gc.setFont(buttonFont);
             gc.fillText(text, x + BUTTON_WIDTH / 2, y + BUTTON_HEIGHT / 2 + 6);
+        }
+    }
+
+
+    private void saveScore() {
+        if (scoreSaved) {
+            System.out.println("⚠ Score already saved");
+            return;
+        }
+
+        try {
+            int finalScore = GameSession.getInstance().getScore();
+            String playerName = GameSession.getInstance().getCurrentPlayer(); // ← LẤY TỪ SESSION
+
+            if (playerName == null || playerName.trim().isEmpty()) {
+                System.err.println("✗ No player logged in!");
+                return;
+            }
+
+            System.out.println("💾 Saving: " + playerName + " - Score: " + finalScore);
+
+            if (scoreSaveCallback != null) {
+                scoreSaveCallback.saveScore(playerName, finalScore);
+                scoreSaved = true;
+                System.out.println("✓ Score saved!");
+            }
+        } catch (Exception e) {
+            System.err.println("✗ Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -14,6 +14,7 @@ public class GameSession {
     private static final int MAX_LIVES = 3;
     private int score = 0;
     private GameMode mode;
+    private String currentPlayerName = null;
 
     private final List<GameSessionListener> listeners = new ArrayList<>();
 
@@ -180,4 +181,11 @@ public class GameSession {
         return false;
     }
 
+    public void setCurrentPlayer(String playerName) {
+        this.currentPlayerName = playerName;
+    }
+
+    public String getCurrentPlayer() {
+        return this.currentPlayerName;
+    }
 }

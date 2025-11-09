@@ -38,4 +38,8 @@ module vnu.uet.goldexperience {
     opens vnu.uet.goldexperience.model.brick to com.google.gson;
     exports vnu.uet.goldexperience.model.brickFactory;
     opens vnu.uet.goldexperience.model.brickFactory to com.google.gson;
+
+    exports vnu.uet.goldexperience.view;
+    opens vnu.uet.goldexperience.view to javafx.fxml;
+    exports vnu.uet.goldexperience.database;
 }
