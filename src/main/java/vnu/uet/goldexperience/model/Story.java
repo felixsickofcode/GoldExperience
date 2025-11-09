@@ -75,7 +75,7 @@ public class Story {
                         "It contains an engineer’s log — memories of Project ARKA’s final days.",
                         "A new coordinate emerges from the file. We head toward the next signal."
                 },
-                true
+                false
         ));
 
         // === CHAPTER 2: NEON SLUMS ===
