@@ -93,8 +93,8 @@ public class GameEngine implements BrickListener {
             levelManager.loadLevel(levelNumber);
         }
         else {
-            int min = 1;
-            int max = 25;
+            int min = 30;
+            int max = 40;
             int randomValue = min + (int)(Math.random() * (max - min + 1));
             levelManager.loadLevel(randomValue);
         }
