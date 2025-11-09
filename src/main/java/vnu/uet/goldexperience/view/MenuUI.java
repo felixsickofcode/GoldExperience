@@ -1,193 +1,123 @@
 package vnu.uet.goldexperience.view;
 
 import javafx.animation.AnimationTimer;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+import javafx.scene.shape.SVGPath;
 import vnu.uet.goldexperience.core.ChapterTheme;
+
+import java.util.function.Consumer;
 
 public class MenuUI {
 
-    private Stage stage;
-    private Pane rootPane;
+    private StackPane rootPane;
     private Canvas backgroundCanvas;
     private GraphicsContext gc;
     private AnimationTimer animationTimer;
-
-    // --- Callbacks để Controller gán hành động ---
-    private Runnable onStoryMode;
-    private Runnable on2PlayerMode;
-    private Runnable onMoveToSetting;
-    // ---
-
-    private Label welcomeLabel; // Label để chào mừng người chơi
 
     private final double WIDTH = 1280;
     private final double HEIGHT = 720;
 
     private double gridOffset = 0;
     private double borderPulse = 0;
+    private double titleGlow = 0;
 
     private final Color DARK_BG = ChapterTheme.DARK_BG_ORIGINAL;
     private final Color NEON_PINK = ChapterTheme.NEON_PINK;
     private final Color NEON_CYAN = ChapterTheme.NEON_CYAN;
+    private final Color NEON_GREEN = Color.rgb(0, 255, 136);
 
-    public MenuUI(Stage stage) {
-        this.stage = stage;
+    private Consumer<String> onMenuAction;
+
+    public MenuUI() {
         createUI();
     }
 
-    // --- Các hàm setter cho Callbacks ---
-    public void setOnStoryMode(Runnable callback) {
-        this.onStoryMode = callback;
+    public void setOnMenuAction(Consumer<String> callback) {
+        this.onMenuAction = callback;
     }
 
-    public void setOn2PlayerMode(Runnable callback) {
-        this.on2PlayerMode = callback;
-    }
-
-    public void setOnMoveToSetting(Runnable callback) {
-        this.onMoveToSetting = callback;
-    }
-    // ---
-
-    /**
-     * Cập nhật tên người chơi trên UI
-     * @param name Tên người chơi
-     */
-    public void setPlayerName(String name) {
-        if (welcomeLabel != null) {
-            welcomeLabel.setText("PLAYER: " + name.toUpperCase());
-        }
-    }
-
-    public Pane getRootPane() {
+    public StackPane getRootPane() {
         return rootPane;
     }
 
     private void createUI() {
-        rootPane = new Pane();
+        rootPane = new StackPane();
         rootPane.setPrefSize(WIDTH, HEIGHT);
-        rootPane.setStyle("-fx-background-color: linear-gradient(to bottom, " +
-                "#0a0514 0%, #1a0a28 25%, #0f0520 50%, #1a0a28 75%, #0a0514 100%);");
+        rootPane.getStyleClass().add("menu-root");
 
-        // Background animation canvas (Giữ nguyên)
         backgroundCanvas = new Canvas(WIDTH, HEIGHT);
         gc = backgroundCanvas.getGraphicsContext2D();
         rootPane.getChildren().add(backgroundCanvas);
 
-        // --- Bố cục (Layout) ---
+        Label titleLabel = new Label("A.R.K.A");
+        titleLabel.getStyleClass().add("menu-title");
 
-        // Tiêu đề chính
-        Label titleLabel = new Label("GOLD EXPERIENCE");
-        titleLabel.setFont(Font.font("Monospace", FontWeight.BOLD, 52));
-        titleLabel.setTextFill(NEON_CYAN);
-        titleLabel.setStyle("-fx-effect: dropshadow(gaussian, #00f5ff, 25, 0.8, 0, 0);");
-        titleLabel.setAlignment(Pos.CENTER);
-        titleLabel.setPrefWidth(WIDTH);
-        titleLabel.setLayoutY(HEIGHT / 2 - 220); // Đặt vị trí
-        rootPane.getChildren().add(titleLabel);
+        Label subtitleLabel = new Label("SELECT YOUR ADVENTURE");
+        subtitleLabel.getStyleClass().add("menu-subtitle");
 
-        // Chào mừng người chơi
-        welcomeLabel = new Label("PLAYER: ");
-        welcomeLabel.setFont(Font.font("Monospace", FontWeight.NORMAL, 14));
-        welcomeLabel.setTextFill(NEON_PINK);
-        welcomeLabel.setAlignment(Pos.CENTER);
-        welcomeLabel.setPrefWidth(WIDTH);
-        welcomeLabel.setLayoutY(HEIGHT / 2 - 150); // Đặt vị trí
-        rootPane.getChildren().add(welcomeLabel);
-
-
-        // Hộp Menu
-        VBox menuBox = new VBox(20); // Giữ khoảng cách
+        VBox menuBox = new VBox(20);
+        menuBox.setMaxWidth(400);
+        menuBox.setMaxHeight(300);
         menuBox.setAlignment(Pos.CENTER);
-        menuBox.setPrefWidth(400); // Khớp FXML
-        menuBox.setLayoutX(440.0); // Khớp FXML
-        menuBox.setLayoutY(300.0); // Khớp FXML
-        menuBox.setStyle(
-                "-fx-background-color: rgba(10, 5, 20, 0.85);" +
-                        "-fx-background-radius: 15;" +
-                        "-fx-border-color: #00f5ff;" + // Đổi viền sang màu Cyan
-                        "-fx-border-width: 2;" +
-                        "-fx-border-radius: 15;" +
-                        "-fx-padding: 40;" +
-                        "-fx-effect: dropshadow(gaussian, #00f5ff, 20, 0.6, 0, 0);" // Đổi hiệu ứng sang Cyan
-        );
+        menuBox.getStyleClass().add("menu-box");
 
-        // --- Các nút ---
-        Button storyButton = createStyledButton("Story Mode");
-        Button player2Button = createStyledButton("2 Player Mode");
-        Button settingButton = createStyledButton("Setting");
+        Button storyModeBtn = createMenuButton("STORY MODE");
+        Button twoPlayerBtn = createMenuButton("2 PLAYER MODE");
+        Button shopBtn = createMenuButton("SHOP");
 
-        // Gán hành động cho các nút
-        storyButton.setOnAction(e -> {
-            if (onStoryMode != null) onStoryMode.run();
-        });
+        storyModeBtn.setOnAction(e -> { if (onMenuAction != null) onMenuAction.accept("story"); });
+        twoPlayerBtn.setOnAction(e -> { if (onMenuAction != null) onMenuAction.accept("2player"); });
+        shopBtn.setOnAction(e -> { if (onMenuAction != null) onMenuAction.accept("shop"); });
 
-        player2Button.setOnAction(e -> {
-            if (on2PlayerMode != null) on2PlayerMode.run();
-        });
+        menuBox.getChildren().addAll(storyModeBtn, twoPlayerBtn, shopBtn);
 
-        settingButton.setOnAction(e -> {
-            if (onMoveToSetting != null) onMoveToSetting.run();
-        });
+        // Create settings icon button at top-right
+        Button settingsIconBtn = createSettingsIconButton();
+        settingsIconBtn.setOnAction(e -> { if (onMenuAction != null) onMenuAction.accept("settings"); });
 
-        // Thêm tất cả vào hộp menu
-        menuBox.getChildren().addAll(
-                storyButton,
-                player2Button,
-                settingButton
-        );
-        // --- KẾT THÚC HỘP MENU ---
+        // Position settings icon at top-right
+        StackPane.setAlignment(settingsIconBtn, Pos.TOP_RIGHT);
+        StackPane.setMargin(settingsIconBtn, new Insets(40, 40, 0, 0));
 
-        rootPane.getChildren().add(menuBox);
+        rootPane.getChildren().addAll(titleLabel, menuBox, settingsIconBtn);
 
-        // Setup animation (Giữ nguyên)
         setupAnimation();
     }
 
-    /**
-     * Hàm trợ giúp để tạo nút theo style
-     */
-    private Button createStyledButton(String text) {
+    private Button createMenuButton(String text) {
         Button button = new Button(text);
-        button.setPrefWidth(350);
-        button.setPrefHeight(50);
-        button.setFont(Font.font("Monospace", FontWeight.BOLD, 18)); // Chữ to hơn
-
-        String baseStyle = "-fx-background-color: linear-gradient(to right, #ff006e, #8b00ff);" +
-                "-fx-text-fill: white;" +
-                "-fx-border-color: #ff006e;" +
-                "-fx-border-width: 2;" +
-                "-fx-border-radius: 5;" +
-                "-fx-background-radius: 5;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, #ff006e, 15, 0.6, 0, 0);";
-
-        String hoverStyle = "-fx-background-color: linear-gradient(to right, #ff3385, #a020f0);" +
-                "-fx-text-fill: white;" +
-                "-fx-border-color: #00f5ff;" +
-                "-fx-border-width: 2;" +
-                "-fx-border-radius: 5;" +
-                "-fx-background-radius: 5;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, #00f5ff, 20, 0.8, 0, 0);";
-
-        button.setStyle(baseStyle);
-        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
-        button.setOnMouseExited(e -> button.setStyle(baseStyle));
+        button.getStyleClass().add("menu-button");
         return button;
     }
 
-    // --- PHẦN ANIMATION (GIỮ NGUYÊN TỪ LOGINUI) ---
+    private Button createSettingsIconButton() {
+        Button button = new Button();
+        button.getStyleClass().add("settings-icon-button");
+
+        // Create gear icon using SVG path
+        SVGPath gearIcon = new SVGPath();
+        gearIcon.setContent("M 12 2 C 11.172 2 10.5 2.672 10.5 3.5 L 10.5 4.1875 C 9.5184 4.4611 8.6128 4.9193 7.8125 5.5 L 7.28125 5.09375 C 6.63925 4.58575 5.70175 4.68125 5.1875 5.3125 L 4.1875 6.6875 C 3.6735 7.3195 3.76875 8.25675 4.40625 8.78125 L 4.9375 9.1875 C 4.6515 9.9875 4.5 10.847 4.5 11.75 C 4.5 12.653 4.6515 13.5125 4.9375 14.3125 L 4.40625 14.71875 C 3.76925 15.24375 3.67375 16.1813 4.1875 16.8125 L 5.1875 18.1875 C 5.70175 18.81875 6.63925 18.91425 7.28125 18.40625 L 7.8125 18 C 8.6128 18.5807 9.5184 19.0389 10.5 19.3125 L 10.5 19.5 C 10.5 20.328 11.172 21 12 21 L 13.5 21 C 14.328 21 15 20.328 15 19.5 L 15 19.3125 C 15.9816 19.0389 16.8872 18.5807 17.6875 18 L 18.21875 18.40625 C 18.86075 18.91425 19.79825 18.81875 20.3125 18.1875 L 21.3125 16.8125 C 21.8265 16.1805 21.73125 15.24325 21.09375 14.71875 L 20.5625 14.3125 C 20.8485 13.5125 21 12.653 21 11.75 C 21 10.847 20.8485 9.9875 20.5625 9.1875 L 21.09375 8.78125 C 21.73075 8.25625 21.82625 7.3187 21.3125 6.6875 L 20.3125 5.3125 C 19.79825 4.68125 18.86075 4.58575 18.21875 5.09375 L 17.6875 5.5 C 16.8872 4.9193 15.9816 4.4611 15 4.1875 L 15 3.5 C 15 2.672 14.328 2 13.5 2 L 12 2 z M 12.75 8.5 C 14.544 8.5 16 9.956 16 11.75 C 16 13.544 14.544 15 12.75 15 C 10.956 15 9.5 13.544 9.5 11.75 C 9.5 9.956 10.956 8.5 12.75 8.5 z");
+        gearIcon.getStyleClass().add("settings-icon");
+        gearIcon.setScaleX(1.8);
+        gearIcon.setScaleY(1.8);
+
+        StackPane iconContainer = new StackPane(gearIcon);
+        iconContainer.setAlignment(Pos.CENTER);
+        button.setGraphic(iconContainer);
+
+        return button;
+    }
 
     private void setupAnimation() {
         animationTimer = new AnimationTimer() {
@@ -195,7 +125,7 @@ public class MenuUI {
 
             @Override
             public void handle(long now) {
-                if (now - lastUpdate >= 33_333_333) { // ~30 FPS
+                if (now - lastUpdate >= 33_333_333) {
                     render();
                     lastUpdate = now;
                 }
@@ -208,56 +138,61 @@ public class MenuUI {
         gc.setFill(DARK_BG);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Vẽ lưới (Giữ nguyên)
         drawPerspectiveGrid();
-
-        // Vẽ viền (Giữ nguyên)
         drawNeonBorder();
-
-        // Vẽ góc (Giữ nguyên)
         drawCornerAccents();
+        drawScanlines();
     }
 
     private void drawPerspectiveGrid() {
-        gridOffset += 2.0;
-        if (gridOffset > 40) gridOffset = 0;
+        gridOffset += 2.5;
+        if (gridOffset > 50) gridOffset = 0;
 
+        // Horizontal lines
         for (int i = 0; i < 15; i++) {
-            double y = (i * 40) + gridOffset;
+            double y = (i * 50) + gridOffset;
             if (y > HEIGHT) continue;
 
-            double alpha = 0.3 - (i * 0.02);
+            double alpha = 0.25 - (i * 0.015);
             gc.setStroke(NEON_CYAN.deriveColor(0, 1, 1, Math.max(0, alpha)));
-            gc.strokeLine(10, y, WIDTH - 10, y);
-
-            gc.setStroke(NEON_CYAN.deriveColor(0, 1, 1, Math.max(0.05, alpha * 0.3)));
-            gc.setLineWidth(3);
-            gc.strokeLine(10, y, WIDTH - 10, y);
             gc.setLineWidth(1.5);
+            gc.strokeLine(0, y, WIDTH, y);
+        }
+
+        // Vertical lines with perspective
+        for (int i = 0; i < 25; i++) {
+            double x = (i * 60);
+            double alpha = 0.15;
+            gc.setStroke(NEON_CYAN.deriveColor(0, 1, 1, alpha));
+            gc.setLineWidth(1);
+            gc.strokeLine(x, 0, x, HEIGHT);
         }
     }
 
     private void drawNeonBorder() {
         borderPulse += 0.05;
-        double pulse = 0.5 + Math.sin(borderPulse) * 0.3;
+        double pulse = 0.6 + Math.sin(borderPulse) * 0.3;
 
-        gc.setStroke(NEON_PINK.deriveColor(0, 1, 1, pulse * 0.4));
-        gc.setLineWidth(8);
-        gc.strokeRect(4, 4, WIDTH - 8, HEIGHT - 8);
+        // Outer glow
+        gc.setStroke(NEON_PINK.deriveColor(0, 1, 1, pulse * 0.3));
+        gc.setLineWidth(10);
+        gc.strokeRect(5, 5, WIDTH - 10, HEIGHT - 10);
 
-        gc.setStroke(NEON_PINK.deriveColor(0, 1, 1, pulse * 0.9));
+        // Main border
+        gc.setStroke(NEON_PINK.deriveColor(0, 1, 1, pulse * 0.8));
         gc.setLineWidth(3);
-        gc.strokeRect(4, 4, WIDTH - 8, HEIGHT - 8);
+        gc.strokeRect(5, 5, WIDTH - 10, HEIGHT - 10);
 
+        // Inner highlight
         gc.setStroke(NEON_PINK.deriveColor(1, 1, 1.5, pulse));
         gc.setLineWidth(1);
-        gc.strokeRect(6, 6, WIDTH - 12, HEIGHT - 12);
+        gc.strokeRect(7, 7, WIDTH - 14, HEIGHT - 14);
     }
 
     private void drawCornerAccents() {
-        double cornerSize = 30;
-        double cornerThick = 3;
-        int margin = 10;
+        double cornerSize = 40;
+        double cornerThick = 4;
+        int margin = 12;
 
         gc.setStroke(NEON_CYAN);
         gc.setLineWidth(cornerThick);
@@ -277,13 +212,20 @@ public class MenuUI {
         // Bottom-right
         gc.strokeLine(WIDTH - margin, HEIGHT - margin, WIDTH - margin - cornerSize, HEIGHT - margin);
         gc.strokeLine(WIDTH - margin, HEIGHT - margin, WIDTH - margin, HEIGHT - margin - cornerSize);
+
+        // Add small dots at corners
+        gc.setFill(NEON_GREEN);
+        gc.fillOval(margin - 2, margin - 2, 4, 4);
+        gc.fillOval(WIDTH - margin - 2, margin - 2, 4, 4);
+        gc.fillOval(margin - 2, HEIGHT - margin - 2, 4, 4);
+        gc.fillOval(WIDTH - margin - 2, HEIGHT - margin - 2, 4, 4);
     }
 
-    public void show() {
-        if (stage != null) {
-            stage.show();
+    private void drawScanlines() {
+        for (int y = 0; y < HEIGHT; y += 4) {
+            gc.setFill(Color.rgb(0, 0, 0, 0.1));
+            gc.fillRect(0, y, WIDTH, 2);
         }
-        startAnimation();
     }
 
     public void startAnimation() {

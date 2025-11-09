@@ -1,61 +1,62 @@
 package vnu.uet.goldexperience.controller;
 
-import javafx.event.ActionEvent;
+import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import vnu.uet.goldexperience.manager.AssetsManager;
-import vnu.uet.goldexperience.manager.SceneManager;
+import javafx.util.Duration;
 import vnu.uet.goldexperience.manager.GameSession;
-
-import java.util.ArrayList;
-import java.util.List;
+import vnu.uet.goldexperience.manager.SceneManager;
 
 public class SelectChapterController {
-    private SceneManager sceneManager;
 
     @FXML
-    private Button btnBack;
-
-    @FXML
-    private Button btnChooseChapter;
-
-    @FXML
-    private StackPane leftStack;
-
-    @FXML
-    private StackPane rightStack;
+    private AnchorPane leftStack;
 
     @FXML
     private AnchorPane centerChapter;
 
     @FXML
-    private Button leftTopButton;
+    private AnchorPane rightStack;
 
     @FXML
-    private Button rightTopButton;
+    private Text centerChapterText;
 
-    private List<ChapterData> chapters;
-    private int currentCenterIndex = 2;
-    private static final int TOTAL_CHAPTERS = 5;
+    @FXML
+    private Text leftChapterText;
 
-    protected int getCurrentCenterIndex() {
-        return currentCenterIndex;
+    @FXML
+    private Text rightChapterText;
+
+    private SceneManager sceneManager;
+    private int currentChapterIndex = 1;
+    private boolean isAnimating = false;
+
+    private static final double SLIDE_DISTANCE = 360.0;
+    private static final Duration ANIMATION_DURATION = Duration.millis(450);
+    private static final double SIDE_CARD_SCALE = 0.75;
+    private static final double SIDE_CARD_OPACITY = 0.3;
+
+    @FXML
+    public void initialize() {
+        System.out.println("Chapter Select initialized");
+        initializeCardPositions();
+        updateChapterDisplay();
     }
 
-    public void setCurrentCenterIndex(int currentCenterIndex) {
-        this.currentCenterIndex = currentCenterIndex;
-    }
+    private void initializeCardPositions() {
+        leftStack.setScaleX(SIDE_CARD_SCALE);
+        leftStack.setScaleY(SIDE_CARD_SCALE);
+        leftStack.setOpacity(SIDE_CARD_OPACITY);
 
-    private static class ChapterData {
-        String name;
-        int chapterNumber;
-        ChapterData(int number) {
-            this.chapterNumber = number;
-            this.name = "Chapter " + number;
-        }
+        rightStack.setScaleX(SIDE_CARD_SCALE);
+        rightStack.setScaleY(SIDE_CARD_SCALE);
+        rightStack.setOpacity(SIDE_CARD_OPACITY);
+
+        centerChapter.setScaleX(1.0);
+        centerChapter.setScaleY(1.0);
+        centerChapter.setOpacity(1.0);
     }
 
     public void setSceneManager(SceneManager sceneManager) {
@@ -63,162 +64,138 @@ public class SelectChapterController {
     }
 
     @FXML
-    public void initialize() {
-        System.out.println("ChapterSelect initialized");
-        initializeChapters();
-
-        // Restore last selected chapter from GameSession
-        int lastChapter = GameSession.getInstance().getCurrentChapter();
-        currentCenterIndex = lastChapter - 1;
-
-        updateChapterDisplay();
-    }
-
-    private void initializeChapters() {
-        chapters = new ArrayList<>();
-        for (int i = 1; i <= TOTAL_CHAPTERS; i++) {
-            chapters.add(new ChapterData(i));
-        }
-    }
-
-    private void updateChapterDisplay() {
-        updateCenterChapter();
-        updateLeftStack();
-        updateRightStack();
-    }
-
-    private void updateCenterChapter() {
-        if (currentCenterIndex >= 0 && currentCenterIndex < chapters.size()) {
-            ChapterData centerData = chapters.get(currentCenterIndex);
-            centerChapter.getChildren().forEach(node -> {
-                if (node instanceof Button) {
-                    Button btn = (Button) node;
-                    if (btn.getGraphic() instanceof AnchorPane) {
-                        AnchorPane pane = (AnchorPane) btn.getGraphic();
-                        pane.getChildren().forEach(child -> {
-                            if (child instanceof Text) {
-                                Text text = (Text) child;
-                                if (text.getText().startsWith("Chapter")) {
-                                    text.setText(centerData.name);
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        }
-    }
-
-    private void updateLeftStack() {
-        if (leftStack.getChildren().size() >= 2) {
-            int bottomChapterIndex = currentCenterIndex - 2;
-            if (bottomChapterIndex >= 0 && bottomChapterIndex < chapters.size()) {
-                AnchorPane pane = (AnchorPane) leftStack.getChildren().get(0);
-                updateChapterPane(pane, chapters.get(bottomChapterIndex));
-                pane.setVisible(true);
-            } else {
-                leftStack.getChildren().get(0).setVisible(false);
-            }
-
-            int topChapterIndex = currentCenterIndex - 1;
-            if (topChapterIndex >= 0 && topChapterIndex < chapters.size()) {
-                AnchorPane pane = (AnchorPane) leftStack.getChildren().get(1);
-                updateChapterPane(pane, chapters.get(topChapterIndex));
-                pane.setVisible(true);
-            } else {
-                leftStack.getChildren().get(1).setVisible(false);
-            }
-        }
-    }
-
-    private void updateRightStack() {
-        if (rightStack.getChildren().size() >= 2) {
-            int bottomChapterIndex = currentCenterIndex + 2;
-            if (bottomChapterIndex >= 0 && bottomChapterIndex < chapters.size()) {
-                AnchorPane pane = (AnchorPane) rightStack.getChildren().get(0);
-                updateChapterPane(pane, chapters.get(bottomChapterIndex));
-                pane.setVisible(true);
-            } else {
-                rightStack.getChildren().get(0).setVisible(false);
-            }
-
-            int topChapterIndex = currentCenterIndex + 1;
-            if (topChapterIndex >= 0 && topChapterIndex < chapters.size()) {
-                AnchorPane pane = (AnchorPane) rightStack.getChildren().get(1);
-                updateChapterPane(pane, chapters.get(topChapterIndex));
-                pane.setVisible(true);
-            } else {
-                rightStack.getChildren().get(1).setVisible(false);
-            }
-        }
-    }
-
-    private void updateChapterPane(AnchorPane pane, ChapterData data) {
-        pane.getChildren().forEach(node -> {
-            if (node instanceof Button) {
-                Button btn = (Button) node;
-                if (btn.getGraphic() instanceof AnchorPane) {
-                    AnchorPane graphicPane = (AnchorPane) btn.getGraphic();
-                    graphicPane.getChildren().forEach(child -> {
-                        if (child instanceof Text) {
-                            Text text = (Text) child;
-                            if (text.getText().startsWith("Chapter")) {
-                                text.setText(data.name);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    @FXML
-    public void onLeftClick(ActionEvent event) {
-        AssetsManager.playClickSound();
-        if (currentCenterIndex > 0) {
-            System.out.println("Moving left to Chapter " + chapters.get(currentCenterIndex - 1).chapterNumber);
-            currentCenterIndex--;
-            sceneManager.animateStageTransition(centerChapter, true, this::updateChapterDisplay);
-        } else {
-            System.out.println("Already at first chapter");
-        }
-    }
-
-    @FXML
-    public void onRightClick(ActionEvent event) {
-        AssetsManager.playClickSound();
-        if (currentCenterIndex < TOTAL_CHAPTERS - 1) {
-            System.out.println("Moving right to Chapter " + chapters.get(currentCenterIndex + 1).chapterNumber);
-            currentCenterIndex++;
-            sceneManager.animateStageTransition(centerChapter, false, this::updateChapterDisplay);
-        } else {
-            System.out.println("Already at last chapter");
-        }
-    }
-
-    @FXML
-    private void handleChooseChapter(ActionEvent event) {
-        AssetsManager.playClickSound();
-        int selectedChapter = getCurrentChapterNumber();
-        System.out.println("Choose Chapter " + selectedChapter + " clicked");
-
-        GameSession.getInstance().setChapter(selectedChapter);
-
-        if (sceneManager != null) {
-            sceneManager.switchTo("level");
-        }
-    }
-
-    @FXML
-    private void handleBackToMenu(ActionEvent event) {
-        AssetsManager.playClickSound();
-        System.out.println("Back to menu clicked");
+    private void handleBackToMenu() {
         if (sceneManager != null) {
             sceneManager.switchTo("menu");
         }
     }
 
-    public int getCurrentChapterNumber() {
-        return chapters.get(currentCenterIndex).chapterNumber;
+    @FXML
+    private void onLeftClick() {
+        if (isAnimating || currentChapterIndex <= 1) return;
+        navigateTo(currentChapterIndex - 1);
     }
+
+    @FXML
+    private void onRightClick() {
+        if (isAnimating || currentChapterIndex >= 5) return;
+        navigateTo(currentChapterIndex + 1);
+    }
+
+
+    private void navigateTo(int targetIndex) {
+        if (targetIndex == currentChapterIndex) return;
+
+        boolean movingLeft = targetIndex > currentChapterIndex;
+        isAnimating = true;
+
+        ParallelTransition carouselAnimation = createCarouselAnimation(movingLeft);
+
+        carouselAnimation.setOnFinished(e -> {
+            currentChapterIndex = targetIndex;
+            resetCardPositions();
+            updateChapterDisplay();
+            isAnimating = false;
+        });
+
+        carouselAnimation.play();
+    }
+
+    private ParallelTransition createCarouselAnimation(boolean movingLeft) {
+        double direction = movingLeft ? -1 : 1;
+
+
+        ParallelTransition leftAnim = new ParallelTransition(
+                createSlideAnimation(leftStack, direction * SLIDE_DISTANCE),
+                createFadeAnimation(leftStack, movingLeft ? 0.0 : 1.0),
+                createScaleAnimation(leftStack, movingLeft ? 0.6 : 1.0)
+        );
+
+        ParallelTransition centerAnim = new ParallelTransition(
+                createSlideAnimation(centerChapter, direction * SLIDE_DISTANCE),
+                createFadeAnimation(centerChapter, SIDE_CARD_OPACITY),
+                createScaleAnimation(centerChapter, SIDE_CARD_SCALE)
+        );
+
+        ParallelTransition rightAnim = new ParallelTransition(
+                createSlideAnimation(rightStack, direction * SLIDE_DISTANCE),
+                createFadeAnimation(rightStack, movingLeft ? 1.0 : 0.0),
+                createScaleAnimation(rightStack, movingLeft ? 1.0 : 0.6)
+        );
+
+        ParallelTransition allAnimations = new ParallelTransition(
+                leftAnim, centerAnim, rightAnim
+        );
+
+        allAnimations.setInterpolator(Interpolator.EASE_BOTH);
+
+        return allAnimations;
+    }
+
+    private TranslateTransition createSlideAnimation(javafx.scene.Node node, double distance) {
+        TranslateTransition slide = new TranslateTransition(ANIMATION_DURATION, node);
+        slide.setByX(distance);
+        return slide;
+    }
+
+    private FadeTransition createFadeAnimation(javafx.scene.Node node, double targetOpacity) {
+        FadeTransition fade = new FadeTransition(ANIMATION_DURATION, node);
+        fade.setToValue(targetOpacity);
+        return fade;
+    }
+
+    private ParallelTransition createScaleAnimation(javafx.scene.Node node, double targetScale) {
+        ScaleTransition scaleX = new ScaleTransition(ANIMATION_DURATION, node);
+        scaleX.setToX(targetScale);
+
+        ScaleTransition scaleY = new ScaleTransition(ANIMATION_DURATION, node);
+        scaleY.setToY(targetScale);
+
+        return new ParallelTransition(scaleX, scaleY);
+    }
+
+    private void resetCardPositions() {
+        leftStack.setTranslateX(0);
+        leftStack.setTranslateY(0);
+        leftStack.setScaleX(SIDE_CARD_SCALE);
+        leftStack.setScaleY(SIDE_CARD_SCALE);
+        leftStack.setOpacity(SIDE_CARD_OPACITY);
+
+        centerChapter.setTranslateX(0);
+        centerChapter.setTranslateY(0);
+        centerChapter.setScaleX(1.0);
+        centerChapter.setScaleY(1.0);
+        centerChapter.setOpacity(1.0);
+
+        rightStack.setTranslateX(0);
+        rightStack.setTranslateY(0);
+        rightStack.setScaleX(SIDE_CARD_SCALE);
+        rightStack.setScaleY(SIDE_CARD_SCALE);
+        rightStack.setOpacity(SIDE_CARD_OPACITY);
+    }
+
+
+    private void updateChapterDisplay() {
+        centerChapterText.setText("Chapter " + (currentChapterIndex ));
+
+        leftStack.setVisible(currentChapterIndex > 1);
+        if (leftStack.isVisible()) {
+            leftChapterText.setText("Chapter " + (currentChapterIndex - 1));
+        }
+
+        rightStack.setVisible(currentChapterIndex < 5);
+        if (rightStack.isVisible()) {
+            rightChapterText.setText("Chapter " + (currentChapterIndex + 1));
+        }
+
+    }
+
+    @FXML
+    private void handleChooseChapter() {
+        if (sceneManager != null) {
+            GameSession.getInstance().setChapter(currentChapterIndex);
+            sceneManager.switchTo("level");
+        }
+    }
+
 }

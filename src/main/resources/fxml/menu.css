@@ -1,0 +1,104 @@
+/* root pane */
+.menu-root {
+    -fx-background-color: linear-gradient(to bottom,
+    #0a0514 0%, #1a0a28 25%, #0f0520 50%, #1a0a28 75%, #0a0514 100%);
+}
+
+.menu-title {
+    -fx-translate-y: -220;
+    -fx-font-family: "Cynosure Straight";
+    -fx-font-size: 170 px;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.2, 0, 0);
+}
+
+.menu-subtitle {
+    -fx-font-family: "Cynosure Straight";
+    -fx-font-size: 16px;
+    -fx-text-fill: #00f5ff;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 5, 0.1, 0, 0);
+}
+
+.menu-box {
+    -fx-translate-y: 100;
+    -fx-background-color: rgba(10, 5, 20, 0.95);
+    -fx-pref-width: 400px;
+    -fx-pref-height: 400px;
+    -fx-alignment: center;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, #000000, 25, 0.5, 0, 15),
+    dropshadow(gaussian, #ff006e, 80, 0.9, 0, 0);
+}
+
+.menu-button {
+    -fx-pref-width: 370px;
+    -fx-pref-height: 60px;
+    -fx-font-family: "Xirod";
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: gray;
+    -fx-cursor: hand;
+    -fx-effect: null;
+}
+
+.menu-button:hover {
+    -fx-background-color: rgba(30, 10, 50, 0.2);
+    -fx-border-color: #ff006e;
+    -fx-border-width: 3px;
+    -fx-text-fill: white;
+
+    /* ĐÃ SỬA: Bật shadow khi hover, làm cho nút "sáng lên" */
+    -fx-effect: dropshadow(gaussian, #ff006e, 20, 0.6, 0, 0);
+
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Settings Icon Button */
+.settings-icon-button {
+    -fx-pref-width: 50px;
+    -fx-pref-height: 50px;
+    -fx-min-width: 50px;
+    -fx-min-height: 50px;
+    -fx-max-width: 50px;
+    -fx-max-height: 50px;
+    -fx-background-color: rgba(20, 10, 40, 0.7);
+    -fx-border-color: #00f5ff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.5, 0, 0);
+}
+
+.settings-icon-button:hover {
+    -fx-background-color: rgba(30, 15, 50, 0.9);
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 2, 0.1, 0, 0);
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.settings-icon-button:pressed {
+    -fx-background-color: #00f5ff;
+    -fx-border-color: white;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(gaussian, white, 2, 1.0, 0, 0);
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+.settings-icon {
+    -fx-fill: #ffff;
+}
+
+.settings-icon-button:hover .settings-icon {
+    -fx-fill: white;
+}
+
+.settings-icon-button:pressed .settings-icon {
+    -fx-fill: #0a0514;
+}

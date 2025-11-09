@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -55,8 +56,7 @@ public class LoginUI {
     private void createUI() {
         rootPane = new Pane();
         rootPane.setPrefSize(WIDTH, HEIGHT);
-        rootPane.setStyle("-fx-background-color: linear-gradient(to bottom, " +
-                "#0a0514 0%, #1a0a28 25%, #0f0520 50%, #1a0a28 75%, #0a0514 100%);");
+        rootPane.getStyleClass().add("login-root");
 
         // Background animation canvas
         backgroundCanvas = new Canvas(WIDTH, HEIGHT);
@@ -65,124 +65,23 @@ public class LoginUI {
 
         // Login form container
         VBox loginBox = new VBox(25);
-        loginBox.setAlignment(Pos.CENTER);
-        loginBox.setPrefWidth(400);
-        loginBox.setLayoutX((WIDTH - 400) / 2);
+        loginBox.setLayoutX((WIDTH - 580) / 2);
         loginBox.setLayoutY(HEIGHT / 2 - 150);
-        loginBox.setStyle(
-                "-fx-background-color: rgba(10, 5, 20, 0.85);" +
-                        "-fx-background-radius: 15;" +
-                        "-fx-border-color: #ff006e;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-border-radius: 15;" +
-                        "-fx-padding: 40;" +
-                        "-fx-effect: dropshadow(gaussian, #ff006e, 20, 0.6, 0, 0);"
-        );
+        loginBox.getStyleClass().add("login-box");
 
-        // Subtitle
         Label subtitleLabel = new Label("Enter Player Name");
-        subtitleLabel.setFont(Font.font("Monospace", FontWeight.NORMAL, 14));
-        subtitleLabel.setTextFill(NEON_CYAN);
+        subtitleLabel.getStyleClass().add("login-subtitle");
 
-        // Username input
         TextField usernameField = new TextField();
         usernameField.setPromptText("Player Name");
-        usernameField.setPrefHeight(50);
-        usernameField.setStyle(
-                "-fx-background-color: rgba(20, 10, 40, 0.8);" +
-                        "-fx-text-fill: #00f5ff;" +
-                        "-fx-prompt-text-fill: rgba(0, 245, 255, 0.5);" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-font-family: 'Monospace';" +
-                        "-fx-border-color: #00f5ff;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-border-radius: 5;" +
-                        "-fx-background-radius: 5;" +
-                        "-fx-padding: 10;"
-        );
+        usernameField.getStyleClass().add("login-input");
 
-        // Focus effect for input
-        usernameField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal) {
-                usernameField.setStyle(
-                        "-fx-background-color: rgba(20, 10, 40, 0.9);" +
-                                "-fx-text-fill: #00f5ff;" +
-                                "-fx-prompt-text-fill: rgba(0, 245, 255, 0.5);" +
-                                "-fx-font-size: 16px;" +
-                                "-fx-font-family: 'Monospace';" +
-                                "-fx-border-color: #ff006e;" +
-                                "-fx-border-width: 2;" +
-                                "-fx-border-radius: 5;" +
-                                "-fx-background-radius: 5;" +
-                                "-fx-padding: 10;" +
-                                "-fx-effect: dropshadow(gaussian, #ff006e, 15, 0.7, 0, 0);"
-                );
-            } else {
-                usernameField.setStyle(
-                        "-fx-background-color: rgba(20, 10, 40, 0.8);" +
-                                "-fx-text-fill: #00f5ff;" +
-                                "-fx-prompt-text-fill: rgba(0, 245, 255, 0.5);" +
-                                "-fx-font-size: 16px;" +
-                                "-fx-font-family: 'Monospace';" +
-                                "-fx-border-color: #00f5ff;" +
-                                "-fx-border-width: 2;" +
-                                "-fx-border-radius: 5;" +
-                                "-fx-background-radius: 5;" +
-                                "-fx-padding: 10;"
-                );
-            }
-        });
-
-        // Error label
         Label errorLabel = new Label("");
-        errorLabel.setFont(Font.font("Monospace", 12));
-        errorLabel.setTextFill(Color.rgb(255, 100, 100));
-        errorLabel.setVisible(false);
+        errorLabel.getStyleClass().add("login-error");
 
-        // Login button
         Button loginButton = new Button("START GAME");
-        loginButton.setPrefWidth(300);
-        loginButton.setPrefHeight(50);
-        loginButton.setFont(Font.font("Monospace", FontWeight.BOLD, 16));
-        loginButton.setStyle(
-                "-fx-background-color: linear-gradient(to right, #ff006e, #8b00ff);" +
-                        "-fx-text-fill: white;" +
-                        "-fx-border-color: #ff006e;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-border-radius: 5;" +
-                        "-fx-background-radius: 5;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-effect: dropshadow(gaussian, #ff006e, 15, 0.6, 0, 0);"
-        );
+        loginButton.getStyleClass().add("login-button");
 
-        // Button hover effect
-        loginButton.setOnMouseEntered(e -> {
-            loginButton.setStyle(
-                    "-fx-background-color: linear-gradient(to right, #ff3385, #a020f0);" +
-                            "-fx-text-fill: white;" +
-                            "-fx-border-color: #00f5ff;" +
-                            "-fx-border-width: 2;" +
-                            "-fx-border-radius: 5;" +
-                            "-fx-background-radius: 5;" +
-                            "-fx-cursor: hand;" +
-                            "-fx-effect: dropshadow(gaussian, #00f5ff, 20, 0.8, 0, 0);"
-            );
-        });
-
-        loginButton.setOnMouseExited(e -> {
-            loginButton.setStyle(
-                    "-fx-background-color: linear-gradient(to right, #ff006e, #8b00ff);" +
-                            "-fx-text-fill: white;" +
-                            "-fx-border-color: #ff006e;" +
-                            "-fx-border-width: 2;" +
-                            "-fx-border-radius: 5;" +
-                            "-fx-background-radius: 5;" +
-                            "-fx-cursor: hand;" +
-                            "-fx-effect: dropshadow(gaussian, #ff006e, 15, 0.6, 0, 0);"
-            );
-        });
-
-        // Login action
         loginButton.setOnAction(e -> {
             String playerName = usernameField.getText().trim();
 
