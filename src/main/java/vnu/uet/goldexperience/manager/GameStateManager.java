@@ -22,7 +22,7 @@ public class GameStateManager {
 
     public void setState(GameState newState) {
         if (currentState == newState) return;
-        System.out.println("GSM: " + currentState + " -> " + newState);
+//        System.out.println("GSM: " + currentState + " -> " + newState);
 
         ExitState(currentState);
 

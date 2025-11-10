@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="vnu.uet.goldexperience.controller.ShopUIController"
+            stylesheets="@../fxml/shop.css"
+            prefHeight="600.0" prefWidth="800.0">
+
+    <!-- TOP: Header với Points và Back button -->
+    <top>
+        <HBox styleClass="shop-header" alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Button fx:id="backButton" text="← Back" styleClass="back-button" onAction="#handleBack"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="SHOP" styleClass="shop-title">
+                <font>
+                    <Font name="System Bold" size="32"/>
+                </font>
+            </Label>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Label text="💰" styleClass="points-icon">
+                    <font>
+                        <Font size="24"/>
+                    </font>
+                </Label>
+                <Label fx:id="pointsLabel" text="0" styleClass="points-label">
+                    <font>
+                        <Font name="System Bold" size="24"/>
+                    </font>
+                </Label>
+                <Label text="Points" styleClass="points-text">
+                    <font>
+                        <Font size="16"/>
+                    </font>
+                </Label>
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- CENTER: TabPane với Paddles và Ball Effects -->
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" styleClass="shop-tabs">
+            <!-- Tab 1: Paddle Skins -->
+            <Tab text="🎯 Paddle Skins">
+                <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="shop-scroll">
+                    <GridPane fx:id="paddleGrid" hgap="20" vgap="20" styleClass="items-grid">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <!-- Items will be added dynamically -->
+                    </GridPane>
+                </ScrollPane>
+            </Tab>
+
+            <!-- Tab 2: Ball Effects -->
+            <Tab text="⚡ Ball Effects">
+                <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="shop-scroll">
+                    <GridPane fx:id="effectGrid" hgap="20" vgap="20" styleClass="items-grid">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <!-- Items will be added dynamically -->
+                    </GridPane>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <!-- BOTTOM: Statistics -->
+    <bottom>
+        <HBox styleClass="shop-footer" alignment="CENTER" spacing="30">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+
+            <Label fx:id="statsLabel" text="Collection: 0/10 items (0%)" styleClass="stats-label">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+
+            <Separator orientation="VERTICAL"/>
+
+            <Label fx:id="paddleStatsLabel" text="Paddles: 0/5" styleClass="stats-label">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+
+            <Separator orientation="VERTICAL"/>
+
+            <Label fx:id="effectStatsLabel" text="Effects: 0/5" styleClass="stats-label">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+        </HBox>
+    </bottom>
+
+</BorderPane>

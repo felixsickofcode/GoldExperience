@@ -1,9 +1,12 @@
 package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.paddle.PaddleEffect;
 import vnu.uet.goldexperience.manager.AssetsManager;
+import vnu.uet.goldexperience.manager.GameDataManager;
+import vnu.uet.goldexperience.manager.PaddleImageHelper;
 
 public class Paddle extends MovableObject {
     private final double speed = Constants.PADDLE_SPEED;
@@ -13,8 +16,14 @@ public class Paddle extends MovableObject {
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
-        this.image = AssetsManager.paddles.get(12);
+        String currentSkin = GameDataManager.getGlobalData().getSelectedPaddleSkin();
+        System.out.println("🎮 [Paddle Constructor] Loading paddle...");
+        System.out.println("   Current selected skin: " + currentSkin);
+
+        this.image = PaddleImageHelper.getImageWithCurrentSkin(2);
         effect = new PaddleEffect(width, height);
+
+        System.out.println("   Image loaded: " + (this.image != null ? this.image.hashCode() : "NULL"));
     }
 
     public void extendPaddle() {
@@ -122,7 +131,14 @@ public class Paddle extends MovableObject {
         }
         effect = new PaddleEffect(newWidth, height);
         setWidth(newWidth);
-        setImage(AssetsManager.paddles.get(size));
+        setImage(PaddleImageHelper.getImageWithCurrentSkin(size));
+    }
+    public void refreshSkin() {
+        int currentSize = getSize();
+        Image newImage = PaddleImageHelper.getImageWithCurrentSkin(currentSize);
+        setImage(newImage);
+
+        setImage(PaddleImageHelper.getImageWithCurrentSkin(currentSize));
     }
     public void onBallCollision(Ball ball) {
         effect.onBallHit(ball.getX(), ball.getY());

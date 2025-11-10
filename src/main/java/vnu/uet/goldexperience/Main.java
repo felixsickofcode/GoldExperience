@@ -6,14 +6,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import vnu.uet.goldexperience.controller.LoginController;
-import vnu.uet.goldexperience.controller.MenuController;
-import vnu.uet.goldexperience.controller.SettingController;
-import vnu.uet.goldexperience.controller.TutorialController;
-import vnu.uet.goldexperience.controller.SelectChapterController;
-import vnu.uet.goldexperience.controller.SelectLevelController;
+import vnu.uet.goldexperience.controller.*;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 
 public class Main extends Application {
 
@@ -40,6 +36,8 @@ public class Main extends Application {
 
         // Load assets
         AssetsManager.loadAssets();
+        // load sounds
+        SoundManager.loadSound();
 
         // Preload FXML (including login)
         sceneManager.PreloadScene("login", "/fxml/login.fxml");
@@ -49,7 +47,7 @@ public class Main extends Application {
         sceneManager.PreloadScene("setting", "/fxml/setting.fxml");
         sceneManager.PreloadScene("chapter", "/fxml/chapter.fxml");
         sceneManager.PreloadScene("level", "/fxml/level.fxml");
-        //sceneManager.PreloadScene("shop", "/fxml/shop.fxml");
+        sceneManager.PreloadScene("shop", "/fxml/shop.fxml");
 
         // Setup login controller
         FXMLLoader loginLoader = sceneManager.getScreens().get("login");
@@ -81,9 +79,9 @@ public class Main extends Application {
         SelectLevelController levelController = levelLoader.getController();
         levelController.setSceneManager(sceneManager);
 
-        //FXMLLoader levelLoader = sceneManager.getScreens().get("shop");
-        //ShopController shopController = shop.getController();
-        //shopController.setSceneManager(sceneManager);
+        FXMLLoader shopLoader = sceneManager.getScreens().get("shop");
+        ShopUIController shopController = shopLoader.getController();
+        shopController.setSceneManager(sceneManager);
 
 
         Scene scene = new Scene(root, 1280, 720);

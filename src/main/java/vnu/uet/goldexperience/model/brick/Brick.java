@@ -6,7 +6,9 @@ import vnu.uet.goldexperience.effect.brick.DebrisEffect;
 import vnu.uet.goldexperience.model.GameObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class Brick extends GameObject {
@@ -47,8 +49,19 @@ public abstract class Brick extends GameObject {
         }
     }
 
+    public abstract String getBrickTypeKey();
+
+    public Map<String, Double> getConfig() {
+        return new HashMap<>();  // Empty config cho static bricks
+    }
+
+    public void setHitPoints(int hp) {
+        this.hitPoints = hp;
+    }
+
+
     public abstract void takeHit();
-    
+
     protected void triggerDestroyEffect() {
         if (playingBreakEffect || playingExplosion) {
             return;
@@ -123,4 +136,5 @@ public abstract class Brick extends GameObject {
     public int getHitPoints() {
         return hitPoints;
     }
+
 }

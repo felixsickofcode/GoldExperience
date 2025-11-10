@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 
 public class SettingController {
     private SceneManager sceneManager;
@@ -34,7 +35,7 @@ public class SettingController {
 
     @FXML
     private void handleSound(ActionEvent event) {
-        AssetsManager.playClickSound();
+        SoundManager.playClickSound();
         System.out.println("Sound clicked");
         soundOn = !soundOn;
         if (soundOn) {
@@ -46,7 +47,7 @@ public class SettingController {
 
     @FXML
     private void handleTutorial(ActionEvent event) {
-        AssetsManager.playClickSound();
+        SoundManager.playClickSound();
         System.out.println("Tutorial clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("tutorial");
@@ -55,7 +56,7 @@ public class SettingController {
 
     @FXML
     private void handleExit(ActionEvent event) {
-        AssetsManager.playClickSound();
+        SoundManager.playClickSound();
         System.out.println("Exit clicked");
         Stage stage = (Stage) btnExit.getScene().getWindow();
         stage.close();
@@ -63,7 +64,7 @@ public class SettingController {
 
     @FXML
     private void handleBackToMenu(ActionEvent event) {
-        AssetsManager.playClickSound();
+        SoundManager.playClickSound();
         System.out.println("Back to menu clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("menu");

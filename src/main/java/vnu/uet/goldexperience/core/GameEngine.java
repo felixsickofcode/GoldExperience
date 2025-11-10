@@ -8,13 +8,12 @@ import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
+import vnu.uet.goldexperience.model.brickFactory.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GameEngine implements BrickListener {
+    private static GameEngine instance;
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final InputManager input;
@@ -66,6 +65,10 @@ public class GameEngine implements BrickListener {
         setupGameOverCallbacks();
 
         initObjects();
+        instance = this;
+    }
+    public static GameEngine getInstance() {
+        return instance;
     }
 
     public void setSceneManager(SceneManager sceneManager) {
@@ -76,9 +79,10 @@ public class GameEngine implements BrickListener {
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
                 Constants.MEDIUM_PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
-
+        paddle.refreshSkin();
         ball = new Ball(Constants.BALL_INIT_POSITION,
                 paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
+        ball.refreshEffects();
     }
 
     private void loadCurrentLevel() {
@@ -108,7 +112,9 @@ public class GameEngine implements BrickListener {
         }
 
         ball.reset(paddle);
+        ball.refreshEffects();
         paddle.reset();
+        paddle.refreshSkin();
 
         if (mode.equals(GameSession.GameMode.ENDLESS)) {
             GameSession.getInstance().addLife();
@@ -152,10 +158,38 @@ public class GameEngine implements BrickListener {
                 reloadLevel();
                 notifyCursorChange();
             }
-
+//            @Override
+//            public void onSave() {  // ← THÊM MỚI
+//                SoundManager.playClickSound();
+//                System.out.println("Save clicked");
+//                if (saveCurrentGame()) {
+//                    System.out.println("✅ Game saved!");
+//                    // Có thể show notification UI
+//                } else {
+//                    System.out.println("❌ Save failed!");
+//                }
+//            }
+//
+//            @Override
+//            public void onLoad() {  // ← THÊM MỚI
+//                SoundManager.playClickSound();
+//                System.out.println("Load clicked");
+//                int levelNumber = GameSession.getInstance().getLevelNumber();
+//                if (hasLevelSave(levelNumber)) {
+//                    if (loadSavedGame(levelNumber)) {
+//                        System.out.println("✅ Game loaded!");
+//                        stateManager.setState(GameState.PLAYING);
+//                        notifyCursorChange();
+//                    } else {
+//                        System.out.println("❌ Load failed!");
+//                    }
+//                } else {
+//                    System.out.println("⚠️ No save file found!");
+//                }
+//            }
             @Override
             public void onBack() {
-                AssetsManager.playClickSound();
+                SoundManager.playClickSound();
                 System.out.println("Back");
                 if (sceneManager != null) {
                     end();
@@ -168,7 +202,7 @@ public class GameEngine implements BrickListener {
 
             @Override
             public void onQuit() {
-                AssetsManager.playClickSound();
+                SoundManager.playClickSound();
                 System.out.println("Quit clicked");
                 javafx.application.Platform.exit();
             }
@@ -179,7 +213,7 @@ private void setupGameOverCallbacks() {
     gameOverManager.setCallback(new GameOverManager.GameOverCallback() {
         @Override
         public void onRetry() {
-            AssetsManager.playClickSound();
+            SoundManager.playClickSound();
             System.out.println("Retry clicked");
             GameSession.getInstance().resetLives();
             reloadLevel();
@@ -187,7 +221,7 @@ private void setupGameOverCallbacks() {
 
             @Override
             public void onMainMenu() {
-                AssetsManager.playClickSound();
+                SoundManager.playClickSound();
                 System.out.println("Main Menu clicked");
                 if (sceneManager != null) {
                     end();
@@ -197,7 +231,7 @@ private void setupGameOverCallbacks() {
 
             @Override
             public void onQuit() {
-                AssetsManager.playClickSound();
+                SoundManager.playClickSound();
                 System.out.println("Quit clicked");
                 javafx.application.Platform.exit();
             }
@@ -258,6 +292,7 @@ private void setupGameOverCallbacks() {
             loop.stop();
             loop = null;
         }
+        instance = null;
     }
 
     private void handleInput() {
@@ -343,9 +378,9 @@ private void setupGameOverCallbacks() {
             return;
         }
 
-        System.out.print(stateManager.getCurrentState());
-        System.out.print(" ");
-        System.out.println(mode);
+//        System.out.print(stateManager.getCurrentState());
+//        System.out.print(" ");
+//        System.out.println(mode);
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.update(deltaTime);
             return;
@@ -391,7 +426,7 @@ private void setupGameOverCallbacks() {
 
 
             if (ball.bounceOffWithPaddle(paddle)) {
-                AssetsManager.playHitPaddleSound();
+                SoundManager.playHitPaddleSound();
             }
         }
 
@@ -418,11 +453,11 @@ private void setupGameOverCallbacks() {
                         }
                     }
                     if (brick instanceof ExplodeBrick) {
-                        AssetsManager.playExplosionSound();
+                        SoundManager.playExplosionSound();
                     } else if (brick.getHitPoints() == 0 || brick instanceof UnbreakableBrick) {
-                        AssetsManager.playBreakBrickSound();
+                        SoundManager.playBreakBrickSound();
                     } else {
-                        AssetsManager.playHitBrickSound();
+                        SoundManager.playHitBrickSound();
                     }
 
                     break;
@@ -526,7 +561,22 @@ private void setupGameOverCallbacks() {
             gameOverManager.render(gc);
         }
     }
+    public void refreshPaddleSkin() {
+        if (paddle != null) {
+            paddle.refreshSkin();
+        }
+    }
+    public void refreshBallEffects() {
+        if (ball != null) {
+            ball.refreshEffects();
+        }
 
+        for (Ball b : balls) {
+            if (b != null) {
+                b.refreshEffects();
+            }
+        }
+    }
     private void checkChainExplosions() {
         List<Brick> newlyExploded = new ArrayList<>();
         for (Brick brick : bricks) {
@@ -545,7 +595,7 @@ private void setupGameOverCallbacks() {
             brick.explodeByChainReaction();
 
             if (!soundForExplosionChains.contains(brick)) {
-                AssetsManager.playExplosionSound();
+                SoundManager.playExplosionSound();
                 soundForExplosionChains.add(brick);
             }
         }
@@ -572,7 +622,7 @@ private void setupGameOverCallbacks() {
         }
 
         if (hasUnbreakableBricks && !levelCompleteSoundPlayed) {
-            AssetsManager.playBreakBrickSound();
+            SoundManager.playBreakBrickSound();
             levelCompleteSoundPlayed = true;
         }
 
@@ -688,4 +738,155 @@ private void setupGameOverCallbacks() {
     public DialogueSystem getDialogueSystem() {
         return dialogueSystem;
     }
+//
+//    /**
+//     * savegame
+//     */
+//
+//    public boolean saveCurrentGame() {
+//        if (!stateManager.is(GameState.PLAYING) && !stateManager.is(GameState.PAUSED)) {
+//            System.out.println("Can only save during gameplay");
+//            return false;
+//        }
+//
+//        int levelNumber = GameSession.getInstance().getLevelNumber();
+//        LevelSaveData saveData = new LevelSaveData();
+//
+//        // Save basic info
+//        saveData.setScore(GameSession.getInstance().getScore());
+//        saveData.setLives(GameSession.getInstance().getLives());
+//
+//        // Save balls (đơn giản)
+//        saveData.setBalls(new ArrayList<>(balls));
+//
+//        // Save paddle (đơn giản)
+//        saveData.setPaddle(paddle);
+//
+//        // Save bricks (dùng BrickSaveInfo với config cho movable bricks)
+//        List<LevelSaveData.BrickSaveInfo> brickInfos = new ArrayList<>();
+//        for (Brick brick : bricks) {
+//            if (!brick.isDestroyed()) {
+//                String typeKey = brick.getBrickTypeKey();
+//                Map<String, Double> config = brick.getConfig(); // Empty cho static, có data cho movable
+//
+//                brickInfos.add(new LevelSaveData.BrickSaveInfo(
+//                        typeKey,
+//                        brick.getX(),
+//                        brick.getY(),
+//                        brick.getHitPoints(),
+//                        config
+//                ));
+//            }
+//        }
+//        saveData.setBricks(brickInfos);
+//
+//        // Save falling powerups (đơn giản)
+//        saveData.setFallingPowerUps(new ArrayList<>(fallingPowerUps));
+//
+//        // Save active powerups
+//        if (powerUpManager != null) {
+//            saveData.setActivePowerups(powerUpManager.captureActivePowerupsInfo());
+//        }
+//
+//        boolean success = GameDataManager.saveLevelProgress(levelNumber, saveData);
+//        if (success) {
+//            System.out.println("✅ Game saved successfully!");
+//        }
+//        return success;
+//    }
+//
+//    /**
+//     * Load game đã save
+//     * Recreate bricks bằng BrickFactory
+//     */
+//    public boolean loadSavedGame(int levelNumber) {
+//        LevelSaveData saveData = GameDataManager.loadLevelProgress(levelNumber);
+//        if (saveData == null) {
+//            System.out.println("No save file found for level " + levelNumber);
+//            return false;
+//        }
+//
+//        System.out.println("Loading saved game for level " + levelNumber);
+//
+//        // Restore game state
+//        GameSession.getInstance().setScore(saveData.getScore());
+//        GameSession.getInstance().setLives(saveData.getLives());
+//
+//        // Restore paddle
+//        this.paddle = saveData.getPaddle();
+//        paddle.refreshSkin();
+//
+//        // Restore balls
+//        this.balls.clear();
+//        this.balls.addAll(saveData.getBalls());
+//        this.ball = balls.isEmpty() ? null : balls.get(0);
+//
+//        // Recreate bricks bằng factory!
+//        this.bricks = new ArrayList<>();
+//        for (LevelSaveData.BrickSaveInfo info : saveData.getBricks()) {
+//            BrickType type = BrickType.fromString(info.getType());
+//            if (type == null) {
+//                System.err.println("Unknown brick type: " + info.getType());
+//                continue;
+//            }
+//
+//            // Create brick bằng factory
+//            Brick brick = type.create(info.getX(), info.getY(), info.getConfig());
+//
+//            // Restore HP
+//            brick.setHitPoints(info.getHitPoints());
+//
+//            // Add listener
+//            brick.addListener(this);
+//
+//            bricks.add(brick);
+//        }
+//
+//        // Restore falling powerups
+//        this.fallingPowerUps.clear();
+//        this.fallingPowerUps.addAll(saveData.getFallingPowerUps());
+//
+//        // Restore power-ups
+//        powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
+//        for (LevelSaveData.ActivePowerupInfo info : saveData.getActivePowerups()) {
+//            powerUpManager.restoreActivePowerup(info.getType(), info.getRemainingDuration());
+//        }
+//
+//        // Update UI
+//        if (uiCallback != null) {
+//            uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+//            uiCallback.onScoreChanged(GameSession.getInstance().getScore());
+//        }
+//
+//        // Reset state
+//        soundForExplosionChains.clear();
+//        levelCompleteSoundPlayed = false;
+//        hitsSinceLastDrop = 0;
+//        bullets.clear();
+//
+//        stateManager.setState(GameState.PLAYING);
+//        System.out.println("✅ Game loaded successfully!");
+//        return true;
+//    }
+//
+//    /**
+//     * Kiểm tra xem level có save không
+//     */
+//    public boolean hasLevelSave(int levelNumber) {
+//        return GameDataManager.hasLevelSave(levelNumber);
+//    }
+//
+//    /**
+//     * Auto-save khi thoát game
+//     */
+//    public void setupAutoSave() {
+//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//            if (stateManager.is(GameState.PLAYING) || stateManager.is(GameState.PAUSED)) {
+//                saveCurrentGame();
+//                System.out.println("🔄 Auto-saved on exit");
+//            }
+//        }));
+//    }
+//
+
 }

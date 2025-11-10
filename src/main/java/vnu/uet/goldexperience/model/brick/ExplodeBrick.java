@@ -16,6 +16,11 @@ public class ExplodeBrick extends Brick {
     }
 
     @Override
+    public String getBrickTypeKey() {
+        return "explode";
+    }
+
+    @Override
     public void takeHit() {
         hitPoints--;
         if (isDestroyed()) {

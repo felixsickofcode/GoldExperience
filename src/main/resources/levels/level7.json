@@ -1,0 +1,23 @@
+{
+  "key": {
+    "N": "normal",
+    "U": "unbreakable",
+    " ": "empty",
+    "E": "explode",
+    "M": "medium"
+  },
+  "layout": [
+    "            ",
+    "            ",
+    "            ",
+    "",
+    "            ",
+    " E        E ",
+    "    E  E    ",
+    "  MMMMMMMM  ",
+    "  U      U  ",
+    " U        U ",
+    "U          U",
+    "UUUU    UUUU"
+  ]
+}

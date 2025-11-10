@@ -2,6 +2,7 @@ package vnu.uet.goldexperience.effect.ball;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.manager.GameDataManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +19,29 @@ public class BallEffect {
     private double centerX, centerY;
     private double glowPulse = 0;
     private double frictionSpawnTimer = 0;
-
+    private boolean trailEnabled = false;
+    private boolean bubbleEnabled = false;
+    private boolean frictionEnabled = false;
     public BallEffect() {
         this.random = new Random();
         this.ballGlow = new BallGlow();
         this.ballTrail = new BallTrail();
         this.bubbles = new ArrayList<>();
         this.frictions = new ArrayList<>();
+        refreshActiveEffects();
     }
+    public void refreshActiveEffects() {
+        List<String> selectedEffects = GameDataManager.getSelectedBallEffects();
 
+        trailEnabled = selectedEffects.contains("ball_trail");
+        bubbleEnabled = selectedEffects.contains("ball_bubble");
+        frictionEnabled = selectedEffects.contains("ball_friction");
+
+        System.out.println("🎨 [BallEffect] Active effects:");
+        System.out.println("   Trail: " + trailEnabled);
+        System.out.println("   Bubble: " + bubbleEnabled);
+        System.out.println("   Friction: " + frictionEnabled);
+    }
     public void update(double x, double y, double deltaTime, double width, double height) {
         double vx = (x - lastX) / deltaTime;
         double vy = (y - lastY) / deltaTime;
@@ -37,13 +52,16 @@ public class BallEffect {
         centerY = y;
 
         if (speed > Constants.SPAWN_THRESHOLD) {
-            spawnBubble(x, y, vx, vy);
+            if (bubbleEnabled) {
+                spawnBubble(x, y, vx, vy);
+            }
 
-            // Spawn friction particles xung quanh đầu bóng
-            frictionSpawnTimer += deltaTime;
-            if (frictionSpawnTimer >= 0.012) { // Tăng tần suất spawn
-                spawnFrictionParticles(x, y, vx, vy, width);
-                frictionSpawnTimer = 0;
+            if (frictionEnabled) {
+                frictionSpawnTimer += deltaTime;
+                if (frictionSpawnTimer >= 0.012) {
+                    spawnFrictionParticles(x, y, vx, vy, width);
+                    frictionSpawnTimer = 0;
+                }
             }
         }
 
@@ -59,7 +77,9 @@ public class BallEffect {
 
         lastX = x;
         lastY = y;
-        ballTrail.update(x, y);
+        if (trailEnabled) {
+            ballTrail.update(x, y);
+        }
         glowPulse = (Math.sin(System.nanoTime() * 1e-9 * 6) + 1) / 2;
     }
 
@@ -71,7 +91,9 @@ public class BallEffect {
     public void clear() {
         bubbles.clear();
         frictions.clear();
-        ballTrail.getTrail().clear();
+        if (ballTrail != null) {
+            ballTrail.getTrail().clear();
+        }
     }
 
     private void spawnBubble(double x, double y, double vx, double vy) {
@@ -103,15 +125,20 @@ public class BallEffect {
     }
 
     public void render(GraphicsContext gc) {
-        for (BallFriction f : frictions) {
-            f.render(gc);
+        if (frictionEnabled) {
+            for (BallFriction f : frictions) {
+                f.render(gc);
+            }
         }
 
-        for (BallBubbleTrail b : bubbles) {
-            b.render(gc);
+        if (bubbleEnabled) {
+            for (BallBubbleTrail b : bubbles) {
+                b.render(gc);
+            }
         }
-
-        ballTrail.render(gc, ballTrail.getTrail(), ballW, ballH);
+        if (trailEnabled && ballTrail != null) {
+            ballTrail.render(gc, ballTrail.getTrail(), ballW, ballH);
+        }
         ballGlow.render(gc, centerX, centerY, ballW / 2, glowPulse);
     }
 }

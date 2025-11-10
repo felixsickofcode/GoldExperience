@@ -13,7 +13,6 @@ public class Ball extends MovableObject {
     private long lastCollisionTime = 0;
     static final double minDy = 80;
     private final BallEffect effect;
-    // Multiplier applied by time-based power-ups like FAST/SLOW; persists across resets
     private double speedScale = 1.0;
 
     public Ball(double x, double y, double radius) {
@@ -22,7 +21,12 @@ public class Ball extends MovableObject {
         this.image = AssetsManager.balls.getFirst();
         this.effect = new BallEffect();
     }
-
+    public void refreshEffects() {
+        if (effect != null) {
+            effect.refreshActiveEffects();
+            System.out.println("🔄 Ball effects refreshed");
+        }
+    }
     public boolean isReset() {
         return reset;
     }

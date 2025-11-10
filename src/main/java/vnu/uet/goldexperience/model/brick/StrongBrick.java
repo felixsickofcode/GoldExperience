@@ -12,12 +12,18 @@ public class StrongBrick extends MediumBrick {
     private boolean isRegenerating;
     private final RegenerateEffect regenerateEffect;
     private final ReviveEffect reviveEffect;
+
     public StrongBrick(double x, double y, double width, double height) {
         super(x, y, width, height);
         image = AssetsManager.bricks.get(5);
         this.hitPoints = Constants.MAX_HIT_POINTS;
         this.regenerateEffect = new RegenerateEffect(this);
         this.reviveEffect = new ReviveEffect(this);
+    }
+
+    @Override
+    public String getBrickTypeKey() {
+        return "strong";
     }
 
     @Override
@@ -63,6 +69,7 @@ public class StrongBrick extends MediumBrick {
             }
         }
     }
+
     @Override
     public void render(GraphicsContext gc) {
         super.render(gc);
