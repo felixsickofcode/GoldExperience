@@ -420,11 +420,6 @@ public class GameEngine implements BrickListener {
         for (Ball b : balls) {
             b.update(deltaTime);
 
-            if (b.isReset()) {
-                b.setX(paddle.getX() + paddle.getWidth() / 2 - b.getWidth() / 2);
-                b.setY(paddle.getY() - b.getHeight());
-            }
-
             if (b.bounceOffWithPaddle(paddle)) {
                 SoundManager.playHitPaddleSound();
             }

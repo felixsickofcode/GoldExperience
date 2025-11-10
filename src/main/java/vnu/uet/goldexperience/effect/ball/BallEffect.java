@@ -11,9 +11,9 @@ import java.util.Random;
 public class BallEffect {
     private final List<BallBubbleTrail> bubbles;
     private final List<BallFriction> frictions;
-    private Random random;
-    private BallTrail ballTrail;
-    private BallGlow ballGlow;
+    private final Random random;
+    private final BallTrail ballTrail;
+    private final BallGlow ballGlow;
     private double lastX, lastY;
     private double ballW, ballH;
     private double centerX, centerY;

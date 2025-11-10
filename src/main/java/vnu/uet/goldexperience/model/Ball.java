@@ -15,6 +15,9 @@ public class Ball extends MovableObject {
     private final BallEffect effect;
     private double speedScale = 1.0;
 
+    private Paddle attachedPaddle = null;
+    private double rollTimer = 0.0;
+
     public Ball(double x, double y, double radius) {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
@@ -38,17 +41,31 @@ public class Ball extends MovableObject {
     }
 
     public void shoot() {
-        // Launch with current speed scale so active FAST/SLOW effects apply across deaths
-        dx = 1 * speedScale;
-        // base launch speed
-        double speed = Constants.BALL_SPEED;
-        dy = -speed * speedScale;
+        if (attachedPaddle == null) {
+            dx = speedScale;
+            dy = -Constants.BALL_SPEED * speedScale;
+        } else {
+            double halfPaddleWidth = attachedPaddle.getWidth() / 2;
+            double angleScaler =
+                    (getCenterX() - (attachedPaddle.getX() + halfPaddleWidth)) / halfPaddleWidth;
+
+            double shootAngle = angleScaler * Math.toRadians(Constants.MAX_SHOOT_ANGLE);
+
+            setDx(Constants.BALL_SPEED * Math.sin(shootAngle) * speedScale);
+            setDy(-Math.abs(Constants.BALL_SPEED * Math.cos(shootAngle) * speedScale));
+        }
+
         reset = false;
+        attachedPaddle = null;
     }
 
     public void applySpeedScale(double factor) {
-        if (factor == 1.0) return;
+        if (factor == 1.0) {
+            return;
+        }
+
         speedScale *= factor;
+
         if (!reset) {
             setDx(getDx() * factor);
             setDy(getDy() * factor);
@@ -62,6 +79,10 @@ public class Ball extends MovableObject {
 
     public void reset(Paddle paddle) {
         reset = true;
+
+        this.attachedPaddle = paddle;
+        this.rollTimer = 0.0;
+
         setX(paddle.getX() + paddle.getWidth() / 2 - radius);
         setY(paddle.getY() - radius * 2);
         dx = 0;
@@ -120,25 +141,21 @@ public class Ball extends MovableObject {
         double minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));
 
         if (minOverlap == overlapLeft && getDx() > 0) {
-//            System.out.println("LEFT");
             setDx(-Math.abs(getDx()));
             setX(brick.getX() - 2 * radius - 0.5);
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
         } else if (minOverlap == overlapRight && getDx() < 0) {
-//            System.out.println("RIGHT");
             setDx(Math.abs(getDx()));
             setX(brick.getX() + brick.getWidth() + 0.5);
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
         } else if (minOverlap == overlapTop && getDy() > 0) {
-//            System.out.println("TOP");
             setDy(-Math.abs(getDy()));
             setY(brick.getY() - 2 * radius - 0.5);
         } else if (minOverlap == overlapBottom && getDy() < 0) {
-//            System.out.println("BOTTOM");
             setDy(Math.abs(getDy()));
             setY(brick.getY() + brick.getHeight() + 0.5);
         } else {
@@ -235,7 +252,19 @@ public class Ball extends MovableObject {
         if (!reset) {
             move(dt);
             handleBallEdgeCollision();
+        } else {
+            if (attachedPaddle != null) {
+                double paddleCenterX = attachedPaddle.getX() + attachedPaddle.getWidth() / 2;
+                double maxOffsetX = (attachedPaddle.getWidth() - this.width) / 2;
+
+                rollTimer += dt * Constants.BALL_ROLLING_SPEED;
+                double rollThreshold = Math.sin(rollTimer);
+
+                setX(paddleCenterX - (this.width / 2) + rollThreshold * maxOffsetX);
+                setY(attachedPaddle.getY() - this.height);
+            }
         }
+
         effect.update(getCenterX(), getCenterY(), dt, width, height);
     }
 
@@ -243,7 +272,9 @@ public class Ball extends MovableObject {
     public void render(GraphicsContext gc) {
         effect.render(gc);
         gc.setGlobalAlpha(1.0);
-        if (image != null)
+
+        if (image != null) {
             gc.drawImage(image, x, y, width, height);
+        }
     }
 }
