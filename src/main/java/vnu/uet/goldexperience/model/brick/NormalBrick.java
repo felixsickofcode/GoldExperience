@@ -11,6 +11,11 @@ public class NormalBrick extends Brick {
     }
 
     @Override
+    public String getBrickTypeKey() {
+        return "normal";
+    }
+
+    @Override
     public void takeHit() {
         hitPoints--;
         if (isDestroyed()) {
@@ -36,6 +41,7 @@ public class NormalBrick extends Brick {
             }
         }
     }
+
     @Override
     public void render(GraphicsContext gc) {
         if (!isDestroyed() && image != null) {

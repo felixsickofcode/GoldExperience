@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 
 public class TutorialController {
     private SceneManager sceneManager;
@@ -27,7 +28,7 @@ public class TutorialController {
 
     @FXML
     private void handleBackToSetting(ActionEvent event) {
-        AssetsManager.playClickSound();
+        SoundManager.playClickSound();
         System.out.println("Back to setting clicked");
         if (sceneManager != null) {
             sceneManager.switchTo("setting");

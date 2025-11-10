@@ -29,6 +29,10 @@ public class UnbreakableBrick extends Brick {
         return false;
     }
 
+    @Override
+    public String getBrickTypeKey() {
+        return "unbreakable";
+    }
 
     @Override
     public void takeHit() {

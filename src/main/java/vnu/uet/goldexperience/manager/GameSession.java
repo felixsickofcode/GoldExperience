@@ -121,7 +121,7 @@ public class GameSession {
     }
 
     public void notifyBallHitWall(HitSide hitSide) {
-        AssetsManager.playHitWallSound();
+        SoundManager.playHitWallSound();
         for (GameSessionListener listener : listeners) {
             listener.onBallHitWall(hitSide);
         }
@@ -179,5 +179,82 @@ public class GameSession {
         }
         return false;
     }
+    // ========== SAVE/LOAD INTEGRATION ==========
 
+//    /**
+//     * Bắt đầu ván mới - khởi tạo lives, score
+//     */
+//    public void startNewGame() {
+//        lives = MAX_LIVES;
+//        score = 0;
+//        recentLifeLost = false;
+//        System.out.println("New game started");
+//    }
+//
+//    /**
+//     * Hoàn thành level - cộng điểm vào global và xóa save
+//     */
+//    public void completeCurrentLevel() {
+//        int levelNumber = getLevelNumber();
+//        GameDataManager.completeLevel(levelNumber, score);
+//
+//        // Reset score cho level tiếp theo
+//        score = 0;
+//
+//        System.out.println("Level " + levelNumber + " completed!");
+//    }
+//
+//    /**
+//     * Kiểm tra xem level hiện tại có save không
+//     */
+//    public boolean hasCurrentLevelSave() {
+//        return GameDataManager.hasLevelSave(getLevelNumber());
+//    }
+//
+//    /**
+//     * Load tiến độ level hiện tại
+//     */
+//    public LevelSaveData loadCurrentLevelProgress() {
+//        return GameDataManager.loadLevelProgress(getLevelNumber());
+//    }
+//
+//    /**
+//     * Xóa save của level hiện tại
+//     */
+//    public void deleteCurrentLevelSave() {
+//        GameDataManager.deleteLevelSave(getLevelNumber());
+//    }
+//
+//    /**
+//     * Setter cho lives (dùng khi load game)
+//     */
+//    public void setLives(int lives) {
+//        this.lives = Math.min(lives, MAX_LIVES);
+//    }
+//
+//    /**
+//     * Setter cho score (dùng khi load game)
+//     */
+//    public void setScore(int score) {
+//        this.score = Math.max(0, score);
+//    }
+//
+//    /**
+//     * Reset toàn bộ game session về mặc định
+//     */
+//    public void resetGameSession() {
+//        currentChapter = 1;
+//        currentLevel = 1;
+//        lives = 0;
+//        score = 0;
+//        recentLifeLost = false;
+//        mode = GameMode.STORY;
+//    }
+//
+//    /**
+//     * Lấy thông tin global data
+//     */
+//    public GlobalGameData getGlobalData() {
+//        return GameDataManager.getGlobalData();
+//    }
 }

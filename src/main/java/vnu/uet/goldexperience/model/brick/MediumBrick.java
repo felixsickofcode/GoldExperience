@@ -16,6 +16,11 @@ public class MediumBrick extends Brick {
     }
 
     @Override
+    public String getBrickTypeKey() {
+        return "medium";
+    }
+
+    @Override
     public void takeHit() {
         hitPoints--;
         if (isDestroyed() && !playingBreakEffect && !playingExplosion) {

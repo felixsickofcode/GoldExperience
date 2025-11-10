@@ -1,6 +1,11 @@
 package vnu.uet.goldexperience.model.brick;
+
 import vnu.uet.goldexperience.model.Movable;
 import vnu.uet.goldexperience.model.brickFactory.MovableBrickFactory.PathType;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class UnbreakableMovableBrick extends UnbreakableBrick implements Movable {
     protected double dx, dy;
     private double originX, originY;
@@ -18,6 +23,25 @@ public class UnbreakableMovableBrick extends UnbreakableBrick implements Movable
         this.moveRangeX = moveRangeX;
         this.moveRangeY = moveRangeY;
         this.pathType = pathType;
+    }
+
+    @Override
+    public Map<String, Double> getConfig() {
+        Map<String, Double> config = new HashMap<>();
+        config.put("dx", dx);
+        config.put("dy", dy);
+        config.put("rangeX", moveRangeX);
+        config.put("rangeY", moveRangeY);
+        return config;
+    }
+
+    @Override
+    public String getBrickTypeKey() {
+        return switch (pathType) {
+            case HORIZONTAL -> "movable_unbreakable_horizontal";
+            case VERTICAL -> "movable_unbreakable_vertical";
+            case CIRCULAR -> null;
+        };
     }
 
     @Override

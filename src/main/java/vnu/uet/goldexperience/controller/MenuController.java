@@ -5,6 +5,7 @@ import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 import vnu.uet.goldexperience.view.MenuUI;
 
 public class MenuController {
@@ -39,7 +40,7 @@ public class MenuController {
             System.out.println("Menu action: " + action);
 
             // Play click sound
-            AssetsManager.playClickSound();
+            SoundManager.playClickSound();
 
             switch (action) {
                 case "story":
