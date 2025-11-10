@@ -15,6 +15,7 @@ import vnu.uet.goldexperience.manager.GameSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale; // Đảm bảo import Locale
 
 public class ScoreboardPanel extends VBox implements GameSession.GameSessionListener {
 
@@ -31,8 +32,14 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
 
     private double glowPulse = 0;
 
+    private String themeVariablesStyle = "";
+
+    private static final String GLOW_STYLE_FORMAT =
+            "-fx-effect: dropshadow(gaussian, %s, 15, %.2f, 0, 0);";
+
     public ScoreboardPanel() {
         super(8);
+        getStyleClass().add("scoreboard");
         setupUI();
         setupUpdateTimer();
         updateScoreboard();
@@ -49,6 +56,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         titleLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 30));
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setMaxWidth(Double.MAX_VALUE);
+        titleLabel.getStyleClass().add("scoreboard-title"); // Thêm class CSS
 
         getChildren().add(titleLabel);
 
@@ -80,18 +88,20 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
 
     private void updateGlowEffect() {
         double pulse = 0.6 + Math.sin(glowPulse) * 0.4;
-        String glowStyle = String.format(
-                "-fx-effect: dropshadow(gaussian, %s, 15, %.2f, 0, 0);",
+        String glowStyle = String.format(Locale.US,
+                GLOW_STYLE_FORMAT,
                 toRGBA(primaryColor, pulse * 0.8),
                 pulse
         );
 
-        setStyle("-fx-background-color: " + toRGBA(backgroundColor, 0.85) + "; " +
-                "-fx-background-radius: 10; " +
-                "-fx-border-color: " + toRGBA(primaryColor, 0.8) + "; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 10; " +
-                glowStyle);
+        String baseStyle = String.format(
+                Locale.US,
+                "-fx-background-color: %s; -fx-border-color: %s;",
+                toRGBA(backgroundColor, 0.85),
+                toRGBA(primaryColor, 0.8)
+        );
+
+        setStyle(themeVariablesStyle + " " + baseStyle + " " + glowStyle);
     }
 
     public void updateScoreboard() {
@@ -155,7 +165,21 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
                 break;
         }
 
-        titleLabel.setTextFill(primaryColor);
+        String primaryColorHex = "#" + primaryColor.toString().substring(2, 8);
+        String secondaryColorHex = "#" + secondaryColor.toString().substring(2, 8);
+        String backgroundColorRGB = String.format("rgb(%d, %d, %d)",
+                (int)(backgroundColor.getRed() * 255),
+                (int)(backgroundColor.getGreen() * 255),
+                (int)(backgroundColor.getBlue() * 255));
+        String textColorRGB = String.format("rgb(%d, %d, %d)",
+                (int)(textColor.getRed() * 255),
+                (int)(textColor.getGreen() * 255),
+                (int)(textColor.getBlue() * 255));
+
+        themeVariablesStyle = String.format(
+                "-primary-color: %s; -secondary-color: %s; -background-color: %s; -text-color: %s;",
+                primaryColorHex, secondaryColorHex, backgroundColorRGB, textColorRGB
+        );
 
         for (ScoreEntry entry : scoreEntries) {
             entry.updateColors(primaryColor, secondaryColor, textColor);
@@ -165,7 +189,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
     }
 
     private String toRGBA(Color color, double alpha) {
-        return String.format("rgba(%d, %d, %d, %.2f)",
+        return String.format(Locale.US, "rgba(%d, %d, %d, %.2f)",
                 (int)(color.getRed() * 255),
                 (int)(color.getGreen() * 255),
                 (int)(color.getBlue() * 255),
@@ -200,6 +224,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
             setAlignment(Pos.CENTER_LEFT);
             setPadding(new Insets(4, 8, 4, 8));
             setMaxWidth(Double.MAX_VALUE);
+            getStyleClass().add("score-entry"); // Áp dụng class CSS
 
             rankLabel = new Label(rank + ".");
             rankLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 20));
@@ -224,10 +249,11 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
             scoreLabel.setText(String.valueOf(score));
 
             if (rank <= 3 && !name.equals("---")) {
-                setStyle("-fx-background-color: " + toRGBA(primaryColor, 0.15) + "; " +
-                        "-fx-background-radius: 5;");
+                if (!getStyleClass().contains("top-rank-entry")) {
+                    getStyleClass().add("top-rank-entry");
+                }
             } else {
-                setStyle("-fx-background-color: transparent;");
+                getStyleClass().remove("top-rank-entry");
             }
         }
 
@@ -249,14 +275,6 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
                 nameLabel.setTextFill(text.deriveColor(0, 1, 0.6, 1));
                 scoreLabel.setTextFill(text.deriveColor(0, 1, 0.7, 1));
             }
-        }
-
-        private String toRGBA(Color color, double alpha) {
-            return String.format("rgba(%d, %d, %d, %.2f)",
-                    (int)(color.getRed() * 255),
-                    (int)(color.getGreen() * 255),
-                    (int)(color.getBlue() * 255),
-                    alpha);
         }
     }
 }

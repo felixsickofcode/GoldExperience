@@ -1,9 +1,23 @@
-
-
 .game-ui-label {
     -fx-font-family: "Cynosure Straight";
     -fx-font-size: 32px;
 }
 
+.scoreboard {
+    -primary-color: #FF69B4;
+    -secondary-color: #00FFFF;
+    -background-color: rgb(10, 5, 20);
+    -text-color: rgb(255, 100, 200);
 
+    -fx-background-radius: 10;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+}
+
+.scoreboard-title {
+    -fx-text-fill: -primary-color;
+}
+
+.score-entry {
+}
 
