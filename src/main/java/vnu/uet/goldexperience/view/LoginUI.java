@@ -16,6 +16,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.core.ChapterTheme;
 import vnu.uet.goldexperience.database.PlayerDatabase;
+import vnu.uet.goldexperience.manager.GameSession;
 
 import java.util.function.Consumer;
 
@@ -102,6 +103,8 @@ public class LoginUI {
 
             if (success) {
                 System.out.println("Player logged in: " + playerName);
+
+                GameSession.getInstance().setCurrentPlayer(playerName);
 
                 // Call callback if set
                 if (onLoginSuccess != null) {

@@ -70,7 +70,11 @@ public class GameEngine implements BrickListener {
     public static GameEngine getInstance() {
         return instance;
     }
-    public void setSceneManager(SceneManager sceneManager) {this.sceneManager = sceneManager;}
+
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+
+    }
 
     private void initObjects() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
@@ -93,8 +97,8 @@ public class GameEngine implements BrickListener {
             levelManager.loadLevel(levelNumber);
         }
         else {
-            int min = 1;
-            int max = 25;
+            int min = 30;
+            int max = 40;
             int randomValue = min + (int)(Math.random() * (max - min + 1));
             levelManager.loadLevel(randomValue);
         }
