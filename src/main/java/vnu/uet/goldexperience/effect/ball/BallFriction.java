@@ -7,9 +7,9 @@ public class BallFriction {
     private double x, y;
     private double vx, vy;
     private double life;
-    private double maxLife;
-    private double length;
-    private double thickness;
+    private final double maxLife;
+    private final double length;
+    private final double thickness;
     private double angle;
 
     public BallFriction(double x, double y, double vx, double vy) {
