@@ -21,12 +21,18 @@ public class Ball extends MovableObject {
         this.image = AssetsManager.balls.getFirst();
         this.effect = new BallEffect();
     }
+
     public void refreshEffects() {
         if (effect != null) {
             effect.refreshActiveEffects();
             System.out.println("🔄 Ball effects refreshed");
         }
     }
+
+    public void setReset(boolean reset) {
+        this.reset = reset;
+    }
+
     public boolean isReset() {
         return reset;
     }
@@ -148,7 +154,7 @@ public class Ball extends MovableObject {
 
     private void printSpeed() {
         double s = Math.hypot(getDx(), getDy());
-        //System.out.println("Ball speed: " + s);
+        // System.out.println("Ball speed: " + s);
     }
 
     private void normalizeSpeed(double maxSpeed) {
@@ -233,7 +239,6 @@ public class Ball extends MovableObject {
         effect.update(getCenterX(), getCenterY(), dt, width, height);
     }
 
-
     @Override
     public void render(GraphicsContext gc) {
         effect.render(gc);
@@ -241,6 +246,4 @@ public class Ball extends MovableObject {
         if (image != null)
             gc.drawImage(image, x, y, width, height);
     }
-
-
 }

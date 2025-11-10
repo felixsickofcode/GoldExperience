@@ -14,48 +14,60 @@ public enum PowerUpType {
             (context) -> {
                 List<Ball> balls = context.balls();
 
-                // Find the first active ball to spawn from
+                // Danh sách list tạm để tránh lỗi vừa thêm vừa duyệt
+                List<Ball> newBallsToAdd = new ArrayList<>();
+
+                // Nhân bản cho tất cả các bóng xuất hiện trong game
                 for (Ball ball : balls) {
                     if (!ball.isReset()) {
-                        // Get current ball's velocity (this will be the angle bisector)
+                        // Lấy bóng hiện tại
                         double currentDx = ball.getDx();
                         double currentDy = ball.getDy();
                         double speed = Math.hypot(currentDx, currentDy);
+
+                        if (speed == 0) {
+                            continue;
+                        }
                         
                         // Calculate current angle
                         double currentAngle = Math.atan2(currentDy, currentDx);
                         
-                        // Create angle spread: ±30 degrees from current angle
-                        double angleSpread = Math.toRadians(30);
+                        // Góc tự phóng mới cho 2 quả phân thân: 30/2 = 15 độ mỗi quả
+                        double angleSpread = Math.toRadians(15);
                         double angle1 = currentAngle - angleSpread;
                         double angle2 = currentAngle + angleSpread;
-                        
-                        // Create two new balls at the current ball's position
+
                         Ball newBall1 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
                         Ball newBall2 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
                         
-                        // Apply the current speed scale to new balls
+                        // Sao chép tốc độ dx, dy của bóng gốc
                         newBall1.applySpeedScale(ball.getSpeedScale());
                         newBall2.applySpeedScale(ball.getSpeedScale());
                         
-                        // Launch new balls with diagonal vectors
+                        // Bóng tự phóng từ 2 góc mới
                         newBall1.setDx(speed * Math.cos(angle1));
                         newBall1.setDy(speed * Math.sin(angle1));
                         
                         newBall2.setDx(speed * Math.cos(angle2));
                         newBall2.setDy(speed * Math.sin(angle2));
+
+                        newBall1.setReset(false);
+                        newBall2.setReset(false);
                         
-                        // Add to balls list
-                        balls.add(newBall1);
-                        balls.add(newBall2);
-                        
-                        // Only spawn once from the first active ball
+                        // Thêm vào danh sách tạm (cho vào Balls là bay màu)
+                        newBallsToAdd.add(newBall1);
+                        newBallsToAdd.add(newBall2);
+
                         break;
                     }
                 }
+
+                if (!newBallsToAdd.isEmpty()) {
+                    balls.addAll(newBallsToAdd);
+                }
             },
             null,
-            "images/threeballs.png",
+            "images/3ball.png",
             Constants.THREE_BALLS_DURATION
     ),
 
