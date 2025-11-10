@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/84ea2adf-f487-460e-a6da-5c5f74eaaa13/console.sql" value="84ea2adf-f487-460e-a6da-5c5f74eaaa13" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Data/GoldExperienceData.sql" value="84ea2adf-f487-460e-a6da-5c5f74eaaa13" />
+  </component>
+</project>
