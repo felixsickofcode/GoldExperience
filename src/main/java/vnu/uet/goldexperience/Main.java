@@ -98,7 +98,7 @@ public class Main extends Application {
         stage.show();
 
         // Start with login screen
-        sceneManager.switchTo("login");
+        sceneManager.switchTo("menu");
         System.out.println("R:" + root.getWidth());
     }
 

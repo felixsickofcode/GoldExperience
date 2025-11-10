@@ -79,7 +79,7 @@ public class GameSession {
         score = 0;
     }
 
-    public boolean stillAlive() {
+    public boolean isStillAlive() {
         return lives > 0;
     }
 

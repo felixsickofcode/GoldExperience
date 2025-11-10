@@ -8,7 +8,6 @@ import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
-import vnu.uet.goldexperience.model.brickFactory.*;
 
 import java.util.*;
 
@@ -30,10 +29,10 @@ public class GameEngine implements BrickListener {
     private GameUICallback uiCallback;
 
     private Paddle paddle;
-    private Ball ball;
     private List<Brick> bricks;
 
     private final List<PowerUp> fallingPowerUps = new ArrayList<>();
+    // Game sẽ maintain một mảng các Ball, thay vì một biến Ball đơn lẻ
     private final List<Ball> balls = new ArrayList<>();
     private final List<Bullet> bullets = new ArrayList<>();
     private PowerUpManager powerUpManager;
@@ -46,7 +45,7 @@ public class GameEngine implements BrickListener {
     private int comboCount = 0;
 
     private boolean levelCompleteSoundPlayed = false;
-    private Set<Brick> soundForExplosionChains = new HashSet<>();
+    private final Set<Brick> soundForExplosionChains = new HashSet<>();
 
     public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
@@ -64,7 +63,7 @@ public class GameEngine implements BrickListener {
         setupPauseMenuCallbacks();
         setupGameOverCallbacks();
 
-        initObjects();
+        initPaddle();
         instance = this;
     }
 
@@ -74,16 +73,12 @@ public class GameEngine implements BrickListener {
 
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
-
     }
 
-    private void initObjects() {
+    private void initPaddle() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
                 Constants.MEDIUM_PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
         paddle.refreshSkin();
-        ball = new Ball(Constants.BALL_INIT_POSITION,
-                paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
-        ball.refreshEffects();
     }
 
     private void loadCurrentLevel() {
@@ -102,6 +97,7 @@ public class GameEngine implements BrickListener {
             int randomValue = min + (int) (Math.random() * (max - min + 1));
             levelManager.loadLevel(randomValue);
         }
+
         bricks = levelManager.getActiveBricks();
 
         // Rồi mới add listener
@@ -111,8 +107,6 @@ public class GameEngine implements BrickListener {
             }
         }
 
-        ball.reset(paddle);
-        ball.refreshEffects();
         paddle.reset();
         paddle.refreshSkin();
 
@@ -126,11 +120,15 @@ public class GameEngine implements BrickListener {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
+
         soundForExplosionChains.clear();
         levelCompleteSoundPlayed = false;
 
+        // Clear dãy bóng (từ màn trước)
         balls.clear();
-        balls.add(ball);
+        // tạo một trạng thái bắt đầu Ball cho mạng mới
+        initNewPrimaryBall();
+
         bullets.clear();
         fallingPowerUps.clear();
         powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
@@ -304,16 +302,20 @@ public class GameEngine implements BrickListener {
                 stateManager.setState(GameState.PLAYING);
                 notifyCursorChange();
             }
+
             return;
         }
+
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.handleInput(input);
             return;
         }
+
         if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.handleKeyInput(input);
             return;
         }
+
         if (stateManager.is(GameState.GAME_OVER)) {
             gameOverManager.handleKeyInput(input);
             notifyCursorChange();
@@ -329,10 +331,9 @@ public class GameEngine implements BrickListener {
         void onCursorVisibilityChanged();
     }
 
-    //Observer
+    // Observer
     public interface GameUICallback {
         void onScoreChanged(int score);
-
         void onLivesChanged(int lives);
     }
 
@@ -356,12 +357,13 @@ public class GameEngine implements BrickListener {
                     - paddle.getWidth() / 2;
             paddle.setTargetX(targetX);
         } else {
-            if (input.isActionActive(Action.MOVE_LEFT))
+            if (input.isActionActive(Action.MOVE_LEFT)) {
                 paddle.moveLeft();
-            else if (input.isActionActive(Action.MOVE_RIGHT))
+            } else if (input.isActionActive(Action.MOVE_RIGHT)) {
                 paddle.moveRight();
-            else
+            } else {
                 paddle.stop();
+            }
         }
 
         // Shoot all reset balls
@@ -395,7 +397,6 @@ public class GameEngine implements BrickListener {
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             if (transitionManager.update(deltaTime)) {
-                ball.reset(paddle);
                 paddle.reset();
                 loadCurrentLevel();
             }
@@ -416,8 +417,10 @@ public class GameEngine implements BrickListener {
 
     private void updateGameplay(double deltaTime) {
         mode = GameSession.getInstance().getMode();
-
         paddle.update(deltaTime);
+
+        List<Ball> ballsToRemove = new ArrayList<>();
+
         for (Ball b : balls) {
             b.update(deltaTime);
 
@@ -426,55 +429,70 @@ public class GameEngine implements BrickListener {
                 b.setY(paddle.getY() - b.getHeight());
             }
 
-
-            if (ball.bounceOffWithPaddle(paddle)) {
+            if (b.bounceOffWithPaddle(paddle)) {
                 SoundManager.playHitPaddleSound();
+            }
+
+            if (b.getY() > canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
+                ballsToRemove.add(b);
             }
         }
 
-        // Check collisions for all balls
+        // Kiểm tra va chạm của toàn bộ tất cả các bóng
         if (!transitionManager.shouldDisableCollision()) {
             for (Ball b : balls) {
                 if (b.isReset()) continue;
-            }
-            for (Brick brick : bricks) {
-                if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                    boolean wasDestroyed = brick.isDestroyed();
 
-                    brick.takeHit();
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && b.bounceOffWithBrick(brick)) {
+                        boolean wasDestroyed = brick.isDestroyed();
 
-                    hitsSinceLastDrop++;
-                    if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
-                        spawnRandomDrop();
-                        hitsSinceLastDrop = 0;
-                    }
+                        brick.takeHit();
 
-                    if (!wasDestroyed && brick.isDestroyed()) {
-                        if (brick instanceof MediumBrick) {
+                        hitsSinceLastDrop++;
+                        if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
                             spawnRandomDrop();
+                            hitsSinceLastDrop = 0;
                         }
-                    }
-                    if (brick instanceof ExplodeBrick) {
-                        SoundManager.playExplosionSound();
-                    } else if (brick.getHitPoints() == 0 || brick instanceof UnbreakableBrick) {
-                        SoundManager.playBreakBrickSound();
-                    } else {
-                        SoundManager.playHitBrickSound();
-                    }
 
-                    break;
+                        // Ai đó cản thằng Minh, thằng Phong lại đi, 2 thằng code game kinh vch
+
+                        if (!wasDestroyed && brick.isDestroyed()) {
+                            if (brick instanceof MediumBrick) {
+                                spawnRandomDrop();
+                            }
+                        }
+
+                        if (brick instanceof ExplodeBrick) {
+                            SoundManager.playExplosionSound();
+                        } else if (brick.getHitPoints() == 0 || brick instanceof UnbreakableBrick) {
+                            SoundManager.playBreakBrickSound();
+                        } else {
+                            SoundManager.playHitBrickSound();
+                        }
+
+                        break;
+                    }
                 }
             }
         }
 
-        if (ball.getY() >= canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
+        // Xoá các bóng đã bị rơi
+        if (!ballsToRemove.isEmpty()) {
+            balls.removeAll(ballsToRemove);
+        }
+
+        if (balls.isEmpty() && !ballsToRemove.isEmpty()) {
             GameSession.getInstance().loseLife();
+
+            // cập nhật lại số mạng sau khi hẹo
             if (uiCallback != null) {
                 uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             }
 
-            if (GameSession.getInstance().stillAlive()) {
-                ball.reset(paddle);
+            // nếu còn mạng thì init quả mới, không thì game over
+            if (GameSession.getInstance().isStillAlive()) {
+                initNewPrimaryBall();
             } else {
                 stateManager.setState(GameState.GAME_OVER);
             }
@@ -511,13 +529,20 @@ public class GameEngine implements BrickListener {
             }
         }
 
-
         if (powerUpManager != null) {
             powerUpManager.update();
         }
 
         checkChainExplosions();
         bricks.removeIf(Brick::canBeRemoved);
+    }
+
+    private void initNewPrimaryBall() {
+        Ball primaryBall = new Ball(Constants.BALL_INIT_POSITION,
+                paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
+        primaryBall.refreshEffects();
+        balls.add(primaryBall);
+        primaryBall.reset(paddle);
     }
 
     private void spawnRandomDrop() {
@@ -531,28 +556,28 @@ public class GameEngine implements BrickListener {
 
     private void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
         gc.save();
         transitionManager.applySlideTransform(gc);
+
         for (PowerUp pu : fallingPowerUps) {
             pu.render(gc);
         }
+
         for (Ball b : balls) {
             b.render(gc);
         }
+
         for (Brick brick : bricks) {
             brick.render(gc);
         }
 
-
         gc.restore();
-
         paddle.render(gc);
-
 
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.render(gc);
         }
+
         if (stateManager.is(GameState.TRANSITIONING)) {
             transitionManager.render(gc);
         } else if (stateManager.is(GameState.PAUSED)) {
@@ -569,10 +594,6 @@ public class GameEngine implements BrickListener {
     }
 
     public void refreshBallEffects() {
-        if (ball != null) {
-            ball.refreshEffects();
-        }
-
         for (Ball b : balls) {
             if (b != null) {
                 b.refreshEffects();
@@ -582,8 +603,10 @@ public class GameEngine implements BrickListener {
 
     private void checkChainExplosions() {
         List<Brick> newlyExploded = new ArrayList<>();
+
         for (Brick brick : bricks) {
             ExplosionEffect effect = brick.getExplosionEffect();
+
             if (effect != null && effect.isActive()) {
                 for (Brick otherBrick : bricks) {
                     if (otherBrick != brick
@@ -594,6 +617,7 @@ public class GameEngine implements BrickListener {
                 }
             }
         }
+
         for (Brick brick : newlyExploded) {
             brick.explodeByChainReaction();
 
@@ -612,6 +636,7 @@ public class GameEngine implements BrickListener {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -619,6 +644,7 @@ public class GameEngine implements BrickListener {
         GameDataManager.completeLevel(GameSession.getInstance().getLevelNumber(),
                 GameSession.getInstance().getScore());
         boolean hasUnbreakableBricks = false;
+
         for (Brick brick : bricks) {
             if (brick instanceof UnbreakableBrick) {
                 ((UnbreakableBrick) brick).destroy();
@@ -645,6 +671,7 @@ public class GameEngine implements BrickListener {
             }
 
             int currentLevelNumber = GameSession.getInstance().getLevelNumber();
+
             if (Story.hasAfterDialogue(currentLevelNumber)) {
                 checkAndShowAfterDialogue();
             } else {
@@ -672,6 +699,7 @@ public class GameEngine implements BrickListener {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -718,7 +746,6 @@ public class GameEngine implements BrickListener {
             stateManager.setState(GameState.STORY);
         }
     }
-
 
     public void refreshMode() {
         this.mode = GameSession.getInstance().getMode();
@@ -893,5 +920,4 @@ public class GameEngine implements BrickListener {
 //        }));
 //    }
 //
-
 }
