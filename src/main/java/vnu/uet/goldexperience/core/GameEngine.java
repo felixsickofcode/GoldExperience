@@ -8,6 +8,7 @@ import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
+import vnu.uet.goldexperience.model.brickFactory.*;
 
 import java.util.*;
 
@@ -92,7 +93,7 @@ public class GameEngine implements BrickListener {
         if (mode.equals(GameSession.GameMode.STORY)) {
             levelManager.loadLevel(levelNumber);
         } else {
-            int min = 30;
+            int min = 31;
             int max = 40;
             int randomValue = min + (int) (Math.random() * (max - min + 1));
             levelManager.loadLevel(randomValue);
