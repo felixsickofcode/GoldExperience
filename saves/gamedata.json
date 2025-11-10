@@ -1,15 +1,10 @@
 {
-  "totalPoints": 1000,
+  "totalPoints": 0,
   "volume": 0.7,
-  "ownedBallEffects": [
-    "ball_trail",
-    "ball_bubble",
-    "ball_friction"
-  ],
+  "ownedBallEffects": [],
   "ownedPaddleSkins": [
     "paddle_default"
   ],
   "selectedPaddleSkin": "paddle_default",
-  "selectedBallEffects": [
-  ]
+  "selectedBallEffects": []
 }
