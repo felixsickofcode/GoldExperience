@@ -171,37 +171,4 @@ public class Paddle extends MovableObject {
             this.shootingEndTime = System.currentTimeMillis() + durationMs;
         }
     }
-
-    public Bullet[] shoot() {
-        if (!isShooting) {
-            return null;
-        }
-
-        long now = System.currentTimeMillis();
-
-        if (now - lastShotTime < Constants.BULLET_COOLDOWN_MS) {
-            return null;
-        }
-
-        lastShotTime = now;
-
-        double bulletY = this.y - Constants.BULLET_HEIGHT;
-        double bulletSpeed = -Constants.BULLET_SPEED;
-
-        double bulletX1 = this.x + Constants.BULLET_WIDTH / 2;
-        Bullet bullet1 = new Bullet(
-                bulletX1, bulletY,
-                Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT,
-                0, bulletSpeed
-        );
-
-        double bulletX2 = this.x + this.width - Constants.BULLET_WIDTH * 1.5;
-        Bullet bullet2 = new Bullet(
-                bulletX2, bulletY,
-                Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT,
-                0, bulletSpeed
-        );
-
-        return new Bullet[]{bullet1, bullet2};
-    }
 }

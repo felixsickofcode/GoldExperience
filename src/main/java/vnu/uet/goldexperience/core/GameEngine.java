@@ -131,6 +131,11 @@ public class GameEngine implements BrickListener {
 
         bullets.clear();
         fallingPowerUps.clear();
+
+        if (powerUpManager != null) {
+            powerUpManager.clearAll();
+        }
+
         powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
     }
 
@@ -362,20 +367,13 @@ public class GameEngine implements BrickListener {
             }
         }
 
-        // Shoot all reset balls
+        // Bắn tất cả bóng
         if (input.isActionActive(Action.SHOOT)) {
             for (Ball b : balls) {
                 if (b.isReset()) {
                     b.shoot();
                 }
             }
-        }
-
-        Bullet[] newBullets = paddle.shoot();
-
-        if (newBullets != null) {
-            this.bullets.add(newBullets[0]);
-            this.bullets.add(newBullets[1]);
         }
     }
 
@@ -472,6 +470,11 @@ public class GameEngine implements BrickListener {
             // cập nhật lại số mạng sau khi hẹo
             if (uiCallback != null) {
                 uiCallback.onLivesChanged(GameSession.getInstance().getLives());
+            }
+
+            // mất mạng? = powerup bay màu
+            if (powerUpManager != null) {
+                powerUpManager.clearAll();
             }
 
             // nếu còn mạng thì init quả mới, không thì game over

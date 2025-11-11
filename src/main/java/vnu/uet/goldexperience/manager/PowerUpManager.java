@@ -35,6 +35,9 @@ public class PowerUpManager {
         long duration = stats.duration();
 
         if (duration > 0) {
+            PowerUpType type = powerUp.getType();
+            activePowerUps.removeIf(ap -> ap.getPowerUp().getType() == type);
+
             activePowerUps.add(new ActivePowerUp(powerUp, context, duration));
 
             if (powerUp.getType() == PowerUpType.BULLETS) {
@@ -64,7 +67,7 @@ public class PowerUpManager {
 
             if (bulletSpawnTimer <= 0.0) {
                 PowerUpStats stats = GameDataManager.getPowerUpStatsFor(PowerUpType.BULLETS);
-                bulletSpawnTimer = stats.value();
+                bulletSpawnTimer = stats.value() / 1000.0;
 
                     spawnBullet();
             }
@@ -73,18 +76,23 @@ public class PowerUpManager {
 
     private void spawnBullet() {
         Paddle paddle = context.paddle();
-
-        double spawnX = paddle.getX() + paddle.getWidth() / 2 - Constants.BULLET_WIDTH / 2;
-        double spawnY = paddle.getY() - Constants.BULLET_HEIGHT;
-
+        double bulletY = paddle.getY() - Constants.BULLET_HEIGHT;
         double dy = -Constants.BULLET_SPEED;
 
-        Bullet newBullet = new Bullet(
-                spawnX, spawnY,
+        double bulletX1 = paddle.getX() + Constants.BULLET_WIDTH / 2;
+        Bullet bullet1 = new Bullet(
+                bulletX1, bulletY,
                 Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT, 0, dy
         );
 
-        context.bullets().add(newBullet);
+        double bulletX2 = paddle.getX() + paddle.getWidth() - Constants.BULLET_WIDTH * 1.5;
+        Bullet bullet2 = new Bullet(
+                bulletX2, bulletY,
+                Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT, 0, dy
+        );
+
+        context.bullets().add(bullet1);
+        context.bullets().add(bullet2);
     }
 
 //    public List<LevelSaveData.ActivePowerupInfo> captureActivePowerupsInfo() {

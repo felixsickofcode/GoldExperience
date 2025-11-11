@@ -98,7 +98,7 @@ public class AssetsManager {
     private static void loadBullets() {
         try {
             List<String> imageDirs = List.of(
-                    "/images/blue_bullet_0.png"
+                    "/images/blue_bullet.png"
             );
 
             for (String dir : imageDirs) {
