@@ -1,21 +1,10 @@
 {
-  "totalPoints": 93049,
+  "totalPoints": 10232140,
   "volume": 0.7,
-  "ownedBallEffects": [
-    "ball_trail",
-    "ball_bubble",
-    "ball_friction"
-  ],
+  "ownedBallEffects": [],
   "ownedPaddleSkins": [
-    "paddle_default",
-    "paddle_bloody",
-    "paddle_neon",
-    "paddle_slime",
-    "paddle_alien"
+    "paddle_default"
   ],
-  "selectedPaddleSkin": "paddle_neon",
-  "selectedBallEffects": [
-    "ball_friction",
-    "ball_bubble"
-  ]
+  "selectedPaddleSkin": "paddle_default",
+  "selectedBallEffects": []
 }

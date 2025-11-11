@@ -11,10 +11,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-/**
- * Manager quản lý save/load - KHÔNG CẦN RuntimeTypeAdapter!
- * Vì có BrickFactory để recreate bricks
- */
 public class GameDataManager {
     private static final String SAVE_DIR = "saves/";
     private static final String LEVELS_DIR = SAVE_DIR + "levels/";
@@ -25,7 +21,6 @@ public class GameDataManager {
             .setExclusionStrategies(new ExclusionStrategy() {
                 @Override
                 public boolean shouldSkipField(FieldAttributes field) {
-                    // Skip tất cả JavaFX types
                     Class<?> fieldType = field.getDeclaredClass();
                     return Image.class.isAssignableFrom(fieldType)
                             || Color.class.isAssignableFrom(fieldType)||
@@ -70,15 +65,10 @@ public class GameDataManager {
                 System.out.println("   File exists, size: " + file.length() + " bytes");
                 try (FileReader reader = new FileReader(file)) {
                     globalData = gson.fromJson(reader, GlobalGameData.class);
-                    System.out.println("✅ Global data loaded from file:");
-                    System.out.println("   Selected paddle: " + globalData.getSelectedPaddleSkin());
                     return;
                 }
-            } else {
-                System.out.println("⚠️ File does not exist, creating new");
             }
         } catch (Exception e) {
-            System.err.println("❌ Failed to load global data: " + e.getMessage());
             e.printStackTrace();
         }
 

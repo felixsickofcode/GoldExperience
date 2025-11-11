@@ -30,14 +30,13 @@ public class GameEngine implements BrickListener {
     private GameUICallback uiCallback;
 
     private Paddle paddle;
-    private Ball ball;
     private List<Brick> bricks;
 
     private final List<PowerUp> fallingPowerUps = new ArrayList<>();
+    // Game sẽ maintain một mảng các Ball, thay vì một biến Ball đơn lẻ
     private final List<Ball> balls = new ArrayList<>();
     private final List<Bullet> bullets = new ArrayList<>();
     private PowerUpManager powerUpManager;
-    private int hitsSinceLastDrop = 0;
 
     private AnimationTimer loop;
     private long lastTime = 0;
@@ -46,7 +45,7 @@ public class GameEngine implements BrickListener {
     private int comboCount = 0;
 
     private boolean levelCompleteSoundPlayed = false;
-    private Set<Brick> soundForExplosionChains = new HashSet<>();
+    private final Set<Brick> soundForExplosionChains = new HashSet<>();
 
     public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
@@ -64,25 +63,22 @@ public class GameEngine implements BrickListener {
         setupPauseMenuCallbacks();
         setupGameOverCallbacks();
 
-        initObjects();
+        initPaddle();
         instance = this;
     }
+
     public static GameEngine getInstance() {
         return instance;
     }
 
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
-
     }
 
-    private void initObjects() {
+    private void initPaddle() {
         paddle = new Paddle(Constants.PADDLE_INIT_POSITION, canvas.getHeight() - 120,
                 Constants.MEDIUM_PADDLE_WIDTH, Constants.PADDLE_HEIGHT);
         paddle.refreshSkin();
-        ball = new Ball(Constants.BALL_INIT_POSITION,
-                paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
-        ball.refreshEffects();
     }
 
     private void loadCurrentLevel() {
@@ -93,15 +89,15 @@ public class GameEngine implements BrickListener {
                 ", Level " + GameSession.getInstance().getCurrentLevel() + ")");
 
         // Load trước
-        if ( mode.equals(GameSession.GameMode.STORY)) {
+        if (mode.equals(GameSession.GameMode.STORY)) {
             levelManager.loadLevel(levelNumber);
-        }
-        else {
-            int min = 30;
+        } else {
+            int min = 31;
             int max = 40;
-            int randomValue = min + (int)(Math.random() * (max - min + 1));
+            int randomValue = min + (int) (Math.random() * (max - min + 1));
             levelManager.loadLevel(randomValue);
         }
+
         bricks = levelManager.getActiveBricks();
 
         // Rồi mới add listener
@@ -111,15 +107,12 @@ public class GameEngine implements BrickListener {
             }
         }
 
-        ball.reset(paddle);
-        ball.refreshEffects();
         paddle.reset();
         paddle.refreshSkin();
 
         if (mode.equals(GameSession.GameMode.ENDLESS)) {
             GameSession.getInstance().addLife();
-        }
-        else {
+        } else {
             GameSession.getInstance().resetLives();
         }
 
@@ -127,15 +120,18 @@ public class GameEngine implements BrickListener {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
         }
+
         soundForExplosionChains.clear();
         levelCompleteSoundPlayed = false;
 
+        // Clear dãy bóng (từ màn trước)
         balls.clear();
-        balls.add(ball);
+        // tạo một trạng thái bắt đầu Ball cho mạng mới
+        initNewPrimaryBall();
+
         bullets.clear();
         fallingPowerUps.clear();
         powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
-        hitsSinceLastDrop = 0;
     }
 
     public void reloadLevel() {
@@ -158,7 +154,8 @@ public class GameEngine implements BrickListener {
                 reloadLevel();
                 notifyCursorChange();
             }
-//            @Override
+
+            //            @Override
 //            public void onSave() {  // ← THÊM MỚI
 //                SoundManager.playClickSound();
 //                System.out.println("Save clicked");
@@ -193,7 +190,7 @@ public class GameEngine implements BrickListener {
                 System.out.println("Back");
                 if (sceneManager != null) {
                     end();
-                    if ( mode.equals(GameSession.GameMode.STORY))
+                    if (mode.equals(GameSession.GameMode.STORY))
                         sceneManager.switchTo("level");
                     else
                         sceneManager.switchTo("menu");
@@ -209,15 +206,15 @@ public class GameEngine implements BrickListener {
         });
     }
 
-private void setupGameOverCallbacks() {
-    gameOverManager.setCallback(new GameOverManager.GameOverCallback() {
-        @Override
-        public void onRetry() {
-            SoundManager.playClickSound();
-            System.out.println("Retry clicked");
-            GameSession.getInstance().resetLives();
-            reloadLevel();
-        }
+    private void setupGameOverCallbacks() {
+        gameOverManager.setCallback(new GameOverManager.GameOverCallback() {
+            @Override
+            public void onRetry() {
+                SoundManager.playClickSound();
+                System.out.println("Retry clicked");
+                GameSession.getInstance().resetLives();
+                reloadLevel();
+            }
 
             @Override
             public void onMainMenu() {
@@ -239,27 +236,24 @@ private void setupGameOverCallbacks() {
     }
 
     private void setupDialogueCallbacks() {
-        dialogueSystem.setCallback(new DialogueSystem.DialogueCallback() {
-            @Override
-            public void onDialogueComplete() {
-                System.out.println("Dialogue complete");
-                if (stateManager.is(GameState.STORY)) {
-                    if (dialogueSystem.isAfterLevelDialogue()) {
-                        boolean hasNext = GameSession.getInstance().nextLevel();
-                        if (hasNext) {
-                            stateManager.setState(GameState.TRANSITIONING);
-                        } else {
-                            if (sceneManager != null) {
-                                end();
-                                sceneManager.switchTo("menu");
-                            }
-                        }
+        dialogueSystem.setCallback(() -> {
+            System.out.println("Dialogue complete");
+            if (stateManager.is(GameState.STORY)) {
+                if (dialogueSystem.isAfterLevelDialogue()) {
+                    boolean hasNext = GameSession.getInstance().nextLevel();
+                    if (hasNext) {
+                        stateManager.setState(GameState.TRANSITIONING);
                     } else {
-                        stateManager.setState(GameState.PLAYING);
+                        if (sceneManager != null) {
+                            end();
+                            sceneManager.switchTo("menu");
+                        }
                     }
+                } else {
+                    stateManager.setState(GameState.PLAYING);
                 }
-                notifyCursorChange();
             }
+            notifyCursorChange();
         });
     }
 
@@ -304,16 +298,20 @@ private void setupGameOverCallbacks() {
                 stateManager.setState(GameState.PLAYING);
                 notifyCursorChange();
             }
+
             return;
         }
+
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.handleInput(input);
             return;
         }
+
         if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.handleKeyInput(input);
             return;
         }
+
         if (stateManager.is(GameState.GAME_OVER)) {
             gameOverManager.handleKeyInput(input);
             notifyCursorChange();
@@ -329,7 +327,7 @@ private void setupGameOverCallbacks() {
         void onCursorVisibilityChanged();
     }
 
-    //Observer
+    // Observer
     public interface GameUICallback {
         void onScoreChanged(int score);
         void onLivesChanged(int lives);
@@ -355,15 +353,16 @@ private void setupGameOverCallbacks() {
                     - paddle.getWidth() / 2;
             paddle.setTargetX(targetX);
         } else {
-            if (input.isActionActive(Action.MOVE_LEFT))
+            if (input.isActionActive(Action.MOVE_LEFT)) {
                 paddle.moveLeft();
-            else if (input.isActionActive(Action.MOVE_RIGHT))
+            } else if (input.isActionActive(Action.MOVE_RIGHT)) {
                 paddle.moveRight();
-            else
+            } else {
                 paddle.stop();
+            }
         }
 
-    // Shoot all reset balls
+        // Shoot all reset balls
         if (input.isActionActive(Action.SHOOT)) {
             for (Ball b : balls) {
                 if (b.isReset()) {
@@ -372,6 +371,7 @@ private void setupGameOverCallbacks() {
             }
         }
     }
+
     private void update(double deltaTime) {
         if (stateManager.is(GameState.PAUSED)) {
             pauseMenuManager.update(deltaTime);
@@ -393,7 +393,6 @@ private void setupGameOverCallbacks() {
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             if (transitionManager.update(deltaTime)) {
-                ball.reset(paddle);
                 paddle.reset();
                 loadCurrentLevel();
             }
@@ -414,65 +413,63 @@ private void setupGameOverCallbacks() {
 
     private void updateGameplay(double deltaTime) {
         mode = GameSession.getInstance().getMode();
-
         paddle.update(deltaTime);
+
+        List<Ball> ballsToRemove = new ArrayList<>();
+
         for (Ball b : balls) {
             b.update(deltaTime);
 
-            if (b.isReset()) {
-                b.setX(paddle.getX() + paddle.getWidth() / 2 - b.getWidth() / 2);
-                b.setY(paddle.getY() - b.getHeight());
+            if (b.bounceOffWithPaddle(paddle)) {
+                SoundManager.playHitPaddleSound();
             }
 
-
-            if (ball.bounceOffWithPaddle(paddle)) {
-                SoundManager.playHitPaddleSound();
+            if (b.getY() > canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
+                ballsToRemove.add(b);
             }
         }
 
-        // Check collisions for all balls
+        // Kiểm tra va chạm của toàn bộ tất cả các bóng
         if (!transitionManager.shouldDisableCollision()) {
             for (Ball b : balls) {
                 if (b.isReset()) continue;
-            }
-            for (Brick brick : bricks) {
-                if (!brick.isDestroyed() && ball.bounceOffWithBrick(brick)) {
-                    boolean wasDestroyed = brick.isDestroyed();
 
-                    brick.takeHit();
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && b.bounceOffWithBrick(brick)) {
+                        brick.takeHit();
 
-                    hitsSinceLastDrop++;
-                    if (hitsSinceLastDrop >= Constants.POWER_UP_HIT_DROP_TEST_THRESHOLD) {
-                        spawnRandomDrop();
-                        hitsSinceLastDrop = 0;
-                    }
+                        // Ai đó cản thằng Minh, thằng Phong lại đi, 2 thằng code game kinh vch
 
-                    if (!wasDestroyed && brick.isDestroyed()) {
-                        if (brick instanceof MediumBrick) {
-                            spawnRandomDrop();
+                        if (brick instanceof ExplodeBrick) {
+                            SoundManager.playExplosionSound();
+                        } else if (brick.getHitPoints() == 0 || brick instanceof UnbreakableBrick) {
+                            SoundManager.playBreakBrickSound();
+                        } else {
+                            SoundManager.playHitBrickSound();
                         }
-                    }
-                    if (brick instanceof ExplodeBrick) {
-                        SoundManager.playExplosionSound();
-                    } else if (brick.getHitPoints() == 0 || brick instanceof UnbreakableBrick) {
-                        SoundManager.playBreakBrickSound();
-                    } else {
-                        SoundManager.playHitBrickSound();
-                    }
 
-                    break;
+                        break;
+                    }
                 }
             }
         }
 
-        if (ball.getY() >= canvas.getHeight() && stateManager.is(GameState.PLAYING)) {
+        // Xoá các bóng đã bị rơi
+        if (!ballsToRemove.isEmpty()) {
+            balls.removeAll(ballsToRemove);
+        }
+
+        if (balls.isEmpty() && !ballsToRemove.isEmpty()) {
             GameSession.getInstance().loseLife();
+
+            // cập nhật lại số mạng sau khi hẹo
             if (uiCallback != null) {
                 uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             }
 
-            if (GameSession.getInstance().stillAlive()) {
-                ball.reset(paddle);
+            // nếu còn mạng thì init quả mới, không thì game over
+            if (GameSession.getInstance().isStillAlive()) {
+                initNewPrimaryBall();
             } else {
                 stateManager.setState(GameState.GAME_OVER);
             }
@@ -482,7 +479,7 @@ private void setupGameOverCallbacks() {
             brick.update(deltaTime);
         }
 
-            // Update active falling power-ups
+        // Update active falling power-ups
         if (!fallingPowerUps.isEmpty()) {
             List<PowerUp> collected = new ArrayList<>();
             for (PowerUp pu : fallingPowerUps) {
@@ -509,7 +506,6 @@ private void setupGameOverCallbacks() {
             }
         }
 
-
         if (powerUpManager != null) {
             powerUpManager.update();
         }
@@ -518,41 +514,48 @@ private void setupGameOverCallbacks() {
         bricks.removeIf(Brick::canBeRemoved);
     }
 
-    private void spawnRandomDrop() {
-        double minX = 0;
-        double maxX = Constants.GAMEPLAYZONE_WIDTH - Constants.POWER_UP_ITEM_WIDTH;
-        double spawnX = minX + Math.random() * (maxX - minX);
-        double spawnY = -Constants.POWER_UP_ITEM_HEIGHT;
+    private void initNewPrimaryBall() {
+        Ball primaryBall = new Ball(Constants.BALL_INIT_POSITION,
+                paddle.getY() - Constants.NORMAL_BALL_SIZE, Constants.NORMAL_BALL_SIZE);
+        primaryBall.refreshEffects();
+        balls.add(primaryBall);
+        primaryBall.reset(paddle);
+    }
+
+    private void spawnRandomDrop(Brick destroyedBrick) {
+        double spawnX = destroyedBrick.getX() + destroyedBrick.getWidth() / 2
+                - Constants.POWER_UP_ITEM_WIDTH / 2;
+        double spawnY = destroyedBrick.getY() + destroyedBrick.getHeight() / 2
+                - Constants.POWER_UP_ITEM_HEIGHT / 2;
+
         PowerUpType dropType = PowerUpType.randomDroppable();
         fallingPowerUps.add(new SimplePowerUp(spawnX, spawnY, dropType));
     }
 
     private void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
         gc.save();
         transitionManager.applySlideTransform(gc);
+
         for (PowerUp pu : fallingPowerUps) {
             pu.render(gc);
         }
+
         for (Ball b : balls) {
             b.render(gc);
         }
+
         for (Brick brick : bricks) {
             brick.render(gc);
         }
 
-
-
         gc.restore();
-
         paddle.render(gc);
-
-
 
         if (stateManager.is(GameState.STORY)) {
             dialogueSystem.render(gc);
         }
+
         if (stateManager.is(GameState.TRANSITIONING)) {
             transitionManager.render(gc);
         } else if (stateManager.is(GameState.PAUSED)) {
@@ -561,26 +564,27 @@ private void setupGameOverCallbacks() {
             gameOverManager.render(gc);
         }
     }
+
     public void refreshPaddleSkin() {
         if (paddle != null) {
             paddle.refreshSkin();
         }
     }
-    public void refreshBallEffects() {
-        if (ball != null) {
-            ball.refreshEffects();
-        }
 
+    public void refreshBallEffects() {
         for (Ball b : balls) {
             if (b != null) {
                 b.refreshEffects();
             }
         }
     }
+
     private void checkChainExplosions() {
         List<Brick> newlyExploded = new ArrayList<>();
+
         for (Brick brick : bricks) {
             ExplosionEffect effect = brick.getExplosionEffect();
+
             if (effect != null && effect.isActive()) {
                 for (Brick otherBrick : bricks) {
                     if (otherBrick != brick
@@ -591,6 +595,7 @@ private void setupGameOverCallbacks() {
                 }
             }
         }
+
         for (Brick brick : newlyExploded) {
             brick.explodeByChainReaction();
 
@@ -609,11 +614,15 @@ private void setupGameOverCallbacks() {
                 return false;
             }
         }
+
         return true;
     }
 
     private void handleLevelComplete() {
+        GameDataManager.completeLevel(GameSession.getInstance().getLevelNumber(),
+                GameSession.getInstance().getScore());
         boolean hasUnbreakableBricks = false;
+
         for (Brick brick : bricks) {
             if (brick instanceof UnbreakableBrick) {
                 ((UnbreakableBrick) brick).destroy();
@@ -640,6 +649,7 @@ private void setupGameOverCallbacks() {
             }
 
             int currentLevelNumber = GameSession.getInstance().getLevelNumber();
+
             if (Story.hasAfterDialogue(currentLevelNumber)) {
                 checkAndShowAfterDialogue();
             } else {
@@ -667,6 +677,7 @@ private void setupGameOverCallbacks() {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -675,6 +686,10 @@ private void setupGameOverCallbacks() {
         int points = 125;
         GameSession.getInstance().addScore(points + comboCount);
         comboCount += 5;
+
+        if (!(brick instanceof UnbreakableBrick) && Math.random() < Constants.DROP_CHANCE) {
+            spawnRandomDrop(brick);
+        }
 
         if (uiCallback != null) {
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
@@ -713,7 +728,6 @@ private void setupGameOverCallbacks() {
             stateManager.setState(GameState.STORY);
         }
     }
-
 
     public void refreshMode() {
         this.mode = GameSession.getInstance().getMode();
@@ -888,5 +902,4 @@ private void setupGameOverCallbacks() {
 //        }));
 //    }
 //
-
 }

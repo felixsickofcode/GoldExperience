@@ -3,9 +3,6 @@ package vnu.uet.goldexperience.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class lưu dữ liệu toàn cục của game
- */
 public class GlobalGameData {
     private int totalPoints;
     private float volume;
