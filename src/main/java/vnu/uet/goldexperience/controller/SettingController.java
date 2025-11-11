@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import vnu.uet.goldexperience.manager.GameDataManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.manager.SoundManager;
 
@@ -34,8 +35,9 @@ public class SettingController {
 
     @FXML
     public void initialize() {
-        System.out.println("Setting initialized");
-
+        double currentVolume = GameDataManager.getGlobalData().getVolume();
+        musicVolumeSlider.setValue(currentVolume * 100);
+        musicVolumeLabel.setText(String.format("%.0f%%", currentVolume * 100));
         // Add listener to update label when slider value changes
         musicVolumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             musicVolumeLabel.setText(String.format("%.0f%%", newVal.doubleValue()));
@@ -44,10 +46,10 @@ public class SettingController {
 
     @FXML
     private void handleMusicVolume(MouseEvent event) {
-        double volume = musicVolumeSlider.getValue();
+        double volume = musicVolumeSlider.getValue() / 100;
         System.out.println("Music volume set to: " + volume);
-        // TODO: Apply music volume to SoundManager
-        // SoundManager.setMusicVolume(volume / 100.0);
+        GameDataManager.setVolume(volume);
+        SoundManager.updateAllVolumes();
     }
 
     @FXML

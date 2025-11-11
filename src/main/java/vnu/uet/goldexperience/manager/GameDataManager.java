@@ -110,7 +110,7 @@ public class GameDataManager {
         return false;
     }
 
-    public static void setVolume(float volume) {
+    public static void setVolume(double volume) {
         globalData.setVolume(volume);
         saveGlobalData();
     }

@@ -8,7 +8,6 @@ import javafx.scene.text.TextAlignment;
 import vnu.uet.goldexperience.core.Action;
 import vnu.uet.goldexperience.core.ChapterTheme;
 import vnu.uet.goldexperience.manager.InputManager;
-import vnu.uet.goldexperience.manager.SoundManager;
 
 public class SaveFoundDialog {
 
@@ -153,11 +152,9 @@ public class SaveFoundDialog {
         if (input.isActionJustPressed(Action.MOVE_UP) ||
                 input.isActionJustPressed(Action.MOVE_LEFT)) {
             selectedIndex = 0;
-            SoundManager.playClickSound();
         } else if (input.isActionJustPressed(Action.MOVE_DOWN) ||
                 input.isActionJustPressed(Action.MOVE_RIGHT)) {
             selectedIndex = 1;
-            SoundManager.playClickSound();
         }
 
         if (input.isActionJustPressed(Action.CONFIRM) ||
@@ -172,7 +169,6 @@ public class SaveFoundDialog {
         int hoveredIndex = getButtonIndexAtPosition(mouseX, mouseY);
         if (hoveredIndex >= 0) {
             if (selectedIndex != hoveredIndex) {
-                SoundManager.playClickSound();
             }
             selectedIndex = hoveredIndex;
 
@@ -203,7 +199,6 @@ public class SaveFoundDialog {
     private void executeSelectedOption() {
         if (callback == null) return;
 
-        SoundManager.playClickSound();
         DialogOption option = DialogOption.values()[selectedIndex];
 
         hide();

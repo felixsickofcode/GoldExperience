@@ -7,10 +7,10 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import vnu.uet.goldexperience.core.GameEngine;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.manager.ShopManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 import vnu.uet.goldexperience.model.ShopItem;
 
 import java.net.URL;
@@ -43,14 +43,20 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
     public void initialize(URL location, ResourceBundle resources) {
         shopManager = ShopManager.getInstance();
         shopManager.setListener(this);
-
         refreshShop();
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab != null) {
+                SoundManager.playClickSound();
+
+                System.out.println("Switched tab: " + newTab.getText());
+            }
+        });
     }
 
     /**
      * refresh
      */
-    private void refreshShop() {
+    void refreshShop() {
         shopManager.refresh();
         updatePointsDisplay();
         updateStatistics();
@@ -227,10 +233,12 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
     }
 
     private void handlePurchase(ShopItem item) {
+        SoundManager.playClickSound();
         shopManager.purchaseItem(item);
     }
 
     private void handleEquip(ShopItem item) {
+        SoundManager.playClickSound();
         if (item.isPaddleSkin()) {
             shopManager.selectPaddleSkin(item);
         } else {
@@ -240,6 +248,7 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
 
     @FXML
     private void handleBack() {
+        SoundManager.playClickSound();
         if (sceneManager != null) {
             sceneManager.switchTo("menu");
         }

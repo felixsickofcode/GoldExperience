@@ -115,7 +115,7 @@ public class GameController implements GameSessionListener {
 
         rootGamePane.setOnMousePressed(e -> {
             input.mouseClicked();
-
+            SoundManager.playClickSound();
             if (engine != null && engine.getStateManager() != null) {
                 if (engine.getStateManager().is(GameState.PAUSED))
                     engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true);

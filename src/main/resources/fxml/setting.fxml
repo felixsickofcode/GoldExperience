@@ -30,7 +30,7 @@
                         <VBox alignment="CENTER" prefWidth="340.0" spacing="8.0" styleClass="slider-container">
                             <children>
                                 <Label styleClass="volume-title" text="MUSIC VOLUME" />
-                                <Slider fx:id="musicVolumeSlider" max="100.0" min="0.0" onMouseReleased="#handleMusicVolume" showTickLabels="false" showTickMarks="false" styleClass="volume-slider" value="60.0" />
+                                <Slider fx:id="musicVolumeSlider" max="100.0" min="0.0" onMouseReleased="#handleMusicVolume" showTickLabels="false" showTickMarks="false" styleClass="volume-slider"/>
                                 <Label fx:id="musicVolumeLabel" styleClass="volume-percentage" text="60%" />
                             </children>
                         </VBox>
