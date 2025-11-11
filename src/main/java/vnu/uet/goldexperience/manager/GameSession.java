@@ -20,6 +20,11 @@ public class GameSession {
 
     private GameSession() {}
 
+    public GameSession(int level, int chapter)
+    {
+        currentChapter = chapter;
+        currentLevel = level;
+    }
     public enum GameMode {
         STORY,
         ENDLESS
@@ -126,17 +131,6 @@ public class GameSession {
         for (GameSessionListener listener : listeners) {
             listener.onBallHitWall(hitSide);
         }
-    }
-
-    public void setChapterAndLevel(int chapter, int level) {
-        boolean chapterChanged = this.currentChapter != chapter;
-        boolean levelChanged = this.currentLevel != level;
-
-        this.currentChapter = chapter;
-        this.currentLevel = level;
-
-        if (chapterChanged) notifyChapterChanged();
-        if (levelChanged) notifyLevelChanged();
     }
 
     public void setChapter(int chapter) {

@@ -71,6 +71,10 @@ public class MenuController {
         System.out.println("2 Player Mode clicked");
         GameSession.getInstance().setMode(GameSession.GameMode.ENDLESS);
         GameSession.getInstance().resetLives();
+        GameSession session = GameSession.getInstance();
+        session.setChapter(6);
+        session.setLevel(6);
+        System.out.println(session.getCurrentChapter() + "\n" + session.getCurrentLevel());
         if (sceneManager != null) {
             menuUI.stopAnimation();
             sceneManager.switchTo("game");
