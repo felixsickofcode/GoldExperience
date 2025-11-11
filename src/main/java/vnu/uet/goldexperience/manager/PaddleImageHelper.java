@@ -13,8 +13,8 @@ public class PaddleImageHelper {
         SKIN_VARIANT_MAP.put("paddle_default", 1);  // _1 variant
         SKIN_VARIANT_MAP.put("paddle_bloody", 2);    // _2 variant
         SKIN_VARIANT_MAP.put("paddle_neon", 3);      // _3 variant
-        SKIN_VARIANT_MAP.put("paddle_diamond", 4);   // _4 variant
-        SKIN_VARIANT_MAP.put("paddle_rainbow", 5);   // _5 variant
+        SKIN_VARIANT_MAP.put("paddle_slime", 4);   // _4 variant
+        SKIN_VARIANT_MAP.put("paddle_alien", 5);   // _5 variant
     }
 
     public static int getImageIndex(int paddleSize, String skinId) {

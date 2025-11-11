@@ -63,6 +63,18 @@ public class SceneManager {
             fadeIn.play();
         });
         fadeOut.play();
+
+        Object controller = controllers.get(name);
+        if (controller != null) {
+            try {
+                java.lang.reflect.Method method = controller.getClass().getMethod("onSceneShown");
+                method.invoke(controller);
+                System.out.println("Called onSceneShown for: " + name);
+            } catch (NoSuchMethodException e) {
+            } catch (Exception e) {
+                System.err.println("Error calling onSceneShown: " + e.getMessage());
+            }
+        }
     }
 
     public Object getController(String name) {
