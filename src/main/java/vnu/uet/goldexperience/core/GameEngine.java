@@ -10,7 +10,7 @@ import vnu.uet.goldexperience.model.*;
 import vnu.uet.goldexperience.model.brick.*;
 import vnu.uet.goldexperience.model.brick.Brick.BrickListener;
 import vnu.uet.goldexperience.model.brickFactory.*;
-import vnu.uet.goldexperience.view.LoadGameDialog;
+import vnu.uet.goldexperience.view.SaveFoundDialog;
 
 import java.util.*;
 
@@ -52,7 +52,8 @@ public class GameEngine implements BrickListener {
     /**
      * saveload
      */
-    private LoadGameDialog loadGameDialog;
+    private SaveFoundDialog saveFoundDialog;
+    private boolean PointAdd = false;
 
     public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
@@ -65,7 +66,7 @@ public class GameEngine implements BrickListener {
         this.stateManager = new GameStateManager(transitionManager, pauseMenuManager, gameOverManager);
         this.dialogueSystem = new DialogueSystem(canvas);
         this.mode = GameSession.getInstance().getMode();
-        this.loadGameDialog = new LoadGameDialog(canvas);
+        this.saveFoundDialog = new SaveFoundDialog(canvas);
         setupLoadGameDialogCallbacks();
         setupDialogueCallbacks();
         setupPauseMenuCallbacks();
@@ -91,6 +92,7 @@ public class GameEngine implements BrickListener {
 
     private void loadCurrentLevel() {
         comboCount = 0;
+        PointAdd = false;
         int levelNumber = GameSession.getInstance().getLevelNumber();
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
@@ -260,7 +262,7 @@ public class GameEngine implements BrickListener {
         int levelNumber = GameSession.getInstance().getLevelNumber();
         if (hasLevelSave(levelNumber)) {
             System.out.println("💾 Save file found for level " + levelNumber);
-            loadGameDialog.show();
+            saveFoundDialog.show();
             stateManager.setState(GameState.PAUSED);
         } else {
             loadCurrentLevel();
@@ -298,8 +300,8 @@ public class GameEngine implements BrickListener {
     }
 
     private void handleInput() {
-        if (loadGameDialog.isVisible()) {
-            loadGameDialog.handleKeyInput(input);
+        if (saveFoundDialog.isVisible()) {
+            saveFoundDialog.handleKeyInput(input);
             return;
         }
         if (input.isActionJustPressed(Action.PAUSE)) {
@@ -386,8 +388,8 @@ public class GameEngine implements BrickListener {
     }
 
     private void update(double deltaTime) {
-        if (loadGameDialog.isVisible()) {
-            loadGameDialog.update(deltaTime);
+        if (saveFoundDialog.isVisible()) {
+            saveFoundDialog.update(deltaTime);
             return;
         }
 
@@ -613,8 +615,8 @@ public class GameEngine implements BrickListener {
         } else if (stateManager.is(GameState.GAME_OVER)) {
             gameOverManager.render(gc);
         }
-        if (loadGameDialog.isVisible()) {
-            loadGameDialog.render(gc);
+        if (saveFoundDialog.isVisible()) {
+            saveFoundDialog.render(gc);
         }
     }
 
@@ -672,8 +674,13 @@ public class GameEngine implements BrickListener {
     }
 
     private void handleLevelComplete() {
-        GameDataManager.completeLevel(GameSession.getInstance().getLevelNumber(),
-                GameSession.getInstance().getScore());
+        if (!PointAdd) {
+            GameDataManager.completeLevel(
+                    GameSession.getInstance().getLevelNumber(),
+                    GameSession.getInstance().getScore()
+            );
+            PointAdd = true;
+        }
         boolean hasUnbreakableBricks = false;
 
         for (Brick brick : bricks) {
@@ -810,7 +817,7 @@ public class GameEngine implements BrickListener {
      * savegame
      */
     private void setupLoadGameDialogCallbacks() {
-        loadGameDialog.setCallback(new LoadGameDialog.LoadGameCallback() {
+        saveFoundDialog.setCallback(new SaveFoundDialog.LoadGameCallback() {
             @Override
             public void onNewGame() {
                 System.out.println("🆕 Starting new game");
@@ -979,8 +986,8 @@ public class GameEngine implements BrickListener {
         }));
     }
 
-    public LoadGameDialog getLoadGameDialog() {
-        return loadGameDialog;
+    public SaveFoundDialog getLoadGameDialog() {
+        return saveFoundDialog;
     }
 
 }

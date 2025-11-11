@@ -9,7 +9,7 @@ import vnu.uet.goldexperience.core.Action;
 import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.SoundManager;
 
-public class LoadGameDialog {
+public class SaveFoundDialog {
 
     private enum DialogOption {
         NEW_GAME(0, "NEW GAME"),
@@ -57,7 +57,7 @@ public class LoadGameDialog {
 
     private LoadGameCallback callback;
 
-    public LoadGameDialog(Canvas canvas) {
+    public SaveFoundDialog(Canvas canvas) {
         this.canvasWidth = canvas.getWidth();
         this.canvasHeight = canvas.getHeight();
 
