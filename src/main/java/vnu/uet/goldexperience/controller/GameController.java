@@ -255,43 +255,6 @@ public class GameController implements GameSessionListener {
         }
     }
 
-    /**
-     * Save player score to database and update scoreboard
-     * Call this when game ends or player achieves new high score
-     */
-    public void savePlayerScore(String playerName, int finalScore) {
-        if (playerName == null || playerName.trim().isEmpty()) {
-            System.err.println("Cannot save score: invalid player name");
-            return;
-        }
-
-        if (finalScore <= 0) {
-            System.err.println("Cannot save score: score must be greater than 0");
-            return;
-        }
-
-        System.out.println("Game over - Final score: " + finalScore + " for " + playerName);
-
-        if (scoreboardPanel != null) {
-            int chapter = GameSession.getInstance().getCurrentChapter();
-            int level = GameSession.getInstance().getCurrentLevel();
-            javafx.application.Platform.runLater(() ->
-                    scoreboardPanel.updateScoreboardForLevel(chapter, level)
-            );
-        }
-    }
-
-
-    public void cleanup() {
-        GameSession.getInstance().removeListener(this);
-
-        if (scoreboardPanel != null) {
-            scoreboardPanel.stop();
-        }
-
-        endGame();
-    }
-
     @Override
     public void onBallHitWall(GameSession.HitSide hitSide) {}
 

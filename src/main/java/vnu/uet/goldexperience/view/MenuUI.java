@@ -30,7 +30,6 @@ public class MenuUI {
 
     private double gridOffset = 0;
     private double borderPulse = 0;
-    private double titleGlow = 0;
 
     private final Color DARK_BG = ChapterTheme.DARK_BG_ORIGINAL;
     private final Color NEON_PINK = ChapterTheme.NEON_PINK;

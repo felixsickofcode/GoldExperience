@@ -102,6 +102,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         try {
             currentChapter = GameSession.getInstance().getCurrentChapter();
             currentLevel = GameSession.getInstance().getCurrentLevel();
+            System.out.println("asdnajsnxja" + currentChapter + " " + currentLevel + " ");
 
             List<PlayerDatabase.PlayerScore> topPlayers =
                     PlayerDatabase.getInstance().getTopPlayers(currentChapter, currentLevel, 10);
