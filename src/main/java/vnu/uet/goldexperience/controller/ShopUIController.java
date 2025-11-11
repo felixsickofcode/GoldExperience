@@ -119,15 +119,12 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
         VBox card = new VBox(10);
         card.setAlignment(Pos.CENTER);
         card.getStyleClass().add("item-card");
-        card.setPrefWidth(220);
-        card.setPrefHeight(300);
 
         // Icon/Image
         ImageView icon = createItemIcon(item);
 
         // Name
         Label nameLabel = new Label(item.getName());
-        nameLabel.setFont(Font.font("System Bold", 18));
         nameLabel.getStyleClass().add("item-name");
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(200);
@@ -135,7 +132,6 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
 
         // Description
         Label descLabel = new Label(item.getDescription());
-        descLabel.setFont(Font.font(12));
         descLabel.getStyleClass().add("item-description");
         descLabel.setWrapText(true);
         descLabel.setMaxWidth(200);
@@ -160,7 +156,7 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        card.getChildren().addAll(icon, nameLabel, descLabel, spacer, statusLabel, actionButton);
+        card.getChildren().addAll(icon, nameLabel, descLabel, statusLabel, actionButton);
 
         return card;
     }

@@ -87,7 +87,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
     }
 
     private void updateGlowEffect() {
-        double pulse = 0.6 + Math.sin(glowPulse) * 0.4;
+        double pulse = 0.3 + Math.sin(glowPulse) * 0.4;
         String glowStyle = String.format(Locale.US,
                 GLOW_STYLE_FORMAT,
                 toRGBA(primaryColor, pulse * 0.8),

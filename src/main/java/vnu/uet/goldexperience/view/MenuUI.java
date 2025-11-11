@@ -73,7 +73,7 @@ public class MenuUI {
         menuBox.getStyleClass().add("menu-box");
 
         Button storyModeBtn = createMenuButton("STORY MODE");
-        Button twoPlayerBtn = createMenuButton("2 PLAYER MODE");
+        Button twoPlayerBtn = createMenuButton("ENLESS MODE");
         Button shopBtn = createMenuButton("SHOP");
 
         storyModeBtn.setOnAction(e -> { if (onMenuAction != null) onMenuAction.accept("story"); });
