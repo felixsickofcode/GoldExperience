@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import vnu.uet.goldexperience.core.Action;
+import vnu.uet.goldexperience.core.ChapterTheme;
 import vnu.uet.goldexperience.manager.InputManager;
 import vnu.uet.goldexperience.manager.SoundManager;
 
@@ -38,12 +39,14 @@ public class SaveFoundDialog {
 
     private double animationTimer = 0;
 
-    // Theme colors
-    private Color colorPrimary = Color.rgb(0, 255, 255);
-    private Color colorSecondary = Color.rgb(255, 0, 255);
-    private Color colorBackground = Color.rgb(15, 15, 30);
-    private Color colorText = Color.WHITE;
-    private Color colorOverlay = Color.rgb(0, 0, 0, 0.85);
+    private ChapterTheme currentTheme;
+    private Color colorPrimary;
+    private Color colorSecondary;
+    private Color colorBackground;
+    private Color colorBackgroundSecondary;
+    private Color colorText;
+    private Color colorTextDisabled;
+    private Color colorOverlay;
 
     private Font titleFont;
     private Font buttonFont;
@@ -51,7 +54,6 @@ public class SaveFoundDialog {
 
     public interface LoadGameCallback {
         void onNewGame();
-
         void onLoadGame();
     }
 
@@ -61,9 +63,64 @@ public class SaveFoundDialog {
         this.canvasWidth = canvas.getWidth();
         this.canvasHeight = canvas.getHeight();
 
+        setTheme(ChapterTheme.ORIGINAL);
+
         titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 32);
         buttonFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 22);
         infoFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 14);
+    }
+
+    public void setTheme(ChapterTheme theme) {
+        this.currentTheme = theme;
+        switch (theme) {
+            case CHAPTER_1_RUST:
+                colorPrimary = ChapterTheme.NEON_ORANGE;
+                colorSecondary = ChapterTheme.MEDIUM_GRAY;
+                colorBackground = ChapterTheme.DARK_BG_CH1;
+                colorBackgroundSecondary = ChapterTheme.DARK_BG_CH1.brighter();
+                colorText = ChapterTheme.PURE_WHITE;
+                colorTextDisabled = ChapterTheme.MEDIUM_GRAY;
+                colorOverlay = Color.rgb(30, 25, 20, 0.8);
+                break;
+            case CHAPTER_3_VERDANT:
+                colorPrimary = ChapterTheme.NEON_GREEN;
+                colorSecondary = ChapterTheme.EARTHY_YELLOW;
+                colorBackground = ChapterTheme.DARK_BG_CH3;
+                colorBackgroundSecondary = ChapterTheme.DARK_BG_CH3.brighter();
+                colorText = ChapterTheme.PURE_WHITE;
+                colorTextDisabled = ChapterTheme.MEDIUM_GRAY;
+                colorOverlay = Color.rgb(10, 20, 10, 0.8);
+                break;
+            case CHAPTER_4_CATHEDRAL:
+                colorPrimary = ChapterTheme.GOLD;
+                colorSecondary = ChapterTheme.GOLD;
+                colorBackground = ChapterTheme.DARK_BG_CH4;
+                colorBackgroundSecondary = ChapterTheme.DARK_BG_CH4.brighter();
+                colorText = ChapterTheme.PURE_WHITE;
+                colorTextDisabled = ChapterTheme.MEDIUM_GRAY;
+                colorOverlay = Color.rgb(20, 10, 30, 0.8);
+                break;
+            case CHAPTER_5_NEXUS:
+                colorPrimary = ChapterTheme.PURE_WHITE;
+                colorSecondary = ChapterTheme.PURE_WHITE;
+                colorBackground = ChapterTheme.DARK_BG_CH5;
+                colorBackgroundSecondary = ChapterTheme.DARK_BG_CH5.brighter();
+                colorText = Color.BLACK;
+                colorTextDisabled = ChapterTheme.MEDIUM_GRAY;
+                colorOverlay = Color.rgb(15, 15, 25, 0.8);
+                break;
+            case CHAPTER_2_NEON:
+            case ORIGINAL:
+            default:
+                colorPrimary = ChapterTheme.NEON_CYAN;
+                colorSecondary = ChapterTheme.NEON_PINK;
+                colorBackground = ChapterTheme.DARK_BG;
+                colorBackgroundSecondary = ChapterTheme.DARK_PURPLE;
+                colorText = ChapterTheme.PURE_WHITE;
+                colorTextDisabled = Color.rgb(150, 150, 150);
+                colorOverlay = Color.rgb(0, 0, 0, 0.8);
+                break;
+        }
     }
 
     public void setCallback(LoadGameCallback callback) {
@@ -72,7 +129,7 @@ public class SaveFoundDialog {
 
     public void show() {
         isVisible = true;
-        selectedIndex = 1; // Default to LOAD_GAME
+        selectedIndex = 1;
         animationTimer = 0;
     }
 
@@ -248,7 +305,7 @@ public class SaveFoundDialog {
             gc.strokeRect(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
 
             gc.setTextAlign(TextAlignment.CENTER);
-            gc.setFill(colorText.deriveColor(0, 1, 1, 0.5));
+            gc.setFill(colorTextDisabled);
             gc.setFont(buttonFont);
             gc.fillText(text, x + BUTTON_WIDTH / 2, y + BUTTON_HEIGHT / 2 + 8);
         }

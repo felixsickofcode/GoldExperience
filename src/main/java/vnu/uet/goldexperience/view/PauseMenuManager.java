@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.manager;
+package vnu.uet.goldexperience.view;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -7,6 +7,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import vnu.uet.goldexperience.core.Action;
 import vnu.uet.goldexperience.core.ChapterTheme; // <-- IMPORT THÊM
+import vnu.uet.goldexperience.manager.InputManager;
+import vnu.uet.goldexperience.manager.SceneManager;
 
 public class PauseMenuManager {
 

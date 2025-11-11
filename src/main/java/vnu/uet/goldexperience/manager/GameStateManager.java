@@ -1,6 +1,10 @@
 package vnu.uet.goldexperience.manager;
 
 import vnu.uet.goldexperience.core.GameState;
+import vnu.uet.goldexperience.view.GameOverManager;
+import vnu.uet.goldexperience.view.PauseMenuManager;
+import vnu.uet.goldexperience.view.SaveFoundDialog;
+import vnu.uet.goldexperience.view.TransitionManager;
 //State Machine
 
 public class GameStateManager {
@@ -11,13 +15,16 @@ public class GameStateManager {
     private final TransitionManager transitionManager;
     private final PauseMenuManager pauseMenuManager;
     private final GameOverManager gameOverManager;
+    private final SaveFoundDialog saveFoundDialog;
 
     public GameStateManager(TransitionManager transitionManager,
                             PauseMenuManager pauseMenuManager,
-                            GameOverManager gameOverManager) {
+                            GameOverManager gameOverManager,
+                            SaveFoundDialog saveFoundDialog) {
         this.transitionManager = transitionManager;
         this.pauseMenuManager = pauseMenuManager;
         this.gameOverManager = gameOverManager;
+        this.saveFoundDialog = saveFoundDialog;
     }
 
     public void setState(GameState newState) {
@@ -36,6 +43,9 @@ public class GameStateManager {
         switch (state) {
             case PAUSED:
                 pauseMenuManager.hide();
+                break;
+            case TOLOAD:
+                saveFoundDialog.hide();
                 break;
             case STORY:
                 break;
@@ -68,6 +78,9 @@ public class GameStateManager {
                 break;
             case STORY:
                 System.out.println("GSM: Story mode");
+                break;
+            case TOLOAD:
+                saveFoundDialog.show();
                 break;
         }
     }

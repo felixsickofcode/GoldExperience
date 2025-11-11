@@ -6,5 +6,6 @@ public enum GameState {
     TRANSITIONING,
     GAME_OVER,
     STORY,
-    VICTORY
+    VICTORY,
+    TOLOAD,
 }
