@@ -137,7 +137,7 @@ public class GameController implements GameSessionListener {
             if (engine.getStateManager().is(GameState.PAUSED)
                     || engine.getStateManager().is(GameState.GAME_OVER)
                         || engine.getStateManager().is(GameState.STORY)
-                            || engine.getStateManager().is(GameState.TOLOAD)3) {
+                            || engine.getStateManager().is(GameState.TOLOAD)) {
                 rootGamePane.setCursor(Cursor.DEFAULT);
             } else {
                 rootGamePane.setCursor(Cursor.NONE);

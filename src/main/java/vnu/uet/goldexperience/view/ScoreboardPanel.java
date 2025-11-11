@@ -102,7 +102,6 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         try {
             currentChapter = GameSession.getInstance().getCurrentChapter();
             currentLevel = GameSession.getInstance().getCurrentLevel();
-            System.out.println("asdnajsnxja" + currentChapter + " " + currentLevel + " ");
 
             List<PlayerDatabase.PlayerScore> topPlayers =
                     PlayerDatabase.getInstance().getTopPlayers(currentChapter, currentLevel, 10);
@@ -220,16 +219,16 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
             setMaxWidth(Double.MAX_VALUE);
 
             rankLabel = new Label(rank + ".");
-            rankLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 20));
+            rankLabel.setFont(Font.font("Xirod", FontWeight.BOLD, 15));
             rankLabel.setMinWidth(30);
 
             nameLabel = new Label("---");
-            nameLabel.setFont(Font.font("Cynosure Straight", FontWeight.NORMAL, 19));
+            nameLabel.setFont(Font.font("Xirod", FontWeight.NORMAL, 14));
             nameLabel.setMaxWidth(110);
             nameLabel.setMinWidth(110);
 
             scoreLabel = new Label("0");
-            scoreLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 19));
+            scoreLabel.setFont(Font.font("Xirod", FontWeight.BOLD, 13));
             scoreLabel.setAlignment(Pos.CENTER_RIGHT);
             scoreLabel.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(scoreLabel, javafx.scene.layout.Priority.ALWAYS);

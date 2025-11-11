@@ -3,6 +3,7 @@ package vnu.uet.goldexperience;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -10,6 +11,8 @@ import vnu.uet.goldexperience.controller.*;
 import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.manager.SoundManager;
+
+import java.awt.event.KeyEvent;
 
 public class Main extends Application {
 
@@ -39,7 +42,7 @@ public class Main extends Application {
         // load sounds
         SoundManager.loadSound();
 
-        // Preload FXML (including login)
+        // Preload FXML
         sceneManager.PreloadScene("login", "/fxml/login.fxml");
         sceneManager.PreloadScene("menu", "/fxml/menu-view.fxml");
         sceneManager.PreloadScene("tutorial", "/fxml/tutorial-view.fxml");
@@ -49,32 +52,26 @@ public class Main extends Application {
         sceneManager.PreloadScene("level", "/fxml/level.fxml");
         sceneManager.PreloadScene("shop", "/fxml/shop.fxml");
 
-        // Setup login controller
         FXMLLoader loginLoader = sceneManager.getScreens().get("login");
         LoginController loginController = loginLoader.getController();
         loginController.setSceneManager(sceneManager);
 
-        // Setup menu controller (MenuController - chỉ cho menu)
         FXMLLoader menuLoader = sceneManager.getScreens().get("menu");
         MenuController menuController = menuLoader.getController();
         menuController.setSceneManager(sceneManager);
 
-        // Setup tutorial controller (TutorialController - riêng biệt)
         FXMLLoader tutorialLoader = sceneManager.getScreens().get("tutorial");
         TutorialController tutorialController = tutorialLoader.getController();
         tutorialController.setSceneManager(sceneManager);
 
-        // Setup setting controller (SettingController - riêng biệt)
         FXMLLoader settingLoader = sceneManager.getScreens().get("setting");
         SettingController settingController = settingLoader.getController();
         settingController.setSceneManager(sceneManager);
 
-        // Setup chapter controller
         FXMLLoader chapterLoader = sceneManager.getScreens().get("chapter");
         SelectChapterController chapterController = chapterLoader.getController();
         chapterController.setSceneManager(sceneManager);
 
-        // Setup level controller
         FXMLLoader levelLoader = sceneManager.getScreens().get("level");
         SelectLevelController levelController = levelLoader.getController();
         levelController.setSceneManager(sceneManager);
@@ -85,24 +82,21 @@ public class Main extends Application {
 
 
         Scene scene = new Scene(root, 1280, 720);
-        scene.getStylesheets().add(getClass().getResource("/fxml/menu.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/style.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/login.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/chapter-select.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/level-select.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/shop.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/setting.css").toExternalForm());
-        scene.getStylesheets().add(getClass().getResource("/fxml/tutorial.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/chapter-select.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/level-select.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/shop.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/setting.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/tutorial.css").toExternalForm());
+
 
         stage.setScene(scene);
         stage.setTitle("Gold Experience");
-//        stage.setFullScreen(true);
-//        stage.setFullScreenExitHint("Nhấn F11 để thoát toàn màn hình");
         stage.show();
 
-        // Start with login screen
         sceneManager.switchTo("login");
-        System.out.println("R:" + root.getWidth());
     }
 
     public static void main(String[] args) {
