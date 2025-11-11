@@ -69,7 +69,7 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
                 stats.ownedItems, stats.totalItems, stats.getCompletionPercentage()));
 
         paddleStatsLabel.setText(String.format("Paddles: %d/5", stats.paddlesOwned));
-        effectStatsLabel.setText(String.format("Effects: %d/5", stats.effectsOwned));
+        effectStatsLabel.setText(String.format("Effects: %d/3", stats.effectsOwned));
     }
 
     /**

@@ -13,19 +13,15 @@ public class PlayerDatabase {
     private static PlayerDatabase instance;
     private Connection connection;
 
-    // Thông tin kết nối database
     private static final String DB_URL = "jdbc:mysql://localhost:3306/gold_experience";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "p1h2o3n4g5";
 
     private PlayerDatabase() {
         try {
-            // Load MySQL JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Database connected successfully!");
-
         } catch (ClassNotFoundException e) {
             System.err.println("MySQL JDBC Driver not found!");
             e.printStackTrace();
@@ -35,7 +31,6 @@ public class PlayerDatabase {
         }
     }
 
-    // Singleton instance
     public static PlayerDatabase getInstance() {
         if (instance == null) {
             instance = new PlayerDatabase();
@@ -44,40 +39,57 @@ public class PlayerDatabase {
     }
 
     /**
-     * Thêm hoặc cập nhật player
-     * @param name Tên player
-     * @param score Điểm số
-     * @return true nếu thành công
+     * Thêm hoặc cập nhật player cho chapter và level cụ thể
+     * CHỈ cập nhật nếu điểm mới cao hơn điểm hiện tại
      */
-    public boolean addOrUpdatePlayer(String name, int score) {
-        String sql = "INSERT INTO players (name, score) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE score = ?, updated_at = CURRENT_TIMESTAMP";
+    public boolean addOrUpdatePlayer(String name, int chapter, int level, int score) {
+        if (score <= 0) {
+            System.out.println("Score must be greater than 0, skipping save");
+            return false;
+        }
+
+        int currentScore = getPlayerScore(name, chapter, level);
+
+        if (currentScore >= score) {
+            System.out.println("Current score (" + currentScore + ") is higher than or equal to new score (" + score + "), skipping update");
+            score = currentScore;
+        }
+
+        String sql = "INSERT INTO players (name, chapter, level, score) VALUES (?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE score = GREATEST(score, ?), updated_at = CURRENT_TIMESTAMP";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, name);
-            stmt.setInt(2, score);
-            stmt.setInt(3, score);
+            stmt.setInt(2, chapter);
+            stmt.setInt(3, level);
+            stmt.setInt(4, score);
+            stmt.setInt(5, score);
 
             int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("✓ Saved score " + score + " for " + name + " (Chapter " + chapter + ", Level " + level + ")");
+            }
+
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error adding/updating player: " + e.getMessage());
+            System.err.println("✗ Error adding/updating player: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
     /**
-     * Lấy điểm số của player
-     * @param name Tên player
-     * @return Điểm số, hoặc -1 nếu không tìm thấy
+     * Lấy điểm số của player cho chapter và level cụ thể
      */
-    public int getPlayerScore(String name) {
-        String sql = "SELECT score FROM players WHERE name = ?";
+    public int getPlayerScore(String name, int chapter, int level) {
+        String sql = "SELECT score FROM players WHERE name = ? AND chapter = ? AND level = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, name);
+            stmt.setInt(2, chapter);
+            stmt.setInt(3, level);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -93,17 +105,22 @@ public class PlayerDatabase {
     }
 
     /**
-     * Cập nhật điểm số của player
-     * @param name Tên player
-     * @param newScore Điểm số mới
-     * @return true nếu thành công
+     * Cập nhật điểm số - CHỈ cập nhật nếu điểm mới cao hơn
      */
-    public boolean updateScore(String name, int newScore) {
-        String sql = "UPDATE players SET score = ?, updated_at = CURRENT_TIMESTAMP WHERE name = ?";
+    public boolean updateScore(String name, int chapter, int level, int newScore) {
+        if (newScore <= 0) {
+            return false;
+        }
+
+        String sql = "UPDATE players SET score = ?, updated_at = CURRENT_TIMESTAMP " +
+                "WHERE name = ? AND chapter = ? AND level = ? AND score < ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, newScore);
             stmt.setString(2, name);
+            stmt.setInt(3, chapter);
+            stmt.setInt(4, level);
+            stmt.setInt(5, newScore);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -116,16 +133,18 @@ public class PlayerDatabase {
     }
 
     /**
-     * Lấy top N players theo điểm
-     * @param limit Số lượng players
-     * @return Danh sách PlayerScore
+     * Lấy top N players theo điểm cho chapter và level cụ thể
      */
-    public List<PlayerScore> getTopPlayers(int limit) {
+    public List<PlayerScore> getTopPlayers(int chapter, int level, int limit) {
         List<PlayerScore> topPlayers = new ArrayList<>();
-        String sql = "SELECT name, score FROM players ORDER BY score DESC LIMIT ?";
+        String sql = "SELECT name, score FROM players " +
+                "WHERE chapter = ? AND level = ? " +
+                "ORDER BY score DESC LIMIT ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, limit);
+            stmt.setInt(1, chapter);
+            stmt.setInt(2, level);
+            stmt.setInt(3, limit);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -143,15 +162,41 @@ public class PlayerDatabase {
     }
 
     /**
-     * Kiểm tra xem player đã tồn tại chưa
-     * @param name Tên player
-     * @return true nếu tồn tại
+     * Lấy tổng điểm cao nhất của tất cả players (tổng từ tất cả chapter/level)
      */
-    public boolean playerExists(String name) {
-        String sql = "SELECT COUNT(*) FROM players WHERE name = ?";
+    public List<PlayerScore> getTopPlayersByTotalScore(int limit) {
+        List<PlayerScore> topPlayers = new ArrayList<>();
+        String sql = "SELECT name, SUM(score) AS total_score FROM players " +
+                "GROUP BY name ORDER BY total_score DESC LIMIT ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, limit);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                int totalScore = rs.getInt("total_score");
+                topPlayers.add(new PlayerScore(name, totalScore));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("✗ Error getting top players by total score: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return topPlayers;
+    }
+
+    /**
+     * Kiểm tra xem player đã tồn tại cho chapter/level cụ thể chưa
+     */
+    public boolean playerExists(String name, int chapter, int level) {
+        String sql = "SELECT COUNT(*) FROM players WHERE name = ? AND chapter = ? AND level = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, name);
+            stmt.setInt(2, chapter);
+            stmt.setInt(3, level);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -167,36 +212,56 @@ public class PlayerDatabase {
     }
 
     /**
-     * Lấy tất cả players
-     * @return Danh sách tất cả players
+     * Lấy tất cả records của một player
      */
-    public List<PlayerScore> getAllPlayers() {
-        List<PlayerScore> allPlayers = new ArrayList<>();
-        String sql = "SELECT name, score FROM players ORDER BY score DESC";
+    public List<PlayerLevelScore> getPlayerAllScores(String name) {
+        List<PlayerLevelScore> scores = new ArrayList<>();
+        String sql = "SELECT chapter, level, score FROM players " +
+                "WHERE name = ? ORDER BY chapter, level";
 
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String name = rs.getString("name");
+                int chapter = rs.getInt("chapter");
+                int level = rs.getInt("level");
                 int score = rs.getInt("score");
-                allPlayers.add(new PlayerScore(name, score));
+                scores.add(new PlayerLevelScore(name, chapter, level, score));
             }
 
         } catch (SQLException e) {
-            System.err.println("✗ Error getting all players: " + e.getMessage());
+            System.err.println("✗ Error getting player scores: " + e.getMessage());
             e.printStackTrace();
         }
 
-        return allPlayers;
+        return scores;
     }
 
     /**
-     * Xóa player
-     * @param name Tên player
-     * @return true nếu thành công
+     * Xóa player record cho chapter/level cụ thể
      */
-    public boolean deletePlayer(String name) {
+    public boolean deletePlayer(String name, int chapter, int level) {
+        String sql = "DELETE FROM players WHERE name = ? AND chapter = ? AND level = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setInt(2, chapter);
+            stmt.setInt(3, level);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("✗ Error deleting player: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Xóa tất cả records của một player
+     */
+    public boolean deletePlayerAllRecords(String name) {
         String sql = "DELETE FROM players WHERE name = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -205,7 +270,7 @@ public class PlayerDatabase {
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            System.err.println("✗ Error deleting player: " + e.getMessage());
+            System.err.println("✗ Error deleting player records: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -227,7 +292,7 @@ public class PlayerDatabase {
     }
 
     /**
-     * Inner class để lưu thông tin player
+     * Inner class để lưu thông tin player (chỉ name + score)
      */
     public static class PlayerScore {
         private String name;
@@ -249,6 +314,44 @@ public class PlayerDatabase {
         @Override
         public String toString() {
             return name + ": " + score;
+        }
+    }
+
+    /**
+     * Inner class để lưu thông tin đầy đủ (name + chapter + level + score)
+     */
+    public static class PlayerLevelScore {
+        private String name;
+        private int chapter;
+        private int level;
+        private int score;
+
+        public PlayerLevelScore(String name, int chapter, int level, int score) {
+            this.name = name;
+            this.chapter = chapter;
+            this.level = level;
+            this.score = score;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getChapter() {
+            return chapter;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s - Ch%d L%d: %d", name, chapter, level, score);
         }
     }
 }

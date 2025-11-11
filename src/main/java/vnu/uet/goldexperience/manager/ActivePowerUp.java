@@ -14,13 +14,15 @@ public class ActivePowerUp {
         this.startTime = System.currentTimeMillis();
         this.context = context;
     }
-//    public ActivePowerUp(PowerUp powerUp, GameContext context, double remainingMs) {
-//        this.powerUp = powerUp;
-//        this.context = context;
-//
-//        long elapsed = (long)(powerUp.getDuration() - remainingMs);
-//        this.startTime = System.currentTimeMillis() - elapsed;
-//    }
+
+    public ActivePowerUp(PowerUp powerUp, GameContext context, double remainingMs) {
+        this.powerUp = powerUp;
+        this.context = context;
+
+        long elapsed = (long) (powerUp.getDuration() - remainingMs);
+        this.startTime = System.currentTimeMillis() - elapsed;
+    }
+
     public boolean isExpired() {
         if (powerUp.isPermanent())
             return false;
