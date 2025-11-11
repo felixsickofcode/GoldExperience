@@ -917,7 +917,6 @@ public class GameEngine implements BrickListener {
         // Reset volatile state
         soundForExplosionChains.clear();
         levelCompleteSoundPlayed = false;
-        hitsSinceLastDrop = 0;
         bullets.clear();
 
         System.out.println("✅ Game loaded successfully!");
