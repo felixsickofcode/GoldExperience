@@ -15,7 +15,7 @@ public class PlayerDatabase {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/gold_experience";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
+    private static final String DB_PASSWORD = "p1h2o3n4g5";
 
     private PlayerDatabase() {
         try {
