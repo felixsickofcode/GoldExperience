@@ -8,12 +8,15 @@ public class ActivePowerUp {
     private final PowerUp powerUp;
     private final long startTime;
     private final GameContext context;
+    private final long duration;
 
-    public ActivePowerUp(PowerUp powerUp, GameContext context) {
+    public ActivePowerUp(PowerUp powerUp, GameContext context, long duration) {
         this.powerUp = powerUp;
         this.startTime = System.currentTimeMillis();
         this.context = context;
+        this.duration = duration;
     }
+
 //    public ActivePowerUp(PowerUp powerUp, GameContext context, double remainingMs) {
 //        this.powerUp = powerUp;
 //        this.context = context;
@@ -21,11 +24,13 @@ public class ActivePowerUp {
 //        long elapsed = (long)(powerUp.getDuration() - remainingMs);
 //        this.startTime = System.currentTimeMillis() - elapsed;
 //    }
-    public boolean isExpired() {
-        if (powerUp.isPermanent())
-            return false;
 
-        return System.currentTimeMillis() - startTime >= powerUp.getDuration();
+    public boolean isExpired() {
+        if (powerUp.isPermanent() || duration == 0) {
+            return false;
+        }
+
+        return System.currentTimeMillis() - startTime >= this.duration;
     }
 
     public void expire() {

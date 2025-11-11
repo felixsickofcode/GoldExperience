@@ -38,6 +38,8 @@ public class Constants {
     public static final double PADDLE_INIT_POSITION = 420;
 
     public static final double BULLET_SPEED = 450;
+    public static final double BULLET_WIDTH = 8;
+    public static final double BULLET_HEIGHT = 14;
 
     // Power up constants
     public static final double DROP_CHANCE = 0.35;

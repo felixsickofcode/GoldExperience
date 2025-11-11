@@ -1,9 +1,8 @@
 package vnu.uet.goldexperience.manager;
 
-import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.core.GameContext;
+import vnu.uet.goldexperience.core.PowerUpStats;
 import vnu.uet.goldexperience.model.PowerUp;
-import vnu.uet.goldexperience.model.PowerUpType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ public class PowerUpManager {
     public List<ActivePowerUp> getActivePowerUps() {
         return activePowerUps;
     }
+
     public PowerUpManager(GameContext context) {
         this.context = context;
         activePowerUps = new ArrayList<>();
@@ -24,8 +24,11 @@ public class PowerUpManager {
     public void activatePowerUp(PowerUp powerUp) {
         powerUp.applyEffect(context);
 
-        if (!powerUp.isPermanent()) {
-            activePowerUps.add(new ActivePowerUp(powerUp, context));
+        PowerUpStats stats = GameDataManager.getPowerUpStatsFor(powerUp.getType());
+        long duration = stats.duration();
+
+        if (duration > 0) {
+            activePowerUps.add(new ActivePowerUp(powerUp, context, duration));
         }
     }
 
@@ -39,6 +42,7 @@ public class PowerUpManager {
             return false;
         });
     }
+
 //    public List<LevelSaveData.ActivePowerupInfo> captureActivePowerupsInfo() {
 //        List<LevelSaveData.ActivePowerupInfo> infos = new ArrayList<>();
 //        for (ActivePowerUp ap : activePowerUps) {
@@ -75,6 +79,7 @@ public class PowerUpManager {
 //            // Anonymous class implementation
 //        };
 //    }
+
     public void clearAll() {
         for (ActivePowerUp ap : activePowerUps) {
             ap.expire();

@@ -1,7 +1,12 @@
 package vnu.uet.goldexperience.manager;
 
+import vnu.uet.goldexperience.core.PowerUpStats;
+import vnu.uet.goldexperience.model.PowerUpType;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class GlobalGameData {
     private int totalPoints;
@@ -10,6 +15,7 @@ public class GlobalGameData {
     private List<String> ownedPaddleSkins;
     private String selectedPaddleSkin;
     private List<String> selectedBallEffects;
+    private Map<PowerUpType, PowerUpStats> powerUpUpgrades = new HashMap<>();
 
     // Default values
     private static final float DEFAULT_VOLUME = 0.7f;
@@ -23,6 +29,14 @@ public class GlobalGameData {
         this.selectedBallEffects = new ArrayList<>();
         this.ownedPaddleSkins.add(DEFAULT_PADDLE_SKIN);
         this.selectedPaddleSkin = DEFAULT_PADDLE_SKIN;
+    }
+
+    public Map<PowerUpType, PowerUpStats> getPowerUpUpgrades() {
+        if (powerUpUpgrades == null) {
+            powerUpUpgrades = new HashMap<>();
+        }
+
+        return powerUpUpgrades;
     }
 
     // Getters
