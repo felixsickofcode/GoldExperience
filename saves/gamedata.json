@@ -1,0 +1,11 @@
+{
+  "totalPoints": 58375790,
+  "volume": 0.7,
+  "ownedBallEffects": [],
+  "ownedPaddleSkins": [
+    "paddle_default"
+  ],
+  "selectedPaddleSkin": "paddle_default",
+  "selectedBallEffects": [],
+  "powerUpUpgrades": {}
+}

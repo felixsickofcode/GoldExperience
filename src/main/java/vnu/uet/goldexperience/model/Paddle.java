@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.paddle.PaddleEffect;
-import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameDataManager;
 import vnu.uet.goldexperience.manager.PaddleImageHelper;
 
@@ -13,6 +12,10 @@ public class Paddle extends MovableObject {
     private int direction = 0;
     private PaddleEffect effect;
     private double targetX = -1;
+
+    private boolean isShooting = false;
+    private long shootingEndTime = 0;
+    private long lastShotTime = 0;
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
@@ -82,6 +85,10 @@ public class Paddle extends MovableObject {
         }
         effect.update(x, y, deltaTime);
         handlePaddleEdgeCollision();
+
+        if (isShooting && System.currentTimeMillis() > shootingEndTime) {
+            this.isShooting = false;
+        }
     }
 
     public void handlePaddleEdgeCollision() {
@@ -124,7 +131,6 @@ public class Paddle extends MovableObject {
         switch (size) {
             case 0 -> newWidth = Constants.TINY_PADDLE_WIDTH;
             case 1 -> newWidth = Constants.SMALL_PADDLE_WIDTH;
-            case 2 -> newWidth = Constants.MEDIUM_PADDLE_WIDTH;
             case 3 -> newWidth = Constants.LARGE_PADDLE_WIDTH;
             case 4 -> newWidth = Constants.BIG_PADDLE_WIDTH;
             default -> newWidth = Constants.MEDIUM_PADDLE_WIDTH;
@@ -133,6 +139,7 @@ public class Paddle extends MovableObject {
         setWidth(newWidth);
         setImage(PaddleImageHelper.getImageWithCurrentSkin(size));
     }
+
     public void refreshSkin() {
         int currentSize = getSize();
         Image newImage = PaddleImageHelper.getImageWithCurrentSkin(currentSize);
@@ -140,15 +147,28 @@ public class Paddle extends MovableObject {
 
         setImage(PaddleImageHelper.getImageWithCurrentSkin(currentSize));
     }
+
     public void onBallCollision(Ball ball) {
         effect.onBallHit(ball.getX(), ball.getY());
     }
+
     public double getSpeed() {
         return speed;
     }
 
-    public void reset()
-    {
+    public void reset() {
         setTargetX((Constants.GAMEPLAYZONE_WIDTH - width)/2);
+    }
+
+    public boolean isShooting() {
+        return isShooting;
+    }
+
+    public void setShooting(boolean active, long durationMs) {
+        this.isShooting = active;
+
+        if (active) {
+            this.shootingEndTime = System.currentTimeMillis() + durationMs;
+        }
     }
 }

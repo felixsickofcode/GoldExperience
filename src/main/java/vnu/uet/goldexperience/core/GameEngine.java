@@ -137,6 +137,11 @@ public class GameEngine implements BrickListener {
 
         bullets.clear();
         fallingPowerUps.clear();
+
+        if (powerUpManager != null) {
+            powerUpManager.clearAll();
+        }
+
         powerUpManager = new PowerUpManager(new GameContext(balls, paddle, bullets, bricks));
     }
 
@@ -370,7 +375,7 @@ public class GameEngine implements BrickListener {
             }
         }
 
-        // Shoot all reset balls
+        // Bắn tất cả bóng
         if (input.isActionActive(Action.SHOOT)) {
             for (Ball b : balls) {
                 if (b.isReset()) {
@@ -478,6 +483,11 @@ public class GameEngine implements BrickListener {
                 uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             }
 
+            // mất mạng? = powerup bay màu
+            if (powerUpManager != null) {
+                powerUpManager.clearAll();
+            }
+
             // nếu còn mạng thì init quả mới, không thì game over
             if (GameSession.getInstance().isStillAlive()) {
                 initNewPrimaryBall();
@@ -493,6 +503,7 @@ public class GameEngine implements BrickListener {
         // Update active falling power-ups
         if (!fallingPowerUps.isEmpty()) {
             List<PowerUp> collected = new ArrayList<>();
+
             for (PowerUp pu : fallingPowerUps) {
                 pu.update(deltaTime);
 
@@ -518,7 +529,32 @@ public class GameEngine implements BrickListener {
         }
 
         if (powerUpManager != null) {
-            powerUpManager.update();
+            powerUpManager.update(deltaTime);
+        }
+
+        // va chạm của Bullet
+        if (!bullets.isEmpty()) {
+            List<Bullet> bulletsToRemove = new ArrayList<>();
+
+            for (Bullet bullet : bullets) {
+                bullet.update(deltaTime);
+
+                if (bullet.isOffScreen()) {
+                    bulletsToRemove.add(bullet);
+                    continue;
+                }
+
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && bullet.checkCollide(brick)) {
+                        brick.takeHit();
+                        bulletsToRemove.add(bullet);
+
+                        break;
+                    }
+                }
+            }
+
+            bullets.removeAll(bulletsToRemove);
         }
 
         checkChainExplosions();
@@ -557,6 +593,10 @@ public class GameEngine implements BrickListener {
         }
         for (Brick brick : bricks) {
             brick.render(gc);
+        }
+
+        for (Bullet bullet : bullets) {
+            bullet.render(gc);
         }
 
         gc.restore();

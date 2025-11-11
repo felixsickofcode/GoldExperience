@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import vnu.uet.goldexperience.core.PowerUpStats;
+import vnu.uet.goldexperience.model.PowerUpType;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -54,6 +56,7 @@ public class GameDataManager {
         if (globalData == null) {
             loadGlobalData();
         }
+
         return globalData;
     }
 
@@ -75,7 +78,6 @@ public class GameDataManager {
         System.out.println("Creating new GlobalGameData");
         globalData = new GlobalGameData();
         saveGlobalData();
-
     }
 
     public static boolean saveGlobalData() {
@@ -186,6 +188,24 @@ public class GameDataManager {
     public static java.util.List<String> getSelectedBallEffects() {
         return globalData.getSelectedBallEffects();
     }
+
+    // lấy trạng thái effect hiện tại của PowerUps (nào đó)
+    public static PowerUpStats getPowerUpStatsFor(PowerUpType type) {
+        if (globalData == null) {
+            loadGlobalData();
+        }
+
+        PowerUpStats currentPowerUpStat = globalData
+                .getPowerUpUpgrades().get(type);
+
+        if (currentPowerUpStat == null) {
+            return PowerUpStats.getDefault(type);
+        }
+
+        return currentPowerUpStat;
+    }
+
+    // TODO: hàm nâng cấp PowerUp
 
     // ========== LEVEL SAVE DATA OPERATIONS ==========
 

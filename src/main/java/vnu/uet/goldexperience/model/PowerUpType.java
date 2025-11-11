@@ -68,7 +68,7 @@ public enum PowerUpType {
             },
             null,
             "images/3ball.png",
-            Constants.THREE_BALLS_DURATION
+            true
     ),
 
     EXTEND(
@@ -78,7 +78,7 @@ public enum PowerUpType {
             },
             null,
             "images/extend.png",
-            Constants.EXTEND_DURATION
+            true
     ),
 
     TINY(
@@ -88,7 +88,7 @@ public enum PowerUpType {
             },
             null,
             "images/tiny.png",
-            Constants.TINY_DURATION
+            true
     ),
 
     FAST(
@@ -105,7 +105,7 @@ public enum PowerUpType {
                 }
             },
             "images/fast.png",
-            Constants.FAST_DURATION
+            true
     ),
 
     SLOW(
@@ -122,22 +122,30 @@ public enum PowerUpType {
                 }
             },
             "images/slow.png",
-            Constants.SLOW_DURATION
+            true
+    ),
+
+    BULLETS(
+            (context) -> {
+                context.paddle().setShooting(true, Constants.BULLETS_DURATION);
+            },
+            (context) -> {
+                context.paddle().setShooting(false, 0);
+            },
+            "images/bullet.png",
+            true
     );
 
     private final PowerUpEffect applyEffect;
     private final PowerUpRemoval removeEffect;
     private final String imagePath;
-    private final long duration;
+    private final boolean droppable;
 
-    // Cache to avoid re-checking sprite compatibility repeatedly
-    private Boolean droppableCache = null;
-
-    PowerUpType(PowerUpEffect apply, PowerUpRemoval remove, String imagePath, long duration) {
+    PowerUpType(PowerUpEffect apply, PowerUpRemoval remove, String imagePath, boolean droppable) {
         this.applyEffect = apply;
         this.removeEffect = remove;
         this.imagePath = imagePath;
-        this.duration = duration;
+        this.droppable = droppable;
     }
 
     public PowerUpEffect getApplyEffect() {
@@ -148,48 +156,39 @@ public enum PowerUpType {
         return removeEffect;
     }
 
-    public long getDuration() {
-        return duration;
-    }
-
     public Image getImage() {
         try {
             String path = imagePath.startsWith("/") ? imagePath : "/" + imagePath;
             URL imageURL = getClass().getResource(path);
-            if (imageURL == null) return null;
+            if (imageURL == null) {
+                return null;
+            }
+
             return new Image(imageURL.toExternalForm());
         } catch (Exception e) {
             return null;
         }
     }
 
-    /**
-     * Whether this power-up can be spawned as a falling item using the common 6-frame 48x33 spritesheet.
-     * This auto-enables new power-ups as long as they provide a compatible spritesheet at {@link #imagePath}.
-     */
     public boolean isDroppableItem() {
-        if (droppableCache != null) return droppableCache;
-        Image img = getImage();
-        boolean ok = false;
-        if (img != null) {
-            ok = img.getWidth() >= 6 * Constants.POWER_UP_ITEM_WIDTH
-                    && img.getHeight() >= Constants.POWER_UP_ITEM_HEIGHT;
-        }
-        droppableCache = ok;
-        return ok;
+        return this.droppable;
     }
 
-    /**
-     * Returns a uniformly random droppable power-up type among all enum values that expose
-     * a compatible spritesheet. If none qualify, defaults to EXTEND to ensure gameplay continuity.
-     */
     public static PowerUpType randomDroppable() {
         List<PowerUpType> options = new ArrayList<>();
+
         for (PowerUpType t : values()) {
-            if (t.isDroppableItem()) options.add(t);
+            if (t.isDroppableItem()) {
+                options.add(t);
+            }
         }
-        if (options.isEmpty()) return EXTEND;
+
+        if (options.isEmpty()) {
+            return EXTEND;
+        }
+
         int idx = ThreadLocalRandom.current().nextInt(options.size());
+
         return options.get(idx);
     }
 }

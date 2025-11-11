@@ -2,11 +2,16 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.manager.AssetsManager;
 
 public class Bullet extends MovableObject {
 
     public Bullet(double x, double y, double width, double height, double dx, double dy) {
-        super(x, y, width, height, 0, Constants.BULLET_SPEED);
+        super(x, y, width, height, dx, dy);
+
+        if (!AssetsManager.bullets.isEmpty()) {
+            this.image = AssetsManager.bullets.getFirst();
+        }
     }
 
     public boolean isOffScreen() {
@@ -27,7 +32,8 @@ public class Bullet extends MovableObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        if (image != null)
+        if (image != null) {
             gc.drawImage(image, x, y);
+        }
     }
 }
