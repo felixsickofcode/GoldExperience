@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.paddle.PaddleEffect;
-import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameDataManager;
 import vnu.uet.goldexperience.manager.PaddleImageHelper;
 
@@ -13,6 +12,10 @@ public class Paddle extends MovableObject {
     private int direction = 0;
     private PaddleEffect effect;
     private double targetX = -1;
+
+    private boolean isShooting = false;
+    private long shootingEndTime = 0;
+    private long lastShotTime = 0;
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
@@ -82,6 +85,10 @@ public class Paddle extends MovableObject {
         }
         effect.update(x, y, deltaTime);
         handlePaddleEdgeCollision();
+
+        if (isShooting && System.currentTimeMillis() > shootingEndTime) {
+            this.isShooting = false;
+        }
     }
 
     public void handlePaddleEdgeCollision() {
@@ -149,8 +156,52 @@ public class Paddle extends MovableObject {
         return speed;
     }
 
-    public void reset()
-    {
+    public void reset() {
         setTargetX((Constants.GAMEPLAYZONE_WIDTH - width)/2);
+    }
+
+    public boolean isShooting() {
+        return isShooting;
+    }
+
+    public void setShooting(boolean active, long durationMs) {
+        this.isShooting = active;
+
+        if (active) {
+            this.shootingEndTime = System.currentTimeMillis() + durationMs;
+        }
+    }
+
+    public Bullet[] shoot() {
+        if (!isShooting) {
+            return null;
+        }
+
+        long now = System.currentTimeMillis();
+
+        if (now - lastShotTime < Constants.BULLET_COOLDOWN_MS) {
+            return null;
+        }
+
+        lastShotTime = now;
+
+        double bulletY = this.y - Constants.BULLET_HEIGHT;
+        double bulletSpeed = -Constants.BULLET_SPEED;
+
+        double bulletX1 = this.x + Constants.BULLET_WIDTH / 2;
+        Bullet bullet1 = new Bullet(
+                bulletX1, bulletY,
+                Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT,
+                0, bulletSpeed
+        );
+
+        double bulletX2 = this.x + this.width - Constants.BULLET_WIDTH * 1.5;
+        Bullet bullet2 = new Bullet(
+                bulletX2, bulletY,
+                Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT,
+                0, bulletSpeed
+        );
+
+        return new Bullet[]{bullet1, bullet2};
     }
 }

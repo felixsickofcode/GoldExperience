@@ -17,7 +17,7 @@ public class PowerUpManager {
     private final GameContext context;
 
     private double bulletSpawnTimer = 0.0;
-    private boolean isBulletActive = false;
+//    private boolean isBulletActive = false;
 
     public List<ActivePowerUp> getActivePowerUps() {
         return activePowerUps;
@@ -38,7 +38,7 @@ public class PowerUpManager {
             activePowerUps.add(new ActivePowerUp(powerUp, context, duration));
 
             if (powerUp.getType() == PowerUpType.BULLETS) {
-                isBulletActive = true;
+//                isBulletActive = true;
                 bulletSpawnTimer = 0.0;
             }
         }
@@ -49,9 +49,9 @@ public class PowerUpManager {
             if (ap.isExpired()) {
                 ap.expire();
 
-                if (ap.getPowerUp().getType() == PowerUpType.BULLETS) {
-                    isBulletActive = false;
-                }
+//                if (ap.getPowerUp().getType() == PowerUpType.BULLETS) {
+//                    isBulletActive = false;
+//                }
 
                 return true;
             }
@@ -59,14 +59,14 @@ public class PowerUpManager {
             return false;
         });
 
-        if (isBulletActive) {
+        if (context.paddle().isShooting()) {
             bulletSpawnTimer -= deltaTime;
 
             if (bulletSpawnTimer <= 0.0) {
                 PowerUpStats stats = GameDataManager.getPowerUpStatsFor(PowerUpType.BULLETS);
                 bulletSpawnTimer = stats.value();
 
-                spawnBullet();
+                    spawnBullet();
             }
         }
     }

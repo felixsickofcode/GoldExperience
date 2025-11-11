@@ -370,6 +370,13 @@ public class GameEngine implements BrickListener {
                 }
             }
         }
+
+        Bullet[] newBullets = paddle.shoot();
+
+        if (newBullets != null) {
+            this.bullets.add(newBullets[0]);
+            this.bullets.add(newBullets[1]);
+        }
     }
 
     private void update(double deltaTime) {
@@ -482,6 +489,7 @@ public class GameEngine implements BrickListener {
         // Update active falling power-ups
         if (!fallingPowerUps.isEmpty()) {
             List<PowerUp> collected = new ArrayList<>();
+
             for (PowerUp pu : fallingPowerUps) {
                 pu.update(deltaTime);
 
@@ -572,6 +580,10 @@ public class GameEngine implements BrickListener {
 
         for (Brick brick : bricks) {
             brick.render(gc);
+        }
+
+        for (Bullet bullet : bullets) {
+            bullet.render(gc);
         }
 
         gc.restore();

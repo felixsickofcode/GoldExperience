@@ -9,9 +9,15 @@ public record PowerUpStats(
 ) {
     public static PowerUpStats getDefault(PowerUpType type) {
         return switch(type) {
-            case PowerUpType.BULLETS -> new PowerUpStats(15_000, 0.7);
-            case PowerUpType.FAST -> new PowerUpStats(10_000, 1.5);
-            case PowerUpType.SLOW -> new PowerUpStats(10_000, 1.0 / 1.5);
+            case PowerUpType.BULLETS -> new PowerUpStats(
+                    Constants.BULLETS_DURATION, Constants.BULLET_COOLDOWN_MS);
+
+            case PowerUpType.FAST -> new PowerUpStats(
+                    Constants.FAST_DURATION, Constants.BALL_SPEED_AMPLIFIER);
+
+            case PowerUpType.SLOW -> new PowerUpStats(
+                    Constants.SLOW_DURATION, 1.0 / Constants.BALL_SPEED_AMPLIFIER);
+
             default -> new PowerUpStats(0, 0);
         };
     }
