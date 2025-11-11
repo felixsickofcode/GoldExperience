@@ -23,7 +23,7 @@ public class GameDataManager {
                 public boolean shouldSkipField(FieldAttributes field) {
                     Class<?> fieldType = field.getDeclaredClass();
                     return Image.class.isAssignableFrom(fieldType)
-                            || Color.class.isAssignableFrom(fieldType)||
+                            || Color.class.isAssignableFrom(fieldType) ||
                             java.util.Random.class.isAssignableFrom(fieldType);
 
                 }
@@ -219,7 +219,7 @@ public class GameDataManager {
 
         try (FileReader reader = new FileReader(file)) {
             LevelSaveData data = gson.fromJson(reader, LevelSaveData.class);
-            System.out.println("Level " + levelNumber + " loaded: " + data);
+            // tra ve data (la cac thong tin ca thiet de load)
             return data;
         } catch (Exception e) {
             System.err.println("Failed to load level " + levelNumber + ": " + e.getMessage());
@@ -233,7 +233,7 @@ public class GameDataManager {
         return new File(fileName).exists();
     }
 
-    public static boolean deleteLevelSave(int levelNumber) {
+    public static void deleteLevelSave(int levelNumber) {
         String fileName = LEVELS_DIR + "level" + levelNumber + ".json";
         File file = new File(fileName);
 
@@ -242,10 +242,7 @@ public class GameDataManager {
             if (deleted) {
                 System.out.println("Level " + levelNumber + " save deleted");
             }
-            return deleted;
         }
-
-        return false;
     }
 
     public static void deleteAllLevelSaves() {
