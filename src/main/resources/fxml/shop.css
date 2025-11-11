@@ -142,6 +142,7 @@
 }
 
 .item-icon-placeholder {
+
     -fx-pref-width: 140px;
     -fx-pref-height: 140px;
     -fx-min-width: 140px;
@@ -169,7 +170,7 @@
 
 .item-status {
     -fx-font-family: "Xirod";
-    -fx-padding: 5 15;
+    -fx-padding: 15 15;
     -fx-background-radius: 15;
     -fx-font-weight: bold;
     -fx-font-size: 12px;
@@ -179,16 +180,20 @@
 .status-equipped {
     -fx-background-color: #00ff88;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #00ff88, 10, 0.1 , 0, 1);
+
 }
 
 .status-owned {
     -fx-background-color: #00d4ff;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #00d4ff, 10, 0.1 , 0, 1);
 }
 
 .status-price {
     -fx-background-color: #ffd700;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #ffd700, 10, 0.1 , 0, 1);
 }
 
 .action-button {
@@ -205,6 +210,7 @@
 .button-buy {
     -fx-background-color: #ff006e;
     -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #ff006e, 10, 0.1 , 0, 1);
 }
 
 .button-buy:hover {
@@ -216,6 +222,7 @@
 .button-equip {
     -fx-background-color: #00bce0;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #00bce0, 10, 0.1 , 0, 1);
 }
 
 .button-equip:hover {
@@ -234,6 +241,7 @@
     -fx-background-color: #00d4ff;
     -fx-text-fill: #0f3460;
     -fx-opacity: 0.7;
+    -fx-effect: dropshadow(gaussian, #00bce0, 10, 0.1 , 0, 1);
 }
 
 .shop-footer {

@@ -155,8 +155,10 @@ public class ShopUIController implements Initializable, ShopManager.ShopListener
         // Add spacer
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
+        Region spacer2 = new Region();
+        VBox.setVgrow(spacer2, Priority.ALWAYS);
 
-        card.getChildren().addAll(icon, nameLabel, descLabel, statusLabel, actionButton);
+        card.getChildren().addAll(spacer, icon, spacer2, nameLabel, descLabel, statusLabel, actionButton);
 
         return card;
     }

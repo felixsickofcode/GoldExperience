@@ -1,35 +1,33 @@
-/* Root background */
-.menu-root {
-    -fx-background-color: #000000;
+.settings-pane {
+    -fx-background-color: linear-gradient(to bottom, #0a0514 0%, #1a0a28 25%, #0f0520 50%, #1a0a28 75%, #0a0514 100%);
 }
 
-/* Settings Title */
 .settings-title {
     -fx-font-family: "Cynosure Straight";
     -fx-font-size: 65px;
-    -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, #00f5ff, 15, 0.4, 0, 0);
+    -fx-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 11, 0.1, 0, 0);
 }
 
-/* Close Button (BACK) */
 #btnQuitSetting {
-    -fx-background-color: rgba(0, 245, 255, 0.05);
-    -fx-border-color: #00f5ff;
-    -fx-border-width: 2px;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
     -fx-font-family: "Xirod";
-    -fx-font-size: 28px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #00f5ff;
+    -fx-text-fill: gray;
     -fx-cursor: hand;
+    -fx-effect: null;
 }
 
 #btnQuitSetting:hover {
-    -fx-background-color: rgba(255, 0, 110, 0.15);
-    -fx-border-color: #ff006e;
+    -fx-background-color: rgba(30, 10, 50, 0.2);
+    -fx-border-color: #00f5ff;
     -fx-border-width: 3px;
-    -fx-text-fill: #ff006e;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.2, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -39,36 +37,35 @@
     -fx-scale-y: 0.98;
 }
 
-/* VBox Container - Outer Frame */
 .vbox-container {
     -fx-background-color: transparent;
 }
 
-/* Settings Frame - Main Border (Cyan mặc định) */
 .settings-frame {
-    -fx-background-color: rgba(26, 26, 26, 0.95);
-    -fx-border-color: #00f5ff;
+    -fx-background-color: rgba(10, 15, 45, 0.95);
     -fx-border-width: 4px;
     -fx-border-radius: 8px;
     -fx-background-radius: 8px;
+    -fx-border-color: #ff006e;
+
+    -fx-effect: dropshadow(gaussian, #ff006e, 25, 0.3, 0, 0);
 }
 
-/* Inner Border (Trắng/Xanh nhạt) */
 .settings-inner {
     -fx-background-color: transparent;
-    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-color: #00f5ff;
     -fx-border-width: 2.5px;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 25, 0.3, 0, 0);
+
 }
 
-/* Volume Slider Container */
 .slider-container {
     -fx-background-color: transparent;
     -fx-padding: 20px 30px;
 }
 
-/* Volume Label */
 .volume-title {
     -fx-font-family: "Xirod";
     -fx-font-size: 20px;
@@ -76,14 +73,12 @@
     -fx-text-fill: #FFFFFF;
 }
 
-/* Volume Percentage Label */
 .volume-percentage {
     -fx-font-family: "Xirod";
     -fx-font-size: 16px;
     -fx-text-fill: #00f5ff;
 }
 
-/* Volume Slider */
 .volume-slider {
     -fx-pref-width: 280px;
 }
@@ -102,43 +97,31 @@
     -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.7, 0, 0);
 }
 
-.volume-slider .thumb:hover {
-    -fx-background-color: #ff006e;
-    -fx-effect: dropshadow(gaussian, #ff006e, 15, 0.9, 0, 0);
-    -fx-scale-x: 1.2;
-    -fx-scale-y: 1.2;
-}
-
-.volume-slider:focused .thumb {
-    -fx-background-color: #ff006e;
-    -fx-effect: dropshadow(gaussian, #ff006e, 12, 0.8, 0, 0);
-}
-
-/* Main Buttons (Trắng/Xanh mặc định) */
 #btnTutorial, #btnExit {
-    -fx-background-color: rgba(0, 245, 255, 0.05);
+    -fx-background-color: transparent;
     -fx-border-color: #00f5ff;
     -fx-border-width: 2px;
     -fx-font-family: "Xirod";
     -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: white;
     -fx-cursor: hand;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.2, 0, 0);
 }
 
 #btnTutorial:hover, #btnExit:hover {
-    -fx-background-color: rgba(255, 0, 110, 0.15);
-    -fx-border-color: #ff006e;
-    -fx-border-width: 3px;
-    -fx-text-fill: #ff006e;
+    -fx-background-color: rgba(30, 10, 50, 0.2);
+    -fx-border-color: #00f5ff;
+    -fx-border-width: 2px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.2, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
 
 #btnTutorial:pressed, #btnExit:pressed {
-    -fx-background-color: rgba(255, 0, 110, 0.25);
     -fx-scale-x: 0.98;
     -fx-scale-y: 0.98;
 }
