@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class GlobalGameData {
     private int totalPoints;
-    private float volume;
+    private double volume;
     private List<String> ownedBallEffects;
     private List<String> ownedPaddleSkins;
     private String selectedPaddleSkin;
@@ -18,7 +18,7 @@ public class GlobalGameData {
     private Map<PowerUpType, PowerUpStats> powerUpUpgrades = new HashMap<>();
 
     // Default values
-    private static final float DEFAULT_VOLUME = 0.7f;
+    private static final double DEFAULT_VOLUME = 1;
     private static final String DEFAULT_PADDLE_SKIN = "paddle_default";
 
     public GlobalGameData() {
@@ -44,6 +44,10 @@ public class GlobalGameData {
         return totalPoints;
     }
 
+    public double getVolume() {
+        return volume;
+    }
+
     public List<String> getSelectedBallEffects() {
         return new ArrayList<>(selectedBallEffects);
     }
@@ -52,7 +56,7 @@ public class GlobalGameData {
         return selectedPaddleSkin;
     }
 
-    public void setVolume(float volume) {
+    public void setVolume(double volume) {
         this.volume = Math.max(0f, Math.min(1f, volume));
     }
 
@@ -98,6 +102,7 @@ public class GlobalGameData {
             selectedBallEffects.add(effect);
         }
     }
+
     public void clearSelectedBallEffects() {
         selectedBallEffects.clear();
     }
@@ -137,4 +142,6 @@ public class GlobalGameData {
                 totalPoints, volume, ownedBallEffects.size(), selectedBallEffects.size(),
                 ownedPaddleSkins.size(), selectedPaddleSkin);
     }
+
+
 }

@@ -12,6 +12,7 @@ public class SoundManager {
     public static AudioClip explosionSound;
     public static void loadSound() {
         loadSounds();
+        updateAllVolumes();
         clickSound.play(0.0);
         hitWallSound.play(0.0);
         hitBrickSound.play(0.0);
@@ -67,4 +68,16 @@ public class SoundManager {
             clip.play();
         }
     }
+    public static void updateAllVolumes() {
+        double volume = GameDataManager.getGlobalData().getVolume();
+
+        if (hitPaddleSound != null) hitPaddleSound.setVolume(volume);
+        if (hitWallSound != null) hitWallSound.setVolume(volume);
+        if (hitBrickSound != null) hitBrickSound.setVolume(volume);
+        if (loseSound != null) loseSound.setVolume(volume);
+        if (clickSound != null) clickSound.setVolume(volume);
+        if (breakBrickSound != null) breakBrickSound.setVolume(volume);
+        if (explosionSound != null) explosionSound.setVolume(volume);
+    }
+
 }

@@ -3,6 +3,7 @@ package vnu.uet.goldexperience.controller;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 import vnu.uet.goldexperience.view.LoginUI;
 
 public class LoginController {
@@ -35,6 +36,7 @@ public class LoginController {
 
         // Set callback for successful login
         loginUI.setOnLoginSuccess((playerName) -> {
+            SoundManager.playClickSound();
             System.out.println("Player logged in: " + playerName);
             loginUI.stopAnimation();
             // Switch to menu

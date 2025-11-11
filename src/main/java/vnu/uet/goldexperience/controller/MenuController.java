@@ -2,7 +2,6 @@ package vnu.uet.goldexperience.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
-import vnu.uet.goldexperience.manager.AssetsManager;
 import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.manager.SoundManager;
@@ -38,8 +37,6 @@ public class MenuController {
         // Set callback for menu actions
         menuUI.setOnMenuAction((action) -> {
             System.out.println("Menu action: " + action);
-
-            // Play click sound
             SoundManager.playClickSound();
 
             switch (action) {
@@ -85,6 +82,8 @@ public class MenuController {
         if (sceneManager != null) {
             menuUI.stopAnimation();
             sceneManager.switchTo("shop");
+            ShopUIController controller = (ShopUIController) sceneManager.getController("shop");
+            controller.refreshShop();
         }
     }
 

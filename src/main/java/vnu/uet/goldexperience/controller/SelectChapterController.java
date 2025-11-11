@@ -3,11 +3,11 @@ package vnu.uet.goldexperience.controller;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import vnu.uet.goldexperience.manager.GameSession;
 import vnu.uet.goldexperience.manager.SceneManager;
+import vnu.uet.goldexperience.manager.SoundManager;
 
 public class SelectChapterController {
 
@@ -65,6 +65,7 @@ public class SelectChapterController {
 
     @FXML
     private void handleBackToMenu() {
+        SoundManager.playClickSound();
         if (sceneManager != null) {
             sceneManager.switchTo("menu");
         }
@@ -72,12 +73,14 @@ public class SelectChapterController {
 
     @FXML
     private void onLeftClick() {
+        SoundManager.playClickSound();
         if (isAnimating || currentChapterIndex <= 1) return;
         navigateTo(currentChapterIndex - 1);
     }
 
     @FXML
     private void onRightClick() {
+        SoundManager.playClickSound();
         if (isAnimating || currentChapterIndex >= 5) return;
         navigateTo(currentChapterIndex + 1);
     }
@@ -192,6 +195,7 @@ public class SelectChapterController {
 
     @FXML
     private void handleChooseChapter() {
+        SoundManager.playClickSound();
         if (sceneManager != null) {
             GameSession.getInstance().setChapter(currentChapterIndex);
             sceneManager.switchTo("level");
