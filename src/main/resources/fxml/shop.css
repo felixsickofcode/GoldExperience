@@ -1,168 +1,216 @@
-/* ========== General ========== */
-.root {
-    -fx-background-color: #1a1a2e;
-    -fx-font-family: "Arial";
-}
-
-/* ========== Header ========== */
 .shop-header {
-    -fx-background-color: linear-gradient(to bottom, #16213e, #0f3460);
-    -fx-border-color: #e94560;
+    -fx-background-color: linear-gradient(to bottom, #10182E, #0D2C54);
+    -fx-border-color: #00d4ff;
     -fx-border-width: 0 0 3px 0;
+    -fx-effect: dropshadow(gaussian, #00d4ff, 10, 0.2, 0, 0);
 }
 
 .shop-title {
-    -fx-text-fill: #e94560;
+    -fx-font-size: 60;
+    -fx-font-family: "Xirod";
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.5), 10, 0, 0, 0);
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.2, 0, 0);
 }
 
 .back-button {
-    -fx-background-color: #533483;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-padding: 10 20;
-    -fx-background-radius: 5;
+    -fx-pref-width: 135px;
+    -fx-pref-height: 50px;
+    -fx-font-family: "Xirod";
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: gray;
     -fx-cursor: hand;
+    -fx-effect: null;
 }
 
 .back-button:hover {
-    -fx-background-color: #6b4499;
+    -fx-background-color: rgba(30, 10, 50, 0.2);
+    -fx-border-color: #00f5ff;
+    -fx-border-width: 3px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.1, 0, 0);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
 
 .points-icon {
+    -fx-font-family: "Xirod";
     -fx-text-fill: #ffd700;
+    -fx-effect: dropshadow(gaussian, #ffd700, 5, 0.1, 0, 0);
 }
 
 .points-label {
+    -fx-font-family: "Xirod";
     -fx-text-fill: #ffd700;
     -fx-font-weight: bold;
 }
 
 .points-text {
+    -fx-font-size: 20;
+    -fx-font-family: "Xirod";
     -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.1, 0, 0);
 }
 
-/* ========== Tabs ========== */
 .shop-tabs .tab-pane {
-    -fx-background-color: #1a1a2e;
+    -fx-background-color: #0A0A1A;
 }
 
 .shop-tabs .tab {
-    -fx-background-color: #0f3460;
-    -fx-text-fill: white;
+    -fx-font-family: "Xirod";
+    -fx-background-color: #0D2C54;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-padding: 15 30;
 }
 
+#tabPane .tab .tab-label {
+    -fx-text-fill: gray;
+}
+
+#tabPane .tab:hover .tab-label {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #ff006e, 10, 0.1, 0, 0);
+}
+
+#tabPane .tab:selected .tab-label {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.1, 0, 0);
+}
+
 .shop-tabs .tab:selected {
-    -fx-background-color: #e94560;
-    -fx-text-fill: white;
+    -fx-background-color: #00bce0;
 }
 
 .shop-tabs .tab:hover {
-    -fx-background-color: #533483;
+    -fx-background-color: #cc4367;
 }
 
 .shop-tabs .tab-header-background {
-    -fx-background-color: #16213e;
+    -fx-background-color: #10182E;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 3);
 }
 
-/* ========== Scroll Pane ========== */
 .shop-scroll {
     -fx-background-color: transparent;
-    -fx-background: #1a1a2e;
+    -fx-background: #0A0A1A;
 }
 
 .shop-scroll .viewport {
-    -fx-background-color: #1a1a2e;
+    -fx-background-color: #0A0A1A;
 }
 
 .shop-scroll .scroll-bar {
-    -fx-background-color: #0f3460;
+    -fx-background-color: #0D2C54;
 }
 
 .shop-scroll .scroll-bar .thumb {
-    -fx-background-color: #533483;
+    -fx-background-color: #00d4ff ;
     -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, #00d4ff, 10, 0.1 , 0, 1);
 }
 
-/* ========== Grid ========== */
 .items-grid {
-    -fx-background-color: #1a1a2e;
+    -fx-background-color: #0A0A1A;
 }
 
-/* ========== Item Card ========== */
 .item-card {
-    -fx-background-color: linear-gradient(to bottom, #16213e, #0f3460);
+    -fx-pref-width: 200px;
+    -fx-pref-height: 300px;
+    -fx-min-width: 200px;
+    -fx-min-height: 300px;
+    -fx-max-width: 200px;
+    -fx-max-height: 300px;
+    -fx-background-color: #10182E;
     -fx-background-radius: 10;
-    -fx-padding: 20;
-    -fx-border-color: #533483;
+    -fx-padding: 15;
+    -fx-border-color: #00f5ff;
     -fx-border-width: 2;
     -fx-border-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.1, 0, 2);
 }
 
 .item-card:hover {
-    -fx-border-color: #e94560;
+    -fx-border-color: #ff006e;
     -fx-scale-x: 1.02;
     -fx-scale-y: 1.02;
-    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.5), 15, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(233, 69, 96, 0.5), 20, 0.1, 0, 5);
 }
 
 .item-icon-placeholder {
+
+    -fx-pref-width: 140px;
+    -fx-pref-height: 140px;
+    -fx-min-width: 140px;
+    -fx-min-height: 140px;
+    -fx-max-width: 140px;
+    -fx-max-height: 140px;
     -fx-background-color: rgba(83, 52, 131, 0.3);
-    -fx-background-radius: 50;
+    -fx-background-radius: 70;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 2);
 }
 
 .item-name {
+    -fx-font-size: 12;
+    -fx-font-family: "Xirod";
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
 .item-description {
+    -fx-font-size: 10;
+    -fx-font-family: "Xirod";
     -fx-text-fill: #cccccc;
     -fx-text-alignment: center;
 }
 
-/* ========== Status Labels ========== */
 .item-status {
-    -fx-padding: 5 15;
+    -fx-font-family: "Xirod";
+    -fx-padding: 15 15;
     -fx-background-radius: 15;
     -fx-font-weight: bold;
     -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 3, 0, 0, 1);
 }
 
 .status-equipped {
     -fx-background-color: #00ff88;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #00ff88, 10, 0.1 , 0, 1);
+
 }
 
 .status-owned {
     -fx-background-color: #00d4ff;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #00d4ff, 10, 0.1 , 0, 1);
 }
 
 .status-price {
     -fx-background-color: #ffd700;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #ffd700, 10, 0.1 , 0, 1);
 }
 
-/* ========== Action Buttons ========== */
 .action-button {
+    -fx-font-family: "Xirod";
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-padding: 10 20;
+    -fx-pref-width: 160px;
     -fx-background-radius: 5;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 5, 0, 0, 2);
 }
 
 .button-buy {
-    -fx-background-color: #e94560;
+    -fx-background-color: #ff006e;
     -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #ff006e, 10, 0.1 , 0, 1);
 }
 
 .button-buy:hover {
@@ -172,12 +220,13 @@
 }
 
 .button-equip {
-    -fx-background-color: #00d4ff;
+    -fx-background-color: #00bce0;
     -fx-text-fill: #0f3460;
+    -fx-effect: dropshadow(gaussian, #00bce0, 10, 0.1 , 0, 1);
 }
 
 .button-equip:hover {
-    -fx-background-color: #00eeff;
+    -fx-background-color: #00d4ff;
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
@@ -192,30 +241,25 @@
     -fx-background-color: #00d4ff;
     -fx-text-fill: #0f3460;
     -fx-opacity: 0.7;
+    -fx-effect: dropshadow(gaussian, #00bce0, 10, 0.1 , 0, 1);
 }
 
-.button-disabled {
-    -fx-background-color: #666666;
-    -fx-text-fill: #999999;
-    -fx-opacity: 0.5;
-}
-
-/* ========== Footer ========== */
 .shop-footer {
-    -fx-background-color: linear-gradient(to top, #16213e, #0f3460);
-    -fx-border-color: #e94560;
+    -fx-background-color: linear-gradient(to top, #10182E, #0D2C54);
+    -fx-border-color: #00d4ff;
     -fx-border-width: 3px 0 0 0;
+    -fx-effect: dropshadow(gaussian, #00d4ff, 5, 0, 0, -2);
 }
 
 .stats-label {
+    -fx-font-family: "Xirod";
     -fx-text-fill: #ffffff;
 }
 
 .separator {
-    -fx-background-color: #533483;
+    -fx-background-color: #ffffff;
 }
 
-/* ========== Animations ========== */
 .item-card,
 .action-button,
 .back-button {

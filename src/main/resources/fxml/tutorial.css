@@ -1,0 +1,120 @@
+.tutorial-pane {
+    -fx-background-color: linear-gradient(to bottom, #0a0514 0%, #1a0a28 25%, #0f0520 50%, #1a0a28 75%, #0a0514 100%);
+}
+
+.mission-panel {
+    -fx-padding: 20px;
+}
+
+.title-label {
+    -fx-font-family: "Xirod";
+    -fx-font-size: 35px;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 11, 0.1, 0, 0);
+    -fx-text-alignment: center;
+}
+
+.story-content {
+    -fx-padding: 15px 25px;
+    -fx-background-color: rgba(0, 245, 255, 0.05);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(0, 245, 255, 0.3);
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+}
+
+.story-text {
+    -fx-font-family: "Xirod", "Arial", sans-serif;
+    -fx-font-size: 12px;
+    -fx-fill: rgba(255, 255, 255, 0.9);
+    -fx-line-spacing: 1.6;
+}
+
+.controls-section {
+    -fx-padding: 15px 25px;
+    -fx-background-color: rgba(0, 245, 255, 0.08);
+    -fx-background-radius: 10px;
+    -fx-border-color: #00f5ff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+}
+
+.section-label {
+    -fx-font-family: "Xirod";
+    -fx-font-size: 20px;
+    -fx-text-fill: #00f5ff;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 8, 0.1, 0, 0);
+}
+
+.control-list {
+    -fx-padding: 10px 20px;
+}
+
+.control-text {
+    -fx-font-family: "Xirod", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-fill: rgba(255, 255, 255, 0.95);
+    -fx-font-weight: bold;
+}
+
+.credits-section {
+    -fx-padding: 15px 25px;
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+}
+
+.credits-label {
+    -fx-font-family: "Xirod";
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+}
+
+.team-name {
+    -fx-font-family: "Xirod";
+    -fx-font-size: 23px;
+    -fx-text-fill: #00f5ff;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.1, 0, 0);
+    -fx-font-weight: bold;
+}
+
+.members-list {
+    -fx-padding: 10px 0 0 0;
+}
+
+.member-text {
+    -fx-font-family: "Xirod", "Arial", sans-serif;
+    -fx-font-size: 11px;
+    -fx-fill: rgba(255, 255, 255, 0.8);
+}
+
+.back-tutor-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #00f5ff;
+    -fx-border-width: 2px;
+    -fx-font-family: "Xirod";
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 10, 0.2, 0, 0);
+}
+
+.back-tutor-button:hover {
+    -fx-background-color: rgba(0, 245, 255, 0.15);
+    -fx-border-color: #00f5ff;
+    -fx-border-width: 2px;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, #00f5ff, 15, 0.4, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.back-tutor-button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}

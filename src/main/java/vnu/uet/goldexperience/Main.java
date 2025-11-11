@@ -90,6 +90,9 @@ public class Main extends Application {
         scene.getStylesheets().add(getClass().getResource("/fxml/login.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/fxml/chapter-select.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/fxml/level-select.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/fxml/shop.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/fxml/setting.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/fxml/tutorial.css").toExternalForm());
 
         stage.setScene(scene);
         stage.setTitle("Gold Experience");

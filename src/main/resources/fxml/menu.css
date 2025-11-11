@@ -50,7 +50,7 @@
     -fx-border-width: 3px;
     -fx-text-fill: white;
 
-    /* ĐÃ SỬA: Bật shadow khi hover, làm cho nút "sáng lên" */
+
     -fx-effect: dropshadow(gaussian, #ff006e, 20, 0.6, 0, 0);
 
     -fx-scale-x: 1.05;
