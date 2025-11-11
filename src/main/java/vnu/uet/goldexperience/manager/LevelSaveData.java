@@ -1,7 +1,9 @@
 package vnu.uet.goldexperience.manager;
 
+import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.model.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,15 +18,12 @@ public class LevelSaveData {
     private int score;
     private int lives;
 
-    // Lưu trực tiếp objects đơn giản
-    private List<Ball> balls;
-    private Paddle paddle;
-    private List<PowerUp> fallingPowerUps;
+    private List<BallData> balls;
+    private PaddleData paddle;
+    private List<PowerUpData> fallingPowerUps;
 
-    // Brick cần lưu theo cách khác vì có factory
     private List<BrickSaveInfo> bricks;
 
-    // Active powerups chỉ cần type + duration
     private List<ActivePowerupInfo> activePowerups;
 
     private String timestamp;
@@ -34,13 +33,117 @@ public class LevelSaveData {
         this.bricks = new ArrayList<>();
         this.fallingPowerUps = new ArrayList<>();
         this.activePowerups = new ArrayList<>();
-        this.timestamp = java.time.LocalDateTime.now().toString();
+        this.timestamp = LocalDateTime.now().toString();
+    }
+
+    public static class BallData {
+        private double x, y;
+        private double dx, dy;
+        private boolean isAttached;
+        private double speedScale;
+
+        public BallData() {}
+
+        public BallData(Ball ball) {
+            this.x = ball.getX();
+            this.y = ball.getY();
+            this.dx = ball.getDx();
+            this.dy = ball.getDy();
+            this.isAttached = ball.isReset();
+            this.speedScale = ball.getSpeedScale();
+        }
+
+        public Ball toBall() {
+            Ball ball = new Ball(x, y, Constants.NORMAL_BALL_SIZE);
+            ball.setDx(dx);
+            ball.setDy(dy);
+            ball.setReset(isAttached);
+            // Restore speedScale
+            if (speedScale != 1.0) {
+                ball.applySpeedScale(speedScale);
+            }
+            return ball;
+        }
+
+        // Getters and Setters
+        public double getX() { return x; }
+        public void setX(double x) { this.x = x; }
+        public double getY() { return y; }
+        public void setY(double y) { this.y = y; }
+        public double getDx() { return dx; }
+        public void setDx(double dx) { this.dx = dx; }
+        public double getDy() { return dy; }
+        public void setDy(double dy) { this.dy = dy; }
+        public boolean isAttached() { return isAttached; }
+        public void setAttached(boolean attached) { isAttached = attached; }
+        public double getSpeedScale() { return speedScale; }
+        public void setSpeedScale(double speedScale) { this.speedScale = speedScale; }
     }
 
     /**
-     * Info để recreate brick bằng factory
-     * Config chứa: dx, dy, rangeX, rangeY cho movable bricks
+     * Data class cho Paddle
      */
+    public static class PaddleData {
+        private double x, y;
+        private double width;
+        private int size;
+
+        public PaddleData() {}
+
+        public PaddleData(Paddle paddle) {
+            this.x = paddle.getX();
+            this.y = paddle.getY();
+            this.width = paddle.getWidth();
+            this.size = paddle.getSize();
+        }
+
+        public Paddle toPaddle() {
+            Paddle paddle = new Paddle(x, y, width, Constants.PADDLE_HEIGHT);
+            paddle.setSize(size);
+            return paddle;
+        }
+
+        public double getX() { return x; }
+        public void setX(double x) { this.x = x; }
+        public double getY() { return y; }
+        public void setY(double y) { this.y = y; }
+        public double getWidth() { return width; }
+        public void setWidth(double width) { this.width = width; }
+        public int getSize() { return size; }
+        public void setSize(int size) { this.size = size; }
+    }
+
+    public static class PowerUpData {
+        private String type;
+        private double x, y;
+        private double dy;
+
+        public PowerUpData() {}
+
+        public PowerUpData(PowerUp powerUp) {
+            this.type = powerUp.getType().name();
+            this.x = powerUp.getX();
+            this.y = powerUp.getY();
+            this.dy = powerUp.getDy();
+        }
+
+        public PowerUp toPowerUp() {
+            PowerUp powerUp = new SimplePowerUp(x, y, PowerUpType.valueOf(type));
+            powerUp.setDy(dy);
+            return powerUp;
+        }
+
+        // Getters and Setters
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+        public double getX() { return x; }
+        public void setX(double x) { this.x = x; }
+        public double getY() { return y; }
+        public void setY(double y) { this.y = y; }
+        public double getDy() { return dy; }
+        public void setDy(double dy) { this.dy = dy; }
+    }
+
     public static class BrickSaveInfo {
         private String type;  // Key từ BrickType enum
         private double x, y;
@@ -59,151 +162,62 @@ public class LevelSaveData {
             this.config = config != null ? new HashMap<>(config) : new HashMap<>();
         }
 
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public void setX(double x) {
-            this.x = x;
-        }
-
-        public double getY() {
-            return y;
-        }
-
-        public void setY(double y) {
-            this.y = y;
-        }
-
-        public int getHitPoints() {
-            return hitPoints;
-        }
-
-        public void setHitPoints(int hitPoints) {
-            this.hitPoints = hitPoints;
-        }
-
-        public Map<String, Double> getConfig() {
-            return config;
-        }
-
-        public void setConfig(Map<String, Double> config) {
-            this.config = config;
-        }
+        // Getters and Setters
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+        public double getX() { return x; }
+        public void setX(double x) { this.x = x; }
+        public double getY() { return y; }
+        public void setY(double y) { this.y = y; }
+        public int getHitPoints() { return hitPoints; }
+        public void setHitPoints(int hitPoints) { this.hitPoints = hitPoints; }
+        public Map<String, Double> getConfig() { return config; }
+        public void setConfig(Map<String, Double> config) { this.config = config; }
     }
 
-    /**
-     * Info cho active powerups
-     */
     public static class ActivePowerupInfo {
         private String type;
         private double remainingDuration;
 
-        public ActivePowerupInfo() {
-        }
+        public ActivePowerupInfo() {}
 
         public ActivePowerupInfo(String type, double remainingDuration) {
             this.type = type;
             this.remainingDuration = remainingDuration;
         }
 
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public double getRemainingDuration() {
-            return remainingDuration;
-        }
-
-        public void setRemainingDuration(double duration) {
-            this.remainingDuration = duration;
-        }
+        public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+        public double getRemainingDuration() { return remainingDuration; }
+        public void setRemainingDuration(double duration) { this.remainingDuration = duration; }
     }
 
-    // Getters and Setters
-    public int getLevelNumber() {
-        return levelNumber;
-    }
+    public int getLevelNumber() { return levelNumber; }
+    public void setLevelNumber(int levelNumber) { this.levelNumber = levelNumber; }
 
-    public void setLevelNumber(int levelNumber) {
-        this.levelNumber = levelNumber;
-    }
+    public int getScore() { return score; }
+    public void setScore(int score) { this.score = score; }
 
-    public int getScore() {
-        return score;
-    }
+    public int getLives() { return lives; }
+    public void setLives(int lives) { this.lives = lives; }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
+    public List<BallData> getBalls() { return balls; }
+    public void setBalls(List<BallData> balls) { this.balls = balls; }
 
-    public int getLives() {
-        return lives;
-    }
+    public List<BrickSaveInfo> getBricks() { return bricks; }
+    public void setBricks(List<BrickSaveInfo> bricks) { this.bricks = bricks; }
 
-    public void setLives(int lives) {
-        this.lives = lives;
-    }
+    public PaddleData getPaddle() { return paddle; }
+    public void setPaddle(PaddleData paddle) { this.paddle = paddle; }
 
-    public List<Ball> getBalls() {
-        return balls;
-    }
+    public List<PowerUpData> getFallingPowerUps() { return fallingPowerUps; }
+    public void setFallingPowerUps(List<PowerUpData> powerUps) { this.fallingPowerUps = powerUps; }
 
-    public void setBalls(List<Ball> balls) {
-        this.balls = balls;
-    }
+    public List<ActivePowerupInfo> getActivePowerups() { return activePowerups; }
+    public void setActivePowerups(List<ActivePowerupInfo> powerups) { this.activePowerups = powerups; }
 
-    public List<BrickSaveInfo> getBricks() {
-        return bricks;
-    }
-
-    public void setBricks(List<BrickSaveInfo> bricks) {
-        this.bricks = bricks;
-    }
-
-    public Paddle getPaddle() {
-        return paddle;
-    }
-
-    public void setPaddle(Paddle paddle) {
-        this.paddle = paddle;
-    }
-
-    public List<PowerUp> getFallingPowerUps() {
-        return fallingPowerUps;
-    }
-
-    public void setFallingPowerUps(List<PowerUp> powerUps) {
-        this.fallingPowerUps = powerUps;
-    }
-
-    public List<ActivePowerupInfo> getActivePowerups() {
-        return activePowerups;
-    }
-
-    public void setActivePowerups(List<ActivePowerupInfo> powerups) {
-        this.activePowerups = powerups;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
+    public String getTimestamp() { return timestamp; }
+    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
 
     @Override
     public String toString() {

@@ -25,35 +25,16 @@ public class GlobalGameData {
         this.selectedPaddleSkin = DEFAULT_PADDLE_SKIN;
     }
 
-    // Getters
     public int getTotalPoints() {
         return totalPoints;
-    }
-
-    public float getVolume() {
-        return volume;
-    }
-
-    public List<String> getOwnedBallEffects() {
-        return new ArrayList<>(ownedBallEffects);
     }
 
     public List<String> getSelectedBallEffects() {
         return new ArrayList<>(selectedBallEffects);
     }
 
-
-    public List<String> getOwnedPaddleSkins() {
-        return new ArrayList<>(ownedPaddleSkins);
-    }
-
     public String getSelectedPaddleSkin() {
         return selectedPaddleSkin;
-    }
-
-    // Setters
-    public void setTotalPoints(int totalPoints) {
-        this.totalPoints = Math.max(0, totalPoints);
     }
 
     public void setVolume(float volume) {
@@ -75,7 +56,6 @@ public class GlobalGameData {
         }
     }
 
-    // Point operations
     public void addPoints(int points) {
         this.totalPoints += points;
     }
@@ -88,7 +68,6 @@ public class GlobalGameData {
         return false;
     }
 
-    // Ball effect operations
     public void addBallEffect(String effect) {
         if (!ownedBallEffects.contains(effect)) {
             ownedBallEffects.add(effect);
@@ -116,7 +95,6 @@ public class GlobalGameData {
         selectedBallEffects.remove(effect);
     }
 
-    // Paddle skin operations
     public void addPaddleSkin(String skin) {
         if (!ownedPaddleSkins.contains(skin)) {
             ownedPaddleSkins.add(skin);
@@ -127,7 +105,6 @@ public class GlobalGameData {
         return ownedPaddleSkins.contains(skin);
     }
 
-    // Utility
     public void reset() {
         this.totalPoints = 0;
         this.volume = DEFAULT_VOLUME;

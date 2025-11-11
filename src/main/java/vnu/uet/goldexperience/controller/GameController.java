@@ -14,6 +14,7 @@ import vnu.uet.goldexperience.manager.*;
 import vnu.uet.goldexperience.view.GameBackground;
 import vnu.uet.goldexperience.core.ChapterTheme;
 import vnu.uet.goldexperience.view.GameUIComponents;
+import vnu.uet.goldexperience.view.LoadGameDialog;
 import vnu.uet.goldexperience.view.ScoreboardPanel;
 import vnu.uet.goldexperience.database.PlayerDatabase;
 import vnu.uet.goldexperience.manager.GameSession.*;
@@ -39,8 +40,7 @@ public class GameController implements GameSessionListener {
     private GameBackground background;
     private PauseMenuManager pauseMenu;
     private TransitionManager transitionManager;
-    private SceneManager sceneManager;
-    private GameStateManager gameStateManager;
+    private LoadGameDialog loadGameDialog;
     private GameOverManager gameOverManager;
     private DialogueSystem dialogueSystem;
     private ChapterTheme currentTheme;
@@ -51,9 +51,9 @@ public class GameController implements GameSessionListener {
         engine = new GameEngine(canvas, input);
         pauseMenu = engine.getPauseMenuManager();
         transitionManager = engine.getTransitionManager();
-        gameStateManager = engine.getStateManager();
         gameOverManager = engine.getGameOverManager();
         dialogueSystem = engine.getDialogueSystem();
+        loadGameDialog = engine.getLoadGameDialog();
 
         gameOverManager.setScoreSaveCallback((playerName, score) -> {
             savePlayerScore(playerName, score);
@@ -83,7 +83,6 @@ public class GameController implements GameSessionListener {
     }
 
     public void setSceneManager(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
         if (engine != null) {
             engine.setSceneManager(sceneManager);
         }
@@ -112,6 +111,9 @@ public class GameController implements GameSessionListener {
             input.mouseMoved(canvasX + canvas.getLayoutX());
             pauseMenu.handleMouseInput(canvasX, canvasY, false);
             gameOverManager.handleMouseInput(canvasX, canvasY, false);
+            if (loadGameDialog != null) {
+                loadGameDialog.handleMouseInput(canvasX, canvasY, false);
+            }
         });
 
         rootGamePane.setOnMouseDragged(e -> {
@@ -126,6 +128,9 @@ public class GameController implements GameSessionListener {
                     engine.getPauseMenuManager().handleMouseInput(e.getX(), e.getY(), true);
                 if (engine.getStateManager().is(GameState.GAME_OVER))
                     engine.getGameOverManager().handleMouseInput(e.getX(), e.getY(), true);
+                if (loadGameDialog != null && loadGameDialog.isVisible()) {
+                    loadGameDialog.handleMouseInput(e.getX(), e.getY(), true);
+                }
             }
         });
 
@@ -288,4 +293,5 @@ public class GameController implements GameSessionListener {
 
     @Override
     public void onBallHitWall(GameSession.HitSide hitSide) {}
+
 }
