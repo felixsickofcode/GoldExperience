@@ -55,10 +55,6 @@ public class GameController implements GameSessionListener {
         gameOverManager = engine.getGameOverManager();
         dialogueSystem = engine.getDialogueSystem();
 
-        gameOverManager.setScoreSaveCallback((playerName, score) -> {
-            savePlayerScore(playerName, score);
-        });
-
         GameSession.getInstance().addListener(this);
         engine.setCursorChangeListener(() -> Platform.runLater(this::updateCursor));
 
@@ -151,6 +147,20 @@ public class GameController implements GameSessionListener {
             Platform.runLater(() ->
                     GameUIComponents.updateScoreLabel(scoreLabel, score)
             );
+        }
+
+        String playerName = GameSession.getInstance().getCurrentPlayer();
+        if (playerName == null || playerName.isEmpty()) return;
+
+        int currentChapter = GameSession.getInstance().getCurrentChapter();
+        int currentLevel = GameSession.getInstance().getCurrentLevel();
+
+        PlayerDatabase db = PlayerDatabase.getInstance();
+
+        int existingScore = db.getPlayerScore(playerName, currentChapter, currentLevel);
+
+        if (existingScore == -1 || score > existingScore) {
+            db.addOrUpdatePlayer(playerName, currentChapter, currentLevel, score);
         }
     }
 
@@ -250,31 +260,22 @@ public class GameController implements GameSessionListener {
             return;
         }
 
-        PlayerDatabase db = PlayerDatabase.getInstance();
+        if (finalScore <= 0) {
+            System.err.println("Cannot save score: score must be greater than 0");
+            return;
+        }
 
-        try {
-            if (db.playerExists(playerName)) {
-                int currentScore = db.getPlayerScore(playerName);
-                if (finalScore > currentScore) {
-                    db.updateScore(playerName, finalScore);
-                    System.out.println("✓ Updated " + playerName + "'s high score: " + currentScore + " → " + finalScore);
-                } else {
-                    System.out.println("Score " + finalScore + " not higher than current " + currentScore);
-                }
-            } else {
-                db.addOrUpdatePlayer(playerName, finalScore);
-                System.out.println("✓ Added new player: " + playerName + " with score " + finalScore);
-            }
+        System.out.println("Game over - Final score: " + finalScore + " for " + playerName);
 
-            // Refresh scoreboard immediately
-            if (scoreboardPanel != null) {
-                Platform.runLater(() -> scoreboardPanel.updateScoreboard());
-            }
-        } catch (Exception e) {
-            System.err.println("Error saving player score: " + e.getMessage());
-            e.printStackTrace();
+        if (scoreboardPanel != null) {
+            int chapter = GameSession.getInstance().getCurrentChapter();
+            int level = GameSession.getInstance().getCurrentLevel();
+            javafx.application.Platform.runLater(() ->
+                    scoreboardPanel.updateScoreboardForLevel(chapter, level)
+            );
         }
     }
+
 
     public void cleanup() {
         GameSession.getInstance().removeListener(this);

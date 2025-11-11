@@ -15,7 +15,7 @@ import vnu.uet.goldexperience.manager.GameSession;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale; // Đảm bảo import Locale
+import java.util.Locale;
 
 public class ScoreboardPanel extends VBox implements GameSession.GameSessionListener {
 
@@ -23,7 +23,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
     private List<ScoreEntry> scoreEntries;
     private AnimationTimer updateTimer;
     private long lastUpdateTime = 0;
-    private final long UPDATE_INTERVAL = 2_000_000_000L;
+    private final long UPDATE_INTERVAL = 250_000_000L;
 
     private Color primaryColor;
     private Color secondaryColor;
@@ -32,14 +32,11 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
 
     private double glowPulse = 0;
 
-    private String themeVariablesStyle = "";
-
-    private static final String GLOW_STYLE_FORMAT =
-            "-fx-effect: dropshadow(gaussian, %s, 15, %.2f, 0, 0);";
+    private int currentChapter = 1;
+    private int currentLevel = 1;
 
     public ScoreboardPanel() {
         super(8);
-        getStyleClass().add("scoreboard");
         setupUI();
         setupUpdateTimer();
         updateScoreboard();
@@ -56,7 +53,6 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         titleLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 30));
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setMaxWidth(Double.MAX_VALUE);
-        titleLabel.getStyleClass().add("scoreboard-title"); // Thêm class CSS
 
         getChildren().add(titleLabel);
 
@@ -74,7 +70,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         updateTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                glowPulse += 0.05;
+                glowPulse += 0.08;
                 updateGlowEffect();
 
                 if (now - lastUpdateTime >= UPDATE_INTERVAL) {
@@ -89,25 +85,26 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
     private void updateGlowEffect() {
         double pulse = 0.6 + Math.sin(glowPulse) * 0.4;
         String glowStyle = String.format(Locale.US,
-                GLOW_STYLE_FORMAT,
+                "-fx-effect: dropshadow(gaussian, %s, 15, %.2f, 0, 0);",
                 toRGBA(primaryColor, pulse * 0.8),
                 pulse
         );
 
-        String baseStyle = String.format(
-                Locale.US,
-                "-fx-background-color: %s; -fx-border-color: %s;",
-                toRGBA(backgroundColor, 0.85),
-                toRGBA(primaryColor, 0.8)
-        );
-
-        setStyle(themeVariablesStyle + " " + baseStyle + " " + glowStyle);
+        setStyle("-fx-background-color: " + toRGBA(backgroundColor, 0.85) + "; " +
+                "-fx-background-radius: 10; " +
+                "-fx-border-color: " + toRGBA(primaryColor, 0.8) + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 10; " +
+                glowStyle);
     }
 
     public void updateScoreboard() {
         try {
+            currentChapter = GameSession.getInstance().getCurrentChapter();
+            currentLevel = GameSession.getInstance().getCurrentLevel();
+
             List<PlayerDatabase.PlayerScore> topPlayers =
-                    PlayerDatabase.getInstance().getTopPlayers(10);
+                    PlayerDatabase.getInstance().getTopPlayers(currentChapter, currentLevel, 10);
 
             for (int i = 0; i < scoreEntries.size(); i++) {
                 if (i < topPlayers.size()) {
@@ -122,6 +119,12 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
         } catch (Exception e) {
             System.err.println("Error updating scoreboard: " + e.getMessage());
         }
+    }
+
+    public void updateScoreboardForLevel(int chapter, int level) {
+        this.currentChapter = chapter;
+        this.currentLevel = level;
+        updateScoreboard();
     }
 
     public void applyTheme(ChapterTheme theme) {
@@ -165,21 +168,7 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
                 break;
         }
 
-        String primaryColorHex = "#" + primaryColor.toString().substring(2, 8);
-        String secondaryColorHex = "#" + secondaryColor.toString().substring(2, 8);
-        String backgroundColorRGB = String.format("rgb(%d, %d, %d)",
-                (int)(backgroundColor.getRed() * 255),
-                (int)(backgroundColor.getGreen() * 255),
-                (int)(backgroundColor.getBlue() * 255));
-        String textColorRGB = String.format("rgb(%d, %d, %d)",
-                (int)(textColor.getRed() * 255),
-                (int)(textColor.getGreen() * 255),
-                (int)(textColor.getBlue() * 255));
-
-        themeVariablesStyle = String.format(
-                "-primary-color: %s; -secondary-color: %s; -background-color: %s; -text-color: %s;",
-                primaryColorHex, secondaryColorHex, backgroundColorRGB, textColorRGB
-        );
+        titleLabel.setTextFill(primaryColor);
 
         for (ScoreEntry entry : scoreEntries) {
             entry.updateColors(primaryColor, secondaryColor, textColor);
@@ -204,10 +193,14 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
     }
 
     @Override
-    public void onChapterChanged(int newChapter) {}
+    public void onChapterChanged(int newChapter) {
+        updateScoreboard();
+    }
 
     @Override
-    public void onLevelChanged(int newLevel) {}
+    public void onLevelChanged(int newLevel) {
+        updateScoreboard();
+    }
 
     @Override
     public void onBallHitWall(GameSession.HitSide side) {}
@@ -224,7 +217,6 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
             setAlignment(Pos.CENTER_LEFT);
             setPadding(new Insets(4, 8, 4, 8));
             setMaxWidth(Double.MAX_VALUE);
-            getStyleClass().add("score-entry"); // Áp dụng class CSS
 
             rankLabel = new Label(rank + ".");
             rankLabel.setFont(Font.font("Cynosure Straight", FontWeight.BOLD, 20));
@@ -249,11 +241,10 @@ public class ScoreboardPanel extends VBox implements GameSession.GameSessionList
             scoreLabel.setText(String.valueOf(score));
 
             if (rank <= 3 && !name.equals("---")) {
-                if (!getStyleClass().contains("top-rank-entry")) {
-                    getStyleClass().add("top-rank-entry");
-                }
+                setStyle("-fx-background-color: " + toRGBA(primaryColor, 0.15) + "; " +
+                        "-fx-background-radius: 5;");
             } else {
-                getStyleClass().remove("top-rank-entry");
+                setStyle("-fx-background-color: transparent;");
             }
         }
 
