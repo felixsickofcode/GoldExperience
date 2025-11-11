@@ -15,7 +15,6 @@ public class GameOverManager {
         MAIN_MENU(1, "MAIN MENU"),
         QUIT(2, "QUIT");
 
-
         final int index;
         final String label;
 
@@ -31,6 +30,7 @@ public class GameOverManager {
         FADING_IN_MENU,
         SHOWN
     }
+
     private Phase currentPhase = Phase.HIDDEN;
 
     private final Canvas canvas;
@@ -60,24 +60,17 @@ public class GameOverManager {
     private Font buttonFont;
 
     private double animationTimer = 0;
-
     private double transitionTimer = 0.0;
     private static final double TITLE_FADE_DURATION = 1.5;
     private static final double MENU_FADE_DURATION = 0.5;
 
-    private boolean scoreSaved = false;
-
-    public interface ScoreSaveCallback {
-        void saveScore(String playerName, int score);
-    }
-    private ScoreSaveCallback scoreSaveCallback;
+    private GameOverCallback callback;
 
     public interface GameOverCallback {
         void onRetry();
         void onQuit();
         void onMainMenu();
     }
-    private GameOverCallback callback;
 
     public GameOverManager(Canvas canvas, SceneManager sceneManager) {
         this.canvas = canvas;
@@ -146,18 +139,12 @@ public class GameOverManager {
         this.callback = callback;
     }
 
-    public void setScoreSaveCallback(ScoreSaveCallback callback) {
-        this.scoreSaveCallback = callback;
-    }
-
     public void show() {
         if (currentPhase != Phase.HIDDEN) return;
         currentPhase = Phase.FADING_IN_TITLE;
         transitionTimer = 0;
         selectedIndex = 0;
         animationTimer = 0;
-        scoreSaved = false;
-        saveScore();
     }
 
     public void hide() {
@@ -193,8 +180,7 @@ public class GameOverManager {
         } else if (input.isActionJustPressed(Action.MOVE_DOWN)) {
             selectedIndex = (selectedIndex + 1) % MENU_OPTION_COUNT;
         }
-        if (input.isActionJustPressed(Action.CONFIRM) ||
-                input.isActionJustPressed(Action.SHOOT)) {
+        if (input.isActionJustPressed(Action.CONFIRM) || input.isActionJustPressed(Action.SHOOT)) {
             executeSelectedOption();
         }
     }
@@ -215,7 +201,6 @@ public class GameOverManager {
     private int getButtonIndexAtPosition(double x, double y) {
         double startY = canvasHeight / 2 + 20;
         double btnX = (canvasWidth - BUTTON_WIDTH) / 2;
-
         for (int i = 0; i < MENU_OPTION_COUNT; i++) {
             double btnY = startY + i * (BUTTON_HEIGHT + BUTTON_SPACING);
             if (x >= btnX && x <= btnX + BUTTON_WIDTH &&
@@ -230,23 +215,15 @@ public class GameOverManager {
         if (callback == null) return;
         MenuOption option = MenuOption.values()[selectedIndex];
         switch (option) {
-            case RETRY:
-                callback.onRetry();
-                break;
-            case QUIT:
-                callback.onQuit();
-                break;
-            case MAIN_MENU:
-                callback.onMainMenu();
-                break;
+            case RETRY -> callback.onRetry();
+            case MAIN_MENU -> callback.onMainMenu();
+            case QUIT -> callback.onQuit();
         }
     }
 
     public void render(GraphicsContext gc) {
         if (currentPhase == Phase.HIDDEN) return;
-
-        double titleAlpha = 0.0;
-        double menuAlpha = 0.0;
+        double titleAlpha = 0.0, menuAlpha = 0.0;
 
         if (currentPhase == Phase.FADING_IN_TITLE) {
             titleAlpha = transitionTimer / TITLE_FADE_DURATION;
@@ -280,7 +257,6 @@ public class GameOverManager {
     private void renderTitle(GraphicsContext gc) {
         double centerX = canvasWidth / 2;
         double titleY = canvasHeight / 2 - 80;
-
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setFont(titleFont);
 
@@ -306,7 +282,6 @@ public class GameOverManager {
 
         gc.setFill(colorBackground.deriveColor(0, 1, 1, 0.3));
         gc.fillRect(boxX, boxY, boxWidth, boxHeight);
-
         gc.setStroke(colorPrimary.deriveColor(0, 1, 1, 0.5));
         gc.setLineWidth(2);
         gc.strokeRect(boxX, boxY, boxWidth, boxHeight);
@@ -317,13 +292,10 @@ public class GameOverManager {
 
         gc.strokeLine(boxX, boxY, boxX + cornerSize, boxY);
         gc.strokeLine(boxX, boxY, boxX, boxY + cornerSize);
-
         gc.strokeLine(boxX + boxWidth, boxY, boxX + boxWidth - cornerSize, boxY);
         gc.strokeLine(boxX + boxWidth, boxY, boxX + boxWidth, boxY + cornerSize);
-
         gc.strokeLine(boxX, boxY + boxHeight, boxX + cornerSize, boxY + boxHeight);
         gc.strokeLine(boxX, boxY + boxHeight, boxX, boxY + boxHeight - cornerSize);
-
         gc.strokeLine(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - cornerSize, boxY + boxHeight);
         gc.strokeLine(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth, boxY + boxHeight - cornerSize);
 
@@ -357,35 +329,6 @@ public class GameOverManager {
             gc.setFill(colorTextDisabled);
             gc.setFont(buttonFont);
             gc.fillText(text, x + BUTTON_WIDTH / 2, y + BUTTON_HEIGHT / 2 + 6);
-        }
-    }
-
-
-    private void saveScore() {
-        if (scoreSaved) {
-            System.out.println("⚠ Score already saved");
-            return;
-        }
-
-        try {
-            int finalScore = GameSession.getInstance().getScore();
-            String playerName = GameSession.getInstance().getCurrentPlayer(); // ← LẤY TỪ SESSION
-
-            if (playerName == null || playerName.trim().isEmpty()) {
-                System.err.println("✗ No player logged in!");
-                return;
-            }
-
-            System.out.println("💾 Saving: " + playerName + " - Score: " + finalScore);
-
-            if (scoreSaveCallback != null) {
-                scoreSaveCallback.saveScore(playerName, finalScore);
-                scoreSaved = true;
-                System.out.println("✓ Score saved!");
-            }
-        } catch (Exception e) {
-            System.err.println("✗ Error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
