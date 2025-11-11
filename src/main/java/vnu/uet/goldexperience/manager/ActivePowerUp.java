@@ -26,7 +26,7 @@ public class ActivePowerUp {
 //    }
 
     public boolean isExpired() {
-        if (powerUp.isPermanent() || duration == 0) {
+        if (isPermanent()) {
             return false;
         }
 
@@ -37,12 +37,8 @@ public class ActivePowerUp {
         powerUp.removeEffect(context);
     }
 
-    public double getRemainingTime() {
-        if (powerUp.isPermanent())
-            return Long.MAX_VALUE;
-
-        long elapsed = System.currentTimeMillis() - startTime;
-        return Math.max(0, powerUp.getDuration() - elapsed);
+    public boolean isPermanent() {
+        return duration == 0;
     }
 
     public PowerUp getPowerUp() {

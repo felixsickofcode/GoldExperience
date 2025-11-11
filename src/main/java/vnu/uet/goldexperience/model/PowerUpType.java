@@ -67,8 +67,7 @@ public enum PowerUpType {
                 }
             },
             null,
-            "images/3ball.png",
-            Constants.THREE_BALLS_DURATION
+            "images/3ball.png"
     ),
 
     EXTEND(
@@ -77,8 +76,7 @@ public enum PowerUpType {
                 paddle.extendPaddle();
             },
             null,
-            "images/extend.png",
-            Constants.EXTEND_DURATION
+            "images/extend.png"
     ),
 
     TINY(
@@ -87,8 +85,7 @@ public enum PowerUpType {
                 paddle.narrowPaddle();
             },
             null,
-            "images/tiny.png",
-            Constants.TINY_DURATION
+            "images/tiny.png"
     ),
 
     FAST(
@@ -104,8 +101,7 @@ public enum PowerUpType {
                     ball.applySpeedScale(1.0 / Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
-            "images/fast.png",
-            Constants.FAST_DURATION
+            "images/fast.png"
     ),
 
     SLOW(
@@ -121,31 +117,27 @@ public enum PowerUpType {
                     ball.applySpeedScale(Constants.BALL_SPEED_AMPLIFIER);
                 }
             },
-            "images/slow.png",
-            Constants.SLOW_DURATION
+            "images/slow.png"
     ),
 
     // TODO: tạm để thế này đã
     BULLETS(
             null,
             null,
-            "image/bullet.png",
-            Constants.BULLETS_DURATION
+            "image/bullet.png"
     );
 
     private final PowerUpEffect applyEffect;
     private final PowerUpRemoval removeEffect;
     private final String imagePath;
-    private final long duration;
 
     // Cache to avoid re-checking sprite compatibility repeatedly
     private Boolean droppableCache = null;
 
-    PowerUpType(PowerUpEffect apply, PowerUpRemoval remove, String imagePath, long duration) {
+    PowerUpType(PowerUpEffect apply, PowerUpRemoval remove, String imagePath) {
         this.applyEffect = apply;
         this.removeEffect = remove;
         this.imagePath = imagePath;
-        this.duration = duration;
     }
 
     public PowerUpEffect getApplyEffect() {
@@ -154,10 +146,6 @@ public enum PowerUpType {
 
     public PowerUpRemoval getRemoveEffect() {
         return removeEffect;
-    }
-
-    public long getDuration() {
-        return duration;
     }
 
     public Image getImage() {

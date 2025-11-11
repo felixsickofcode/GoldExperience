@@ -6,7 +6,7 @@ import vnu.uet.goldexperience.core.Constants;
 public class Bullet extends MovableObject {
 
     public Bullet(double x, double y, double width, double height, double dx, double dy) {
-        super(x, y, width, height, 0, Constants.BULLET_SPEED);
+        super(x, y, width, height, dx, dy);
     }
 
     public boolean isOffScreen() {

@@ -16,7 +16,6 @@ public class AssetsManager {
         loadBalls();
     }
 
-
     private static void loadBricks() {
         try {
             bricks.add(new Image(AssetsManager.class.getResource("/images/brick_15.png").toExternalForm()));
@@ -57,6 +56,4 @@ public class AssetsManager {
             System.err.println("Không thể tải ball: " + e.getMessage());
         }
     }
-
-
 }

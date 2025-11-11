@@ -7,7 +7,6 @@ import vnu.uet.goldexperience.core.GameContext;
 public abstract class PowerUp extends MovableObject {
 
     private final PowerUpType type;
-    private final long duration;
     private final PowerUpEffect applyEffect;
     private final PowerUpRemoval removeEffect;
 
@@ -17,7 +16,6 @@ public abstract class PowerUp extends MovableObject {
         this.applyEffect = type.getApplyEffect();
         this.removeEffect = type.getRemoveEffect();
         this.image = type.getImage();
-        this.duration = type.getDuration();
     }
 
     public void applyEffect(GameContext context) {
@@ -29,16 +27,8 @@ public abstract class PowerUp extends MovableObject {
             removeEffect.remove(context);
     }
 
-    public boolean isPermanent() {
-        return duration == 0;
-    }
-
     public PowerUpType getType() {
         return type;
-    }
-
-    public long getDuration() {
-        return duration;
     }
 
     @Override

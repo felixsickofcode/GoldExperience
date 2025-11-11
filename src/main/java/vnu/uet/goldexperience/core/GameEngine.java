@@ -507,7 +507,32 @@ public class GameEngine implements BrickListener {
         }
 
         if (powerUpManager != null) {
-            powerUpManager.update();
+            powerUpManager.update(deltaTime);
+        }
+
+        // va chạm của Bullet
+        if (!bullets.isEmpty()) {
+            List<Bullet> bulletsToRemove = new ArrayList<>();
+
+            for (Bullet bullet : bullets) {
+                bullet.update(deltaTime);
+
+                if (bullet.isOffScreen()) {
+                    bulletsToRemove.add(bullet);
+                    continue;
+                }
+
+                for (Brick brick : bricks) {
+                    if (!brick.isDestroyed() && bullet.checkCollide(brick)) {
+                        brick.takeHit();
+                        bulletsToRemove.add(bullet);
+
+                        break;
+                    }
+                }
+            }
+
+            bullets.removeAll(bulletsToRemove);
         }
 
         checkChainExplosions();

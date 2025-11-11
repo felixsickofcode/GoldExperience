@@ -124,7 +124,6 @@ public class Paddle extends MovableObject {
         switch (size) {
             case 0 -> newWidth = Constants.TINY_PADDLE_WIDTH;
             case 1 -> newWidth = Constants.SMALL_PADDLE_WIDTH;
-            case 2 -> newWidth = Constants.MEDIUM_PADDLE_WIDTH;
             case 3 -> newWidth = Constants.LARGE_PADDLE_WIDTH;
             case 4 -> newWidth = Constants.BIG_PADDLE_WIDTH;
             default -> newWidth = Constants.MEDIUM_PADDLE_WIDTH;
@@ -133,6 +132,7 @@ public class Paddle extends MovableObject {
         setWidth(newWidth);
         setImage(PaddleImageHelper.getImageWithCurrentSkin(size));
     }
+
     public void refreshSkin() {
         int currentSize = getSize();
         Image newImage = PaddleImageHelper.getImageWithCurrentSkin(currentSize);
@@ -140,9 +140,11 @@ public class Paddle extends MovableObject {
 
         setImage(PaddleImageHelper.getImageWithCurrentSkin(currentSize));
     }
+
     public void onBallCollision(Ball ball) {
         effect.onBallHit(ball.getX(), ball.getY());
     }
+
     public double getSpeed() {
         return speed;
     }
