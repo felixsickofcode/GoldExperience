@@ -15,8 +15,6 @@ public class PauseMenuManager {
         RESTART(1, "RESTART"),
         BACK(2, "BACK"),
         QUIT(3, "QUIT GAME");
-//        SAVE(4, "SAVE GAME"),
-//        LOAD(5, "LOAD GAME");
 
         final int index;
         final String label;
@@ -42,7 +40,7 @@ public class PauseMenuManager {
     private static final double BUTTON_WIDTH = 280;
     private static final double BUTTON_HEIGHT = 45;
     private static final double BUTTON_SPACING = 12;
-    private static final int MENU_OPTION_COUNT = 6;
+    private static final int MENU_OPTION_COUNT = 4;
 
     private ChapterTheme currentTheme;
     private Color colorPrimary;
@@ -61,8 +59,6 @@ public class PauseMenuManager {
         void onRestart();
         void onBack();
         void onQuit();
-//        void onSave();
-//        void onLoad();
     }
 
     private PauseMenuCallback callback;
@@ -218,12 +214,6 @@ public class PauseMenuManager {
             case QUIT:
                 callback.onQuit();
                 break;
-//            case SAVE:          // ← THÊM
-//                callback.onSave();
-//                break;
-//            case LOAD:          // ← THÊM
-//                callback.onLoad();
-//                break;
         }
     }
 

@@ -16,23 +16,21 @@ import java.util.Objects;
 
 public class LevelManager {
 
-    private final List<Brick> activeBricks;
     private final Gson gson;
 
     public LevelManager() {
-        this.activeBricks = new ArrayList<>();
         this.gson = new Gson();
     }
 
-    public void loadLevel(int levelNumber) {
-        activeBricks.clear();
+    public List<Brick> loadLevel(int levelNumber) {
+        List<Brick> bricks = new ArrayList<>();
         String levelFile = "/levels/level" + levelNumber + ".json";
         System.out.println("Đang tải màn chơi: " + levelFile);
 
         try (InputStream is = getClass().getResourceAsStream(levelFile)) {
             if (is == null) {
                 System.err.println("LỖI: Không tìm thấy file: " + levelFile);
-                return;
+                return bricks;
             }
 
             Reader reader = new InputStreamReader(Objects.requireNonNull(is));
@@ -52,7 +50,7 @@ public class LevelManager {
                     if (brickType != null) {
                         Map<String, Double> config = props != null ? props.get(typeString) : null;
                         Brick brick = brickType.create(brickX, brickY, config);
-                        activeBricks.add(brick);
+                        bricks.add(brick);
                     }
                 }
             }
@@ -60,9 +58,6 @@ public class LevelManager {
             System.err.println("Lỗi khi tải hoặc xử lý file: " + levelFile);
             e.printStackTrace();
         }
-    }
-
-    public List<Brick> getActiveBricks() {
-        return activeBricks;
+        return bricks;
     }
 }
