@@ -11,11 +11,8 @@ import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.core.GameEngine;
 import vnu.uet.goldexperience.core.GameState;
 import vnu.uet.goldexperience.manager.*;
-import vnu.uet.goldexperience.view.GameBackground;
+import vnu.uet.goldexperience.view.*;
 import vnu.uet.goldexperience.core.ChapterTheme;
-import vnu.uet.goldexperience.view.GameUIComponents;
-import vnu.uet.goldexperience.view.SaveFoundDialog;
-import vnu.uet.goldexperience.view.ScoreboardPanel;
 import vnu.uet.goldexperience.database.PlayerDatabase;
 import vnu.uet.goldexperience.manager.GameSession.*;
 
@@ -137,7 +134,10 @@ public class GameController implements GameSessionListener {
 
     private void updateCursor() {
         if (engine != null && engine.getStateManager() != null) {
-            if (engine.getStateManager().is(GameState.PAUSED) || engine.getStateManager().is(GameState.GAME_OVER)) {
+            if (engine.getStateManager().is(GameState.PAUSED)
+                    || engine.getStateManager().is(GameState.GAME_OVER)
+                        || engine.getStateManager().is(GameState.STORY)
+                            || engine.getStateManager().is(GameState.TOLOAD)3) {
                 rootGamePane.setCursor(Cursor.DEFAULT);
             } else {
                 rootGamePane.setCursor(Cursor.NONE);
@@ -194,6 +194,7 @@ public class GameController implements GameSessionListener {
             gameOverManager.setTheme(currentTheme);
             transitionManager.setTheme(currentTheme);
             dialogueSystem.setTheme(currentTheme);
+            saveFoundDialog.setTheme(currentTheme);
 
             GameUIComponents.applyTheme(scoreLabel, currentTheme);
             updateLives(GameSession.getInstance().getLives());

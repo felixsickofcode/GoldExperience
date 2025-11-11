@@ -1,4 +1,4 @@
-package vnu.uet.goldexperience.manager;
+package vnu.uet.goldexperience.view;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.GaussianBlur;
@@ -40,10 +40,7 @@ public class TransitionManager {
     public TransitionManager(double canvasWidth, double canvasHeight) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        setTheme(ChapterTheme.ORIGINAL);
-
         titleFont = Font.loadFont(getClass().getResourceAsStream("/font/cyber32.ttf"), 66);
-
     }
 
     public void setTheme(ChapterTheme theme) {
