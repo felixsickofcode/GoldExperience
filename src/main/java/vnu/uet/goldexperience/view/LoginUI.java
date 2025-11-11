@@ -99,7 +99,7 @@ public class LoginUI {
             }
 
             // Save to database
-            boolean success = PlayerDatabase.getInstance().addOrUpdatePlayer(playerName, 0);
+            boolean success = PlayerDatabase.getInstance().addOrUpdatePlayer(playerName, 0,1,1);
 
             if (success) {
                 System.out.println("Player logged in: " + playerName);
