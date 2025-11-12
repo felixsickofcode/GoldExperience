@@ -165,6 +165,7 @@ public class GameEngine implements BrickListener {
             public void onRestart() {
                 System.out.println("Restart clicked");
                 reloadLevel();
+                SoundManager.restartChapterMusic();
                 notifyCursorChange();
             }
 
@@ -173,9 +174,10 @@ public class GameEngine implements BrickListener {
                 SoundManager.playClickSound();
                 System.out.println("Back");
                 saveCurrentGame();
-                if (mode.equals(GameSession.GameMode.STORY)) {
-                    saveCurrentGame();
-                }
+
+                SoundManager.stopAllMusic();
+                SoundManager.playBackgroundMusic();
+
                 if (sceneManager != null) {
                     end();
                     if (mode.equals(GameSession.GameMode.STORY))
@@ -192,6 +194,7 @@ public class GameEngine implements BrickListener {
                 if (mode.equals(GameSession.GameMode.STORY)) {
                     saveCurrentGame();
                 }
+                SoundManager.stopAllMusic();
                 Platform.exit();
             }
         });
@@ -202,6 +205,7 @@ public class GameEngine implements BrickListener {
             @Override
             public void onRetry() {
                 SoundManager.playClickSound();
+                SoundManager.restartChapterMusic();
                 System.out.println("Retry clicked");
                 GameSession.getInstance().resetLives();
                 reloadLevel();
@@ -210,6 +214,8 @@ public class GameEngine implements BrickListener {
             @Override
             public void onMainMenu() {
                 SoundManager.playClickSound();
+                SoundManager.stopAllMusic();
+                SoundManager.playBackgroundMusic();
                 System.out.println("Main Menu clicked");
                 if (sceneManager != null) {
                     end();
@@ -220,6 +226,7 @@ public class GameEngine implements BrickListener {
             @Override
             public void onQuit() {
                 SoundManager.playClickSound();
+                SoundManager.stopAllMusic();
                 System.out.println("Quit clicked");
                 javafx.application.Platform.exit();
             }
@@ -238,6 +245,8 @@ public class GameEngine implements BrickListener {
                         if (sceneManager != null) {
                             end();
                             sceneManager.switchTo("menu");
+                            SoundManager.stopAllMusic();
+                            SoundManager.playBackgroundMusic();
                         }
                     }
                 } else {
@@ -254,7 +263,7 @@ public class GameEngine implements BrickListener {
             public void onNewGame() {
                 notifyCursorChange();
                 loadCurrentLevel();
-                stateManager.setState(GameState.PLAYING);
+                checkAndShowBeforeDialogue();
             }
 
             @Override
@@ -284,7 +293,7 @@ public class GameEngine implements BrickListener {
         // STORY mode - check for saves
         int levelNumber = GameSession.getInstance().getLevelNumber();
         if (hasLevelSave(levelNumber)) {
-            System.out.println("💾 Save file found for level " + levelNumber);
+            System.out.println("Save file found for level " + levelNumber);
             stateManager.setState(GameState.TOLOAD);
         } else {
             loadCurrentLevel();
@@ -328,13 +337,14 @@ public class GameEngine implements BrickListener {
         }
         if (input.isActionJustPressed(Action.PAUSE)) {
             if (stateManager.is(GameState.PLAYING)) {
+                SoundManager.pauseAndSavePosition();
                 stateManager.setState(GameState.PAUSED);
                 notifyCursorChange();
             } else if (stateManager.is(GameState.PAUSED)) {
+                SoundManager.resumeChapterMusic();
                 stateManager.setState(GameState.PLAYING);
                 notifyCursorChange();
             }
-
             return;
         }
 
@@ -433,7 +443,6 @@ public class GameEngine implements BrickListener {
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             if (transitionManager.update(deltaTime)) {
-                paddle.reset();
                 loadCurrentLevel();
             }
 
@@ -516,6 +525,7 @@ public class GameEngine implements BrickListener {
             if (GameSession.getInstance().isStillAlive()) {
                 initNewPrimaryBall();
             } else {
+                SoundManager.playLoseSound();
                 stateManager.setState(GameState.GAME_OVER);
             }
         }
@@ -719,12 +729,9 @@ public class GameEngine implements BrickListener {
         }
 
         if (areAllEffectsFinished()) {
-            System.out.println("Level Complete!");
-
             if (mode.equals(GameSession.GameMode.ENDLESS)) {
-                boolean hasNext = GameSession.getInstance().nextLevel();
-                stateManager.setState(hasNext ? GameState.TRANSITIONING : GameState.VICTORY);
-                return;
+                    stateManager.setState(GameState.TRANSITIONING);
+                    return;
             }
 
             int currentLevelNumber = GameSession.getInstance().getLevelNumber();
@@ -739,6 +746,8 @@ public class GameEngine implements BrickListener {
                 } else {
                     System.out.println("Game Complete! All levels finished!");
                     stateManager.setState(GameState.VICTORY);
+                    SoundManager.stopAllMusic();
+                    SoundManager.playBackgroundMusic();
                 }
             }
         }
@@ -837,6 +846,12 @@ public class GameEngine implements BrickListener {
 
         saveData.setBalls(ballDataList);
 
+        List<LevelSaveData.BulletData> bulletDataList = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            bulletDataList.add(new LevelSaveData.BulletData(bullet));
+        }
+        saveData.setBullets(bulletDataList);
+
         saveData.setPaddle(new LevelSaveData.PaddleData(paddle));
 
         List<LevelSaveData.BrickSaveInfo> brickInfos = new ArrayList<>();
@@ -865,13 +880,11 @@ public class GameEngine implements BrickListener {
         if (powerUpManager != null) {
             saveData.setActivePowerups(powerUpManager.captureActivePowerupsInfo());
         }
-
-        // Save to disk
         boolean success = GameDataManager.saveLevelProgress(levelNumber, saveData);
         if (success) {
-            System.out.println("✅ Game saved successfully! [" + saveData + "]");
+            System.out.println("Game saved");
         } else {
-            System.out.println("❌ Failed to save game!");
+            System.out.println("Failed save, dcm loi l");
         }
     }
 
@@ -893,7 +906,11 @@ public class GameEngine implements BrickListener {
             ball.refreshEffects();
             this.balls.add(ball);
         }
-
+        this.bullets.clear();
+        for (LevelSaveData.BulletData bulletData : saveData.getBullets()) {
+            Bullet bullet = bulletData.toBullet();
+            this.bullets.add(bullet);
+        }
         this.bricks = new ArrayList<>();
         for (LevelSaveData.BrickSaveInfo info : saveData.getBricks()) {
             BrickType type = BrickType.fromString(info.getType());
@@ -915,7 +932,6 @@ public class GameEngine implements BrickListener {
         for (LevelSaveData.ActivePowerupInfo info : saveData.getActivePowerups()) {
             powerUpManager.restoreActivePowerup(info.getType(), info.getRemainingDuration());
         }
-
         if (uiCallback != null) {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
@@ -923,7 +939,6 @@ public class GameEngine implements BrickListener {
 
         soundForExplosionChains.clear();
         levelCompleteSoundPlayed = false;
-        bullets.clear();
 
         return true;
     }
@@ -931,16 +946,6 @@ public class GameEngine implements BrickListener {
 
     public boolean hasLevelSave(int levelNumber) {
         return GameDataManager.hasLevelSave(levelNumber);
-    }
-
-
-    public void setupAutoSave() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (mode.equals(GameSession.GameMode.STORY) &&
-                    (stateManager.is(GameState.PLAYING) || stateManager.is(GameState.PAUSED))) {
-                saveCurrentGame();
-            }
-        }));
     }
 
     public void refreshMode() {

@@ -58,7 +58,9 @@ public class Ball extends MovableObject {
         reset = false;
         attachedPaddle = null;
     }
-
+    public void setSpeedScale(double speedScale) {
+        this.speedScale = speedScale;
+    }
     public void applySpeedScale(double factor) {
         if (factor == 1.0) {
             return;
@@ -207,8 +209,8 @@ public class Ball extends MovableObject {
 
             GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.LEFT);
         }
-
-        if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
+        
+        if (x + radius * 2 >= Constants.GAMEPLAYZONE_WIDTH) {
             setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)

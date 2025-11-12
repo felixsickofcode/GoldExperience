@@ -17,11 +17,6 @@ public class PowerUpManager {
     private final GameContext context;
 
     private double bulletSpawnTimer = 0.0;
-//    private boolean isBulletActive = false;
-
-    public List<ActivePowerUp> getActivePowerUps() {
-        return activePowerUps;
-    }
 
     public PowerUpManager(GameContext context) {
         this.context = context;
@@ -29,32 +24,42 @@ public class PowerUpManager {
     }
 
     public void activatePowerUp(PowerUp powerUp) {
-        powerUp.applyEffect(context);
-
+        PowerUpType type = powerUp.getType();
         PowerUpStats stats = GameDataManager.getPowerUpStatsFor(powerUp.getType());
         long duration = stats.duration();
+        if (type == PowerUpType.FAST || type == PowerUpType.SLOW) {
+            activePowerUps.removeIf(ap -> {
+                PowerUpType oldType = ap.getPowerUp().getType();
+                if (oldType == PowerUpType.FAST || oldType == PowerUpType.SLOW) {
+                    ap.expire();
+                    return true;
+                }
+                return false;
+            });
+        }
+        powerUp.applyEffect(context);
 
         if (duration > 0) {
-            PowerUpType type = powerUp.getType();
             activePowerUps.removeIf(ap -> ap.getPowerUp().getType() == type);
-
             activePowerUps.add(new ActivePowerUp(powerUp, context, duration));
 
             if (powerUp.getType() == PowerUpType.BULLETS) {
-//                isBulletActive = true;
                 bulletSpawnTimer = 0.0;
             }
         }
     }
 
     public void update(double deltaTime) {
+        double deltaTimeMs = deltaTime * 1000;
+        for (ActivePowerUp ap : activePowerUps) {
+            ap.update(deltaTimeMs);
+        }
+
         activePowerUps.removeIf(ap -> {
             if (ap.isExpired()) {
                 ap.expire();
-
                 return true;
             }
-
             return false;
         });
 
@@ -90,13 +95,13 @@ public class PowerUpManager {
             PowerUp powerUp = createPowerUpByType(type);
             PowerUpStats stats = GameDataManager.getPowerUpStatsFor(type);
             long duration = stats.duration();
-
-            powerUp.applyEffect(context);
-
+            if (type == PowerUpType.BULLETS && remainingMs > 0) {
+                powerUp.applyEffect(context);
+                bulletSpawnTimer = stats.value() / 1000.0;
+            }
             if (duration != 0) {
                 activePowerUps.add(new ActivePowerUp(powerUp, context, remainingMs, duration));
             }
-
         } catch (IllegalArgumentException e) {
             System.err.println("Unknown PowerUpType: " + typeString);
         }
@@ -131,7 +136,6 @@ public class PowerUpManager {
         for (ActivePowerUp ap : activePowerUps) {
             ap.expire();
         }
-
         activePowerUps.clear();
     }
 }

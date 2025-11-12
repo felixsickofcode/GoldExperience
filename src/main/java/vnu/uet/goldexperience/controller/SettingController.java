@@ -40,16 +40,16 @@ public class SettingController {
         musicVolumeLabel.setText(String.format("%.0f%%", currentVolume * 100));
         // Add listener to update label when slider value changes
         musicVolumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            double volume = newVal.doubleValue() / 100;
             musicVolumeLabel.setText(String.format("%.0f%%", newVal.doubleValue()));
+            GameDataManager.setVolume(volume);
+            SoundManager.updateAllVolumes();
         });
     }
 
     @FXML
     private void handleMusicVolume(MouseEvent event) {
-        double volume = musicVolumeSlider.getValue() / 100;
-        System.out.println("Music volume set to: " + volume);
-        GameDataManager.setVolume(volume);
-        SoundManager.updateAllVolumes();
+//       da dung listener
     }
 
     @FXML
