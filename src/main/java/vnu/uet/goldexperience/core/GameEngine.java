@@ -245,6 +245,8 @@ public class GameEngine implements BrickListener {
                         if (sceneManager != null) {
                             end();
                             sceneManager.switchTo("menu");
+                            SoundManager.stopAllMusic();
+                            SoundManager.playBackgroundMusic();
                         }
                     }
                 } else {
@@ -261,7 +263,7 @@ public class GameEngine implements BrickListener {
             public void onNewGame() {
                 notifyCursorChange();
                 loadCurrentLevel();
-                stateManager.setState(GameState.PLAYING);
+                checkAndShowBeforeDialogue();
             }
 
             @Override
@@ -291,7 +293,7 @@ public class GameEngine implements BrickListener {
         // STORY mode - check for saves
         int levelNumber = GameSession.getInstance().getLevelNumber();
         if (hasLevelSave(levelNumber)) {
-            System.out.println("💾 Save file found for level " + levelNumber);
+            System.out.println("Save file found for level " + levelNumber);
             stateManager.setState(GameState.TOLOAD);
         } else {
             loadCurrentLevel();
@@ -742,6 +744,8 @@ public class GameEngine implements BrickListener {
                 } else {
                     System.out.println("Game Complete! All levels finished!");
                     stateManager.setState(GameState.VICTORY);
+                    SoundManager.stopAllMusic();
+                    SoundManager.playBackgroundMusic();
                 }
             }
         }
