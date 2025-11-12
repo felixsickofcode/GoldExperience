@@ -1,8 +1,20 @@
 package vnu.uet.goldexperience.manager;
 
 import javafx.scene.media.AudioClip;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SoundManager {
+
+    // thread pool riêng dành cho Sound
+    private static final ExecutorService audioExecutor =
+            Executors.newFixedThreadPool(4); // cứ tạm 4 threads đã, hỏng thì tính sau
+
+    private static final Object playLock = new Object();
+    private static volatile long lastPlayTime = 0;
+    private static final long MIN_PLAY_INTERVAL = 50; // 50ms
+
     public static AudioClip hitPaddleSound;
     public static AudioClip hitWallSound;
     public static AudioClip hitBrickSound;
@@ -10,6 +22,7 @@ public class SoundManager {
     public static AudioClip clickSound;
     public static AudioClip breakBrickSound;
     public static AudioClip explosionSound;
+
     public static void loadSound() {
         loadSounds();
         updateAllVolumes();
@@ -21,6 +34,7 @@ public class SoundManager {
         breakBrickSound.play(0.0);
         explosionSound.play(0.0);
     }
+
     private static void loadSounds() {
         try {
             hitWallSound = new AudioClip(AssetsManager.class.getResource("/sounds/hit_wall.wav").toExternalForm());
@@ -36,7 +50,21 @@ public class SoundManager {
     }
 
     public static void playClickSound() {
-        playSound(clickSound);
+        audioExecutor.submit(() -> {
+            synchronized (playLock) {
+                long now = System.currentTimeMillis();
+
+                if (now - lastPlayTime < MIN_PLAY_INTERVAL) {
+                    return;
+                }
+
+                lastPlayTime = now;
+            }
+
+            if (clickSound != null) {
+                clickSound.play();
+            }
+        });
     }
 
     public static void playHitBrickSound() {
@@ -65,9 +93,10 @@ public class SoundManager {
 
     private static void playSound(AudioClip clip) {
         if (clip != null) {
-            clip.play();
+            audioExecutor.submit(() -> clip.play());
         }
     }
+
     public static void updateAllVolumes() {
         double volume = GameDataManager.getGlobalData().getVolume();
 
@@ -80,4 +109,20 @@ public class SoundManager {
         if (explosionSound != null) explosionSound.setVolume(volume);
     }
 
+    public static void shutdown() {
+        System.out.println("Bắt đầu đóng luồng audio executor nè");
+        audioExecutor.shutdown();
+
+        try {
+            if (!audioExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
+                audioExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            System.err.printf("Không thể đóng luồng audio: %s\n", e.getMessage());
+            // phải gì... phải đóng
+            audioExecutor.shutdownNow();
+        }
+
+        System.out.println("Hoàn tất đóng luồng audio");
+    }
 }

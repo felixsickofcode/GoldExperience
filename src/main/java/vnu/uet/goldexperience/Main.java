@@ -1,9 +1,9 @@
 package vnu.uet.goldexperience;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -96,7 +96,20 @@ public class Main extends Application {
         stage.setTitle("Gold Experience");
         stage.show();
 
-        sceneManager.switchTo("login");
+        sceneManager.switchTo("menu");
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // dọn luồng trước khi tắt game
+        SoundManager.shutdown();
+
+        // này đóng giống hồi làm SDL2
+        Platform.exit();
+        System.exit(0);
+
+        // đóng từ Application trên
+        super.stop();
     }
 
     public static void main(String[] args) {
