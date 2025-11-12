@@ -2,6 +2,8 @@ package vnu.uet.goldexperience.controller;
 
 import javafx.animation.*;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -29,6 +31,15 @@ public class SelectChapterController {
     @FXML
     private Text rightChapterText;
 
+    @FXML
+    private ImageView leftImageView;
+
+    @FXML
+    private ImageView centerImageView;
+
+    @FXML
+    private ImageView rightImageView;
+
     private SceneManager sceneManager;
     private int currentChapterIndex = 1;
     private boolean isAnimating = false;
@@ -37,6 +48,14 @@ public class SelectChapterController {
     private static final Duration ANIMATION_DURATION = Duration.millis(450);
     private static final double SIDE_CARD_SCALE = 0.75;
     private static final double SIDE_CARD_OPACITY = 0.3;
+
+    private final String[] chapterImages = {
+            "/images/chapter1bg.png",
+            "/images/chapter2bg.png",
+            "/images/chapter3bg.png",
+            "/images/chapter4bg.png",
+            "/images/chapter5bg.png"
+    };
 
     @FXML
     public void initialize() {
@@ -179,18 +198,53 @@ public class SelectChapterController {
 
 
     private void updateChapterDisplay() {
-        centerChapterText.setText("Chapter " + (currentChapterIndex ));
+        centerChapterText.setText("Chapter " + (currentChapterIndex));
 
         leftStack.setVisible(currentChapterIndex > 1);
         if (leftStack.isVisible()) {
             leftChapterText.setText("Chapter " + (currentChapterIndex - 1));
+            updateChapterImage(leftImageView, currentChapterIndex - 1);
         }
+
+        // Cập nhật ảnh cho chapter ở giữa
+        updateChapterImage(centerImageView, currentChapterIndex);
 
         rightStack.setVisible(currentChapterIndex < 5);
         if (rightStack.isVisible()) {
             rightChapterText.setText("Chapter " + (currentChapterIndex + 1));
+            updateChapterImage(rightImageView, currentChapterIndex + 1);
+        }
+    }
+
+    /**
+     * Cập nhật ảnh cho ImageView tương ứng với chapter
+     */
+    private void updateChapterImage(ImageView imageView, int chapterNumber) {
+        if (imageView == null) {
+            System.err.println("ImageView is null for chapter " + chapterNumber);
+            return;
         }
 
+        if (chapterNumber < 1 || chapterNumber > chapterImages.length) {
+            System.err.println("Invalid chapter number: " + chapterNumber);
+            return;
+        }
+
+        try {
+            String imagePath = chapterImages[chapterNumber - 1];
+            Image image = new Image(getClass().getResourceAsStream(imagePath));
+
+            if (image.isError()) {
+                System.err.println("Error loading image: " + imagePath);
+                return;
+            }
+
+            imageView.setImage(image);
+            System.out.println("Loaded image for Chapter " + chapterNumber + ": " + imagePath);
+        } catch (Exception e) {
+            System.err.println("Failed to load image for chapter " + chapterNumber);
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -201,5 +255,4 @@ public class SelectChapterController {
             sceneManager.switchTo("level");
         }
     }
-
 }
