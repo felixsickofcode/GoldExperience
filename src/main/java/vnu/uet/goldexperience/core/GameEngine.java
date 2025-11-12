@@ -158,6 +158,7 @@ public class GameEngine implements BrickListener {
             public void onResume() {
                 System.out.println("Resume clicked");
                 stateManager.setState(GameState.PLAYING);
+                SoundManager.resumeChapterMusic();
                 notifyCursorChange();
             }
 
@@ -165,7 +166,7 @@ public class GameEngine implements BrickListener {
             public void onRestart() {
                 System.out.println("Restart clicked");
                 reloadLevel();
-                SoundManager.restartChapterMusic();
+                SoundManager.resumeChapterMusic();
                 notifyCursorChange();
             }
 
@@ -205,7 +206,7 @@ public class GameEngine implements BrickListener {
             @Override
             public void onRetry() {
                 SoundManager.playClickSound();
-                SoundManager.restartChapterMusic();
+                SoundManager.resumeChapterMusic();
                 System.out.println("Retry clicked");
                 GameSession.getInstance().resetLives();
                 reloadLevel();

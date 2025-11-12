@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class BallEffect {
+    private static BallEffect instance;
     private final List<BallBubbleTrail> bubbles;
     private final List<BallFriction> frictions;
     private final Random random;
@@ -22,13 +23,19 @@ public class BallEffect {
     private boolean trailEnabled = false;
     private boolean bubbleEnabled = false;
     private boolean frictionEnabled = false;
-    public BallEffect() {
+    private BallEffect() {
         this.random = new Random();
         this.ballGlow = new BallGlow();
         this.ballTrail = new BallTrail();
         this.bubbles = new ArrayList<>();
         this.frictions = new ArrayList<>();
         refreshActiveEffects();
+    }
+    public static BallEffect getInstance() {
+        if(instance == null) {
+            instance = new BallEffect();
+        }
+        return instance;
     }
     public void refreshActiveEffects() {
         List<String> selectedEffects = GameDataManager.getSelectedBallEffects();
