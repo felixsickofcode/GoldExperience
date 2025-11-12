@@ -165,6 +165,7 @@ public class GameEngine implements BrickListener {
             public void onRestart() {
                 System.out.println("Restart clicked");
                 reloadLevel();
+                SoundManager.restartChapterMusic();
                 notifyCursorChange();
             }
 
@@ -173,9 +174,10 @@ public class GameEngine implements BrickListener {
                 SoundManager.playClickSound();
                 System.out.println("Back");
                 saveCurrentGame();
-                if (mode.equals(GameSession.GameMode.STORY)) {
-                    saveCurrentGame();
-                }
+
+                SoundManager.stopAllMusic();
+                SoundManager.playBackgroundMusic();
+
                 if (sceneManager != null) {
                     end();
                     if (mode.equals(GameSession.GameMode.STORY))
@@ -192,6 +194,7 @@ public class GameEngine implements BrickListener {
                 if (mode.equals(GameSession.GameMode.STORY)) {
                     saveCurrentGame();
                 }
+                SoundManager.stopAllMusic();
                 Platform.exit();
             }
         });
@@ -202,6 +205,7 @@ public class GameEngine implements BrickListener {
             @Override
             public void onRetry() {
                 SoundManager.playClickSound();
+                SoundManager.restartChapterMusic();
                 System.out.println("Retry clicked");
                 GameSession.getInstance().resetLives();
                 reloadLevel();
@@ -210,6 +214,8 @@ public class GameEngine implements BrickListener {
             @Override
             public void onMainMenu() {
                 SoundManager.playClickSound();
+                SoundManager.stopAllMusic();
+                SoundManager.playBackgroundMusic();
                 System.out.println("Main Menu clicked");
                 if (sceneManager != null) {
                     end();
@@ -220,6 +226,7 @@ public class GameEngine implements BrickListener {
             @Override
             public void onQuit() {
                 SoundManager.playClickSound();
+                SoundManager.stopAllMusic();
                 System.out.println("Quit clicked");
                 javafx.application.Platform.exit();
             }
@@ -328,13 +335,14 @@ public class GameEngine implements BrickListener {
         }
         if (input.isActionJustPressed(Action.PAUSE)) {
             if (stateManager.is(GameState.PLAYING)) {
+                SoundManager.pauseAndSavePosition();
                 stateManager.setState(GameState.PAUSED);
                 notifyCursorChange();
             } else if (stateManager.is(GameState.PAUSED)) {
+                SoundManager.resumeChapterMusic();
                 stateManager.setState(GameState.PLAYING);
                 notifyCursorChange();
             }
-
             return;
         }
 

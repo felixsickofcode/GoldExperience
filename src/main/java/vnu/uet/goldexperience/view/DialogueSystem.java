@@ -155,7 +155,7 @@ public class DialogueSystem {
     public void handleInput(InputManager input) {
         if (!isActive) return;
 
-        if (input.isActionJustPressed(Action.SHOOT)) {
+        if (input.isActionJustPressed(Action.CONFIRM)) {
             if (isTypingComplete()) {
                 nextLine();
             } else {

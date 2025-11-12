@@ -85,6 +85,7 @@ public class GameStateManager {
         }
     }
 
+
     public boolean is(GameState state) {
         return currentState == state;
     }
