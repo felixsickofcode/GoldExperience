@@ -25,8 +25,6 @@ public class ActivePowerUp {
     }
     public void update(double deltaTimeMs) {
         if (!isPermanent()) {
-            System.out.println("🔴 ActivePowerUp.update() - Type: " + powerUp.getType() +
-                    ", Remaining: " + remainingMs + " -> " + (remainingMs - deltaTimeMs));
             remainingMs -= deltaTimeMs;
         }
     }

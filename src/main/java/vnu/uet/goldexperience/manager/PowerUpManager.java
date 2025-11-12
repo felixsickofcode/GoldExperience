@@ -50,12 +50,8 @@ public class PowerUpManager {
     }
 
     public void update(double deltaTime) {
-        System.out.println("🔧 PowerUpManager.update() called - deltaTime: " + deltaTime);
-
         double deltaTimeMs = deltaTime * 1000;
         for (ActivePowerUp ap : activePowerUps) {
-            System.out.println("   ⏱️ " + ap.getPowerUp().getType() +
-                    " remaining: " + ap.getRemainingTime());
             ap.update(deltaTimeMs);
         }
 
@@ -73,7 +69,6 @@ public class PowerUpManager {
             if (bulletSpawnTimer <= 0.0) {
                 PowerUpStats stats = GameDataManager.getPowerUpStatsFor(PowerUpType.BULLETS);
                 bulletSpawnTimer = stats.value()/1000.0;
-                System.out.println(bulletSpawnTimer);
                 spawnBullet();
             }
         }
@@ -139,7 +134,6 @@ public class PowerUpManager {
         for (ActivePowerUp ap : activePowerUps) {
             ap.expire();
         }
-
         activePowerUps.clear();
     }
 }

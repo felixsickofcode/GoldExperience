@@ -433,7 +433,6 @@ public class GameEngine implements BrickListener {
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             if (transitionManager.update(deltaTime)) {
-                paddle.reset();
                 loadCurrentLevel();
             }
 
@@ -516,6 +515,7 @@ public class GameEngine implements BrickListener {
             if (GameSession.getInstance().isStillAlive()) {
                 initNewPrimaryBall();
             } else {
+                SoundManager.playLoseSound();
                 stateManager.setState(GameState.GAME_OVER);
             }
         }

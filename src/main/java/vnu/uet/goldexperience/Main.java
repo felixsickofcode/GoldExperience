@@ -3,16 +3,14 @@ package vnu.uet.goldexperience;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import vnu.uet.goldexperience.controller.*;
 import vnu.uet.goldexperience.manager.AssetsManager;
+import vnu.uet.goldexperience.manager.GameDataManager;
 import vnu.uet.goldexperience.manager.SceneManager;
 import vnu.uet.goldexperience.manager.SoundManager;
-
-import java.awt.event.KeyEvent;
 
 public class Main extends Application {
 
@@ -41,6 +39,8 @@ public class Main extends Application {
         AssetsManager.loadAssets();
         // load sounds
         SoundManager.loadSound();
+        SoundManager.updateAllVolumes();
+        SoundManager.playBackgroundMusic();
 
         // Preload FXML
         sceneManager.PreloadScene("login", "/fxml/login.fxml");

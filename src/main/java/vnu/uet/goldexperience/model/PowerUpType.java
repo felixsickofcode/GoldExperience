@@ -175,21 +175,20 @@ public enum PowerUpType {
     }
 
     public static PowerUpType randomDroppable() {
-//        List<PowerUpType> options = new ArrayList<>();
-//
-//        for (PowerUpType t : values()) {
-//            if (t.isDroppableItem()) {
-//                options.add(t);
-//            }
-//        }
-//
-//        if (options.isEmpty()) {
-//            return EXTEND;
-//        }
-//
-//        int idx = ThreadLocalRandom.current().nextInt(options.size());
-//
-//        return options.get(idx);
-        return BULLETS;
+        List<PowerUpType> options = new ArrayList<>();
+
+        for (PowerUpType t : values()) {
+            if (t.isDroppableItem()) {
+                options.add(t);
+            }
+        }
+
+        if (options.isEmpty()) {
+            return EXTEND;
+        }
+
+        int idx = ThreadLocalRandom.current().nextInt(options.size());
+
+        return options.get(idx);
     }
 }
