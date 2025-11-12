@@ -1,6 +1,12 @@
 package vnu.uet.goldexperience.manager;
 
+import javafx.application.Platform;
 import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,9 +29,24 @@ public class SoundManager {
     public static AudioClip breakBrickSound;
     public static AudioClip explosionSound;
 
+    private static MediaPlayer backgroundSound;
+    private static ExecutorService soundExecutor;
+
+    private static final int THREAD_POOL_SIZE = 4;
+
+    private static final Map<String, Long> soundCooldowns = new ConcurrentHashMap<>();
+    private static final long MIN_SOUND_INTERVAL = 50; // milliseconds
+
+    private static volatile boolean isInitialized = false;
+
     public static void loadSound() {
         loadSounds();
         updateAllVolumes();
+        preloadSounds();
+        isInitialized = true;
+    }
+
+    private static void preloadSounds() {
         clickSound.play(0.0);
         hitWallSound.play(0.0);
         hitBrickSound.play(0.0);
@@ -37,63 +58,108 @@ public class SoundManager {
 
     private static void loadSounds() {
         try {
-            hitWallSound = new AudioClip(AssetsManager.class.getResource("/sounds/hit_wall.wav").toExternalForm());
-            hitBrickSound = new AudioClip(AssetsManager.class.getResource("/sounds/hit_brick.wav").toExternalForm());
-            hitPaddleSound = new AudioClip(AssetsManager.class.getResource("/sounds/hit_paddle.wav").toExternalForm());
-            loseSound = new AudioClip(AssetsManager.class.getResource("/sounds/lose.mp3").toExternalForm());
-            clickSound = new AudioClip(AssetsManager.class.getResource("/sounds/click.wav").toExternalForm());
-            breakBrickSound = new AudioClip(AssetsManager.class.getResource("/sounds/break_brick.wav").toExternalForm());
-            explosionSound = new AudioClip(AssetsManager.class.getResource("/sounds/explosion.wav").toExternalForm());
+            hitWallSound = new AudioClip(SoundManager.class.getResource("/sounds/hit_wall.wav").toExternalForm());
+            hitBrickSound = new AudioClip(SoundManager.class.getResource("/sounds/hit_brick.wav").toExternalForm());
+            hitPaddleSound = new AudioClip(SoundManager.class.getResource("/sounds/hit_paddle.wav").toExternalForm());
+            loseSound = new AudioClip(SoundManager.class.getResource("/sounds/lose.mp3").toExternalForm());
+            clickSound = new AudioClip(SoundManager.class.getResource("/sounds/click.wav").toExternalForm());
+            breakBrickSound = new AudioClip(SoundManager.class.getResource("/sounds/break_brick.wav").toExternalForm());
+            explosionSound = new AudioClip(SoundManager.class.getResource("/sounds/explosion.wav").toExternalForm());
+
+            // MediaPlayer cho background music
+            Media backgroundMedia = new Media(SoundManager.class.getResource("/sounds/background.wav").toExternalForm());
+            backgroundSound = new MediaPlayer(backgroundMedia);
+            backgroundSound.setCycleCount(MediaPlayer.INDEFINITE);
         } catch (Exception e) {
             System.err.println("Không thể tải sound: " + e.getMessage());
         }
     }
 
     public static void playClickSound() {
-        audioExecutor.submit(() -> {
-            synchronized (playLock) {
-                long now = System.currentTimeMillis();
-
-                if (now - lastPlayTime < MIN_PLAY_INTERVAL) {
-                    return;
-                }
-
-                lastPlayTime = now;
-            }
-
-            if (clickSound != null) {
-                clickSound.play();
-            }
-        });
+        playSound(clickSound, "click", false);
     }
 
+
     public static void playHitBrickSound() {
-        playSound(hitBrickSound);
+        playSound(hitBrickSound, "hitBrick", true);
     }
 
     public static void playHitWallSound() {
-        playSound(hitWallSound);
+        playSound(hitWallSound, "hitWall", true);
     }
 
     public static void playHitPaddleSound() {
-        playSound(hitPaddleSound);
+        playSound(hitPaddleSound, "hitPaddle", true);
     }
 
     public static void playLoseSound() {
-        playSound(loseSound);
+        playSound(loseSound, "lose", false);
     }
 
     public static void playBreakBrickSound() {
-        playSound(breakBrickSound);
+        playSound(breakBrickSound, "breakBrick", false);
     }
 
     public static void playExplosionSound() {
-        playSound(explosionSound);
+        playSound(explosionSound, "explosion", false);
     }
 
-    private static void playSound(AudioClip clip) {
-        if (clip != null) {
-            audioExecutor.submit(() -> clip.play());
+    private static void playSound(AudioClip clip, String soundName, boolean checkCooldown) {
+        if (clip == null || !isInitialized) {
+            return;
+        }
+
+        if (checkCooldown && !canPlaySound(soundName)) {
+            return;
+        }
+
+        // Play sound async
+        soundExecutor.submit(() -> {
+            Platform.runLater(() -> {
+                double volume = GameDataManager.getGlobalData().getVolume();
+                clip.play(volume);
+
+                if (checkCooldown) {
+                    soundCooldowns.put(soundName, System.currentTimeMillis());
+                }
+            });
+        });
+    }
+
+    private static boolean canPlaySound(String soundName) {
+        Long lastPlayTime = soundCooldowns.get(soundName);
+        if (lastPlayTime == null) {
+            return true;
+        }
+        return (System.currentTimeMillis() - lastPlayTime) >= MIN_SOUND_INTERVAL;
+    }
+
+    public static void playBackgroundMusic() {
+        if (backgroundSound != null && isInitialized) {
+            Platform.runLater(() -> {
+                double volume = GameDataManager.getGlobalData().getVolume() * 0.1;
+                backgroundSound.setVolume(volume);
+                backgroundSound.play();
+                System.out.println("Background music playing at volume: " + volume);
+            });
+        }
+    }
+
+    public static void stopBackgroundMusic() {
+        if (backgroundSound != null) {
+            Platform.runLater(() -> backgroundSound.stop());
+        }
+    }
+
+    public static void pauseBackgroundMusic() {
+        if (backgroundSound != null) {
+            Platform.runLater(() -> backgroundSound.pause());
+        }
+    }
+
+    public static void resumeBackgroundMusic() {
+        if (backgroundSound != null) {
+            Platform.runLater(() -> backgroundSound.play());
         }
     }
 
@@ -107,6 +173,11 @@ public class SoundManager {
         if (clickSound != null) clickSound.setVolume(volume);
         if (breakBrickSound != null) breakBrickSound.setVolume(volume);
         if (explosionSound != null) explosionSound.setVolume(volume);
+
+        if (backgroundSound != null) {
+            double bgVolume = volume * 0.1;
+            backgroundSound.setVolume(bgVolume);
+        }
     }
 
     public static void shutdown() {
