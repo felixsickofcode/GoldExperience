@@ -718,16 +718,9 @@ public class GameEngine implements BrickListener {
         }
 
         if (areAllEffectsFinished()) {
-            System.out.println("Level Complete!");
-
             if (mode.equals(GameSession.GameMode.ENDLESS)) {
-                boolean hasNext = GameSession.getInstance().nextLevel();
-                if (hasNext) {
                     stateManager.setState(GameState.TRANSITIONING);
-                } else {
-                    stateManager.setState(GameState.VICTORY);
-                }
-                return;
+                    return;
             }
 
             int currentLevelNumber = GameSession.getInstance().getLevelNumber();

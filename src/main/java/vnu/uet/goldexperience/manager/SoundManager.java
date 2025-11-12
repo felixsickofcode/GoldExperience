@@ -13,9 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 public class SoundManager {
 
-    // thread pool riêng dành cho Sound
     private static final ExecutorService audioExecutor =
-            Executors.newFixedThreadPool(4); // cứ tạm 4 threads đã, hỏng thì tính sau
+            Executors.newFixedThreadPool(4);
 
     private static final Object playLock = new Object();
     private static volatile long lastPlayTime = 0;
@@ -30,12 +29,9 @@ public class SoundManager {
     public static AudioClip explosionSound;
 
     private static MediaPlayer backgroundSound;
-    private static ExecutorService soundExecutor;
-
-    private static final int THREAD_POOL_SIZE = 4;
 
     private static final Map<String, Long> soundCooldowns = new ConcurrentHashMap<>();
-    private static final long MIN_SOUND_INTERVAL = 50; // milliseconds
+    private static final long MIN_SOUND_INTERVAL = 50;
 
     private static volatile boolean isInitialized = false;
 
@@ -66,7 +62,6 @@ public class SoundManager {
             breakBrickSound = new AudioClip(SoundManager.class.getResource("/sounds/break_brick.wav").toExternalForm());
             explosionSound = new AudioClip(SoundManager.class.getResource("/sounds/explosion.wav").toExternalForm());
 
-            // MediaPlayer cho background music
             Media backgroundMedia = new Media(SoundManager.class.getResource("/sounds/background.wav").toExternalForm());
             backgroundSound = new MediaPlayer(backgroundMedia);
             backgroundSound.setCycleCount(MediaPlayer.INDEFINITE);
@@ -113,8 +108,7 @@ public class SoundManager {
             return;
         }
 
-        // Play sound async
-        soundExecutor.submit(() -> {
+        audioExecutor.submit(() -> {
             Platform.runLater(() -> {
                 double volume = GameDataManager.getGlobalData().getVolume();
                 clip.play(volume);
@@ -140,7 +134,6 @@ public class SoundManager {
                 double volume = GameDataManager.getGlobalData().getVolume() * 0.1;
                 backgroundSound.setVolume(volume);
                 backgroundSound.play();
-                System.out.println("Background music playing at volume: " + volume);
             });
         }
     }
@@ -181,19 +174,14 @@ public class SoundManager {
     }
 
     public static void shutdown() {
-        System.out.println("Bắt đầu đóng luồng audio executor nè");
         audioExecutor.shutdown();
-
         try {
             if (!audioExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
                 audioExecutor.shutdownNow();
             }
         } catch (InterruptedException e) {
-            System.err.printf("Không thể đóng luồng audio: %s\n", e.getMessage());
-            // phải gì... phải đóng
+            System.err.println("Không thể đóng luồng audio: " + e.getMessage());
             audioExecutor.shutdownNow();
         }
-
-        System.out.println("Hoàn tất đóng luồng audio");
     }
 }
