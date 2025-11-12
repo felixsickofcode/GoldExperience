@@ -94,14 +94,15 @@
                                         <DropShadow color="#00000090" radius="20.0" />
                                     </effect>
                                 </Rectangle>
-                                <ImageView fitHeight="200.0"
+                                <ImageView fx:id="leftImageView"
+                                           fitHeight="200.0"
                                            fitWidth="340.0"
                                            layoutX="40.0"
                                            layoutY="95.0"
                                            pickOnBounds="true"
                                            preserveRatio="true">
                                     <image>
-                                        <Image url="@../images/menu-background.jpg" />
+                                        <Image url="@../images/chapter1bg.png" />
                                     </image>
                                 </ImageView>
                                 <Text fill="#AAAAAA"
@@ -175,14 +176,15 @@
                                         <DropShadow color="#00000090" radius="20.0" />
                                     </effect>
                                 </Rectangle>
-                                <ImageView fitHeight="200.0"
+                                <ImageView fx:id="centerImageView"
+                                           fitHeight="200.0"
                                            fitWidth="340.0"
                                            layoutX="40.0"
                                            layoutY="95.0"
                                            pickOnBounds="true"
                                            preserveRatio="true">
                                     <image>
-                                        <Image url="@../images/menu-background.jpg" />
+                                        <Image url="@../images/chapter1bg.png" />
                                     </image>
                                 </ImageView>
                                 <Text fill="#AAAAAA"
@@ -257,14 +259,15 @@
                                         <DropShadow color="#00000090" radius="20.0" />
                                     </effect>
                                 </Rectangle>
-                                <ImageView fitHeight="200.0"
+                                <ImageView fx:id="rightImageView"
+                                           fitHeight="200.0"
                                            fitWidth="340.0"
                                            layoutX="40.0"
                                            layoutY="95.0"
                                            pickOnBounds="true"
                                            preserveRatio="true">
                                     <image>
-                                        <Image url="@../images/menu-background.jpg" />
+                                        <Image url="@../images/chapter2bg.png" />
                                     </image>
                                 </ImageView>
                                 <Text fill="#AAAAAA"
