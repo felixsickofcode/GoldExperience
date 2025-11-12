@@ -26,6 +26,8 @@ public class LevelSaveData {
 
     private List<ActivePowerupInfo> activePowerups;
 
+    private List<BulletData> bullets;
+
     private String timestamp;
 
     public LevelSaveData() {
@@ -33,6 +35,7 @@ public class LevelSaveData {
         this.bricks = new ArrayList<>();
         this.fallingPowerUps = new ArrayList<>();
         this.activePowerups = new ArrayList<>();
+        this.bullets = new ArrayList<>();
         this.timestamp = LocalDateTime.now().toString();
     }
 
@@ -42,7 +45,8 @@ public class LevelSaveData {
         private boolean isAttached;
         private double speedScale;
 
-        public BallData() {}
+        public BallData() {
+        }
 
         public BallData(Ball ball) {
             this.x = ball.getX();
@@ -58,26 +62,60 @@ public class LevelSaveData {
             ball.setDx(dx);
             ball.setDy(dy);
             ball.setReset(isAttached);
-            // Restore speedScale
             if (speedScale != 1.0) {
-                ball.applySpeedScale(speedScale);
+                ball.setSpeedScale(speedScale);
             }
             return ball;
         }
 
         // Getters and Setters
-        public double getX() { return x; }
-        public void setX(double x) { this.x = x; }
-        public double getY() { return y; }
-        public void setY(double y) { this.y = y; }
-        public double getDx() { return dx; }
-        public void setDx(double dx) { this.dx = dx; }
-        public double getDy() { return dy; }
-        public void setDy(double dy) { this.dy = dy; }
-        public boolean isAttached() { return isAttached; }
-        public void setAttached(boolean attached) { isAttached = attached; }
-        public double getSpeedScale() { return speedScale; }
-        public void setSpeedScale(double speedScale) { this.speedScale = speedScale; }
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public double getDx() {
+            return dx;
+        }
+
+        public void setDx(double dx) {
+            this.dx = dx;
+        }
+
+        public double getDy() {
+            return dy;
+        }
+
+        public void setDy(double dy) {
+            this.dy = dy;
+        }
+
+        public boolean isAttached() {
+            return isAttached;
+        }
+
+        public void setAttached(boolean attached) {
+            isAttached = attached;
+        }
+
+        public double getSpeedScale() {
+            return speedScale;
+        }
+
+        public void setSpeedScale(double speedScale) {
+            this.speedScale = speedScale;
+        }
     }
 
     /**
@@ -88,7 +126,8 @@ public class LevelSaveData {
         private double width;
         private int size;
 
-        public PaddleData() {}
+        public PaddleData() {
+        }
 
         public PaddleData(Paddle paddle) {
             this.x = paddle.getX();
@@ -103,14 +142,37 @@ public class LevelSaveData {
             return paddle;
         }
 
-        public double getX() { return x; }
-        public void setX(double x) { this.x = x; }
-        public double getY() { return y; }
-        public void setY(double y) { this.y = y; }
-        public double getWidth() { return width; }
-        public void setWidth(double width) { this.width = width; }
-        public int getSize() { return size; }
-        public void setSize(int size) { this.size = size; }
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public double getWidth() {
+            return width;
+        }
+
+        public void setWidth(double width) {
+            this.width = width;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
     }
 
     public static class PowerUpData {
@@ -118,7 +180,8 @@ public class LevelSaveData {
         private double x, y;
         private double dy;
 
-        public PowerUpData() {}
+        public PowerUpData() {
+        }
 
         public PowerUpData(PowerUp powerUp) {
             this.type = powerUp.getType().name();
@@ -134,14 +197,37 @@ public class LevelSaveData {
         }
 
         // Getters and Setters
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        public double getX() { return x; }
-        public void setX(double x) { this.x = x; }
-        public double getY() { return y; }
-        public void setY(double y) { this.y = y; }
-        public double getDy() { return dy; }
-        public void setDy(double dy) { this.dy = dy; }
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public double getDy() {
+            return dy;
+        }
+
+        public void setDy(double dy) {
+            this.dy = dy;
+        }
     }
 
     public static class BrickSaveInfo {
@@ -163,61 +249,229 @@ public class LevelSaveData {
         }
 
         // Getters and Setters
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        public double getX() { return x; }
-        public void setX(double x) { this.x = x; }
-        public double getY() { return y; }
-        public void setY(double y) { this.y = y; }
-        public int getHitPoints() { return hitPoints; }
-        public void setHitPoints(int hitPoints) { this.hitPoints = hitPoints; }
-        public Map<String, Double> getConfig() { return config; }
-        public void setConfig(Map<String, Double> config) { this.config = config; }
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public int getHitPoints() {
+            return hitPoints;
+        }
+
+        public void setHitPoints(int hitPoints) {
+            this.hitPoints = hitPoints;
+        }
+
+        public Map<String, Double> getConfig() {
+            return config;
+        }
+
+        public void setConfig(Map<String, Double> config) {
+            this.config = config;
+        }
+    }
+
+    public static class BulletData {
+        private double x, y;
+        private double dx, dy;
+        private double width, height;
+        private double bulletSpawnTimer;
+
+
+
+        public BulletData() {
+        }
+
+        public BulletData(Bullet bullet) {
+            this.x = bullet.getX();
+            this.y = bullet.getY();
+            this.dx = bullet.getDx();
+            this.dy = bullet.getDy();
+            this.width = bullet.getWidth();
+            this.height = bullet.getHeight();
+        }
+
+        public Bullet toBullet() {
+            return new Bullet(x, y, width, height, dx, dy);
+        }
+
+        // Getters and Setters
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public double getDx() {
+            return dx;
+        }
+
+        public void setDx(double dx) {
+            this.dx = dx;
+        }
+
+        public double getDy() {
+            return dy;
+        }
+
+        public void setDy(double dy) {
+            this.dy = dy;
+        }
+
+        public double getWidth() {
+            return width;
+        }
+
+        public void setWidth(double width) {
+            this.width = width;
+        }
+
+        public double getHeight() {
+            return height;
+        }
+
+        public void setHeight(double height) {
+            this.height = height;
+        }
     }
 
     public static class ActivePowerupInfo {
         private String type;
         private double remainingDuration;
 
-        public ActivePowerupInfo() {}
+        public ActivePowerupInfo() {
+        }
 
         public ActivePowerupInfo(String type, double remainingDuration) {
             this.type = type;
             this.remainingDuration = remainingDuration;
         }
 
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        public double getRemainingDuration() { return remainingDuration; }
-        public void setRemainingDuration(double duration) { this.remainingDuration = duration; }
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public double getRemainingDuration() {
+            return remainingDuration;
+        }
+
+        public void setRemainingDuration(double duration) {
+            this.remainingDuration = duration;
+        }
     }
 
-    public int getLevelNumber() { return levelNumber; }
-    public void setLevelNumber(int levelNumber) { this.levelNumber = levelNumber; }
+    public int getLevelNumber() {
+        return levelNumber;
+    }
 
-    public int getScore() { return score; }
-    public void setScore(int score) { this.score = score; }
+    public void setLevelNumber(int levelNumber) {
+        this.levelNumber = levelNumber;
+    }
 
-    public int getLives() { return lives; }
-    public void setLives(int lives) { this.lives = lives; }
+    public int getScore() {
+        return score;
+    }
 
-    public List<BallData> getBalls() { return balls; }
-    public void setBalls(List<BallData> balls) { this.balls = balls; }
+    public void setScore(int score) {
+        this.score = score;
+    }
 
-    public List<BrickSaveInfo> getBricks() { return bricks; }
-    public void setBricks(List<BrickSaveInfo> bricks) { this.bricks = bricks; }
+    public int getLives() {
+        return lives;
+    }
 
-    public PaddleData getPaddle() { return paddle; }
-    public void setPaddle(PaddleData paddle) { this.paddle = paddle; }
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
 
-    public List<PowerUpData> getFallingPowerUps() { return fallingPowerUps; }
-    public void setFallingPowerUps(List<PowerUpData> powerUps) { this.fallingPowerUps = powerUps; }
+    public List<BallData> getBalls() {
+        return balls;
+    }
 
-    public List<ActivePowerupInfo> getActivePowerups() { return activePowerups; }
-    public void setActivePowerups(List<ActivePowerupInfo> powerups) { this.activePowerups = powerups; }
+    public void setBalls(List<BallData> balls) {
+        this.balls = balls;
+    }
 
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    public List<BulletData> getBullets() {
+        return bullets;
+    }
+
+    public void setBullets(List<BulletData> bullets) {
+        this.bullets = bullets;
+    }
+
+    public List<BrickSaveInfo> getBricks() {
+        return bricks;
+    }
+
+    public void setBricks(List<BrickSaveInfo> bricks) {
+        this.bricks = bricks;
+    }
+
+    public PaddleData getPaddle() {
+        return paddle;
+    }
+
+    public void setPaddle(PaddleData paddle) {
+        this.paddle = paddle;
+    }
+
+    public List<PowerUpData> getFallingPowerUps() {
+        return fallingPowerUps;
+    }
+
+    public void setFallingPowerUps(List<PowerUpData> powerUps) {
+        this.fallingPowerUps = powerUps;
+    }
+
+    public List<ActivePowerupInfo> getActivePowerups() {
+        return activePowerups;
+    }
+
+    public void setActivePowerups(List<ActivePowerupInfo> powerups) {
+        this.activePowerups = powerups;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
     @Override
     public String toString() {

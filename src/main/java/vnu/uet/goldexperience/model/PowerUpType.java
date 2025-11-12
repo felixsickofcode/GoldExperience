@@ -28,10 +28,10 @@ public enum PowerUpType {
                         if (speed == 0) {
                             continue;
                         }
-                        
+
                         // Calculate current angle
                         double currentAngle = Math.atan2(currentDy, currentDx);
-                        
+
                         // Góc tự phóng mới cho 2 quả phân thân: 30/2 = 15 độ mỗi quả
                         double angleSpread = Math.toRadians(15);
                         double angle1 = currentAngle - angleSpread;
@@ -39,21 +39,21 @@ public enum PowerUpType {
 
                         Ball newBall1 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
                         Ball newBall2 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
-                        
+
                         // Sao chép tốc độ dx, dy của bóng gốc
                         newBall1.applySpeedScale(ball.getSpeedScale());
                         newBall2.applySpeedScale(ball.getSpeedScale());
-                        
+
                         // Bóng tự phóng từ 2 góc mới
                         newBall1.setDx(speed * Math.cos(angle1));
                         newBall1.setDy(speed * Math.sin(angle1));
-                        
+
                         newBall2.setDx(speed * Math.cos(angle2));
                         newBall2.setDy(speed * Math.sin(angle2));
 
                         newBall1.setReset(false);
                         newBall2.setReset(false);
-                        
+
                         // Thêm vào danh sách tạm (cho vào Balls là bay màu)
                         newBallsToAdd.add(newBall1);
                         newBallsToAdd.add(newBall2);
@@ -175,20 +175,21 @@ public enum PowerUpType {
     }
 
     public static PowerUpType randomDroppable() {
-        List<PowerUpType> options = new ArrayList<>();
-
-        for (PowerUpType t : values()) {
-            if (t.isDroppableItem()) {
-                options.add(t);
-            }
-        }
-
-        if (options.isEmpty()) {
-            return EXTEND;
-        }
-
-        int idx = ThreadLocalRandom.current().nextInt(options.size());
-
-        return options.get(idx);
+//        List<PowerUpType> options = new ArrayList<>();
+//
+//        for (PowerUpType t : values()) {
+//            if (t.isDroppableItem()) {
+//                options.add(t);
+//            }
+//        }
+//
+//        if (options.isEmpty()) {
+//            return EXTEND;
+//        }
+//
+//        int idx = ThreadLocalRandom.current().nextInt(options.size());
+//
+//        return options.get(idx);
+        return BULLETS;
     }
 }
