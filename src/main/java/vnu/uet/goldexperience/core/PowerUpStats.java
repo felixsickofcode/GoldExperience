@@ -2,7 +2,7 @@ package vnu.uet.goldexperience.core;
 
 import vnu.uet.goldexperience.model.PowerUpType;
 
-// lớp record để lưu trạng thái nâng cấp hiện tại của PU - trong tương lai có thể không cần
+// lớp record để lưu trạng thái nâng cấp hiện tại của PU - trong tương lai có thể không cần (KHÔNG CẦN THẬT Ạ)
 public record PowerUpStats(
         long duration,
         double value

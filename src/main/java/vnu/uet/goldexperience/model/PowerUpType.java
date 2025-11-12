@@ -2,6 +2,7 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.image.Image;
 import vnu.uet.goldexperience.core.Constants;
+import vnu.uet.goldexperience.manager.GameSession;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -124,6 +125,13 @@ public enum PowerUpType {
             (context) -> context.paddle().setShooting(false, 0),
             "images/bullet.png",
             true
+    ),
+
+    LIVES(
+            (context) -> GameSession.getInstance().addLife(),
+            null,
+            "images/rainbow.png",
+            true
     );
 
     private final PowerUpEffect applyEffect;
@@ -150,12 +158,15 @@ public enum PowerUpType {
         try {
             String path = imagePath.startsWith("/") ? imagePath : "/" + imagePath;
             URL imageURL = getClass().getResource(path);
+
             if (imageURL == null) {
                 return null;
             }
 
             return new Image(imageURL.toExternalForm());
         } catch (Exception e) {
+            System.err.printf("Không thể load texture: %s", imagePath);
+
             return null;
         }
     }
@@ -164,21 +175,48 @@ public enum PowerUpType {
         return this.droppable;
     }
 
-    public static PowerUpType randomDroppable() {
-        List<PowerUpType> options = new ArrayList<>();
+    private record WeightedPowerUp(PowerUpType type, int weight) {}
 
-        for (PowerUpType t : values()) {
-            if (t.isDroppableItem()) {
-                options.add(t);
-            }
+    private static final List<WeightedPowerUp> droppablePowerUps
+            = new ArrayList<>();
+
+    private static int totalWeight = 0;
+
+    static {
+        addDroppable(EXTEND, 10);
+        addDroppable(SLOW, 8);
+        addDroppable(THREE_BALLS, 7);
+        addDroppable(BULLETS, 6);
+        addDroppable(FAST, 5);
+        addDroppable(TINY, 4);
+        addDroppable(LIVES, 2); // hiếm bỏ mịa
+
+        for (WeightedPowerUp wpu : droppablePowerUps) {
+            totalWeight += wpu.weight();
         }
+    }
 
-        if (options.isEmpty()) {
+    private static void addDroppable(PowerUpType type, int weight) {
+        if (type.isDroppableItem()) {
+            droppablePowerUps.add(new WeightedPowerUp(type, weight));
+        }
+    }
+
+    public static PowerUpType randomDroppable() {
+        if (droppablePowerUps.isEmpty() || totalWeight == 0) {
             return EXTEND;
         }
 
-        int idx = ThreadLocalRandom.current().nextInt(options.size());
+        int randomValue = ThreadLocalRandom.current().nextInt(totalWeight);
 
-        return options.get(idx);
+        for (WeightedPowerUp wpu : droppablePowerUps) {
+            if (randomValue < wpu.weight()) {
+                return wpu.type();
+            } else {
+                randomValue -= wpu.weight();
+            }
+        }
+
+        return EXTEND;
     }
 }
