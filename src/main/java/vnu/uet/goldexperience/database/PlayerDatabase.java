@@ -15,7 +15,7 @@ public class PlayerDatabase {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/gold_experience";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
+    private static final String DB_PASSWORD = "Bminh0910@";
 
     private PlayerDatabase() {
         try {
@@ -68,7 +68,7 @@ public class PlayerDatabase {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected > 0) {
-                System.out.println("✓ Saved score " + score + " for " + name + " (Chapter " + chapter + ", Level " + level + ")");
+//                System.out.println("✓ Saved score " + score + " for " + name + " (Chapter " + chapter + ", Level " + level + ")");
             }
 
             return rowsAffected > 0;

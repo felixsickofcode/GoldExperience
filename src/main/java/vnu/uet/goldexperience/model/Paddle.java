@@ -2,6 +2,7 @@ package vnu.uet.goldexperience.model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import vnu.uet.goldexperience.Main;
 import vnu.uet.goldexperience.core.Constants;
 import vnu.uet.goldexperience.effect.paddle.PaddleEffect;
 import vnu.uet.goldexperience.manager.GameDataManager;
@@ -14,8 +15,7 @@ public class Paddle extends MovableObject {
     private double targetX = -1;
 
     private boolean isShooting = false;
-    private long shootingEndTime = 0;
-    private long lastShotTime = 0;
+    private double shootingTimeRemaining = 0;
 
     public Paddle(double x, double y, double width, double height) {
         super(x, y, width, height, 0, 0);
@@ -40,7 +40,7 @@ public class Paddle extends MovableObject {
         if (getSize() <= Constants.MIN_PADDLE_SIZE) {
             return;
         }
-        setSize(getSize()-1);
+        setSize(getSize() - 1);
     }
 
 
@@ -60,10 +60,9 @@ public class Paddle extends MovableObject {
 
     public void setTargetX(double x) {
         if (x < 0) {
-            this.targetX = Math.max(0,x);
-        }
-        else if (x > 576) {
-                this.targetX = Math.min(576,x);
+            this.targetX = Math.max(0, x);
+        } else if (x > 576) {
+            this.targetX = Math.min(576, x);
         } else {
             this.targetX = x;
         }
@@ -86,8 +85,12 @@ public class Paddle extends MovableObject {
         effect.update(x, y, deltaTime);
         handlePaddleEdgeCollision();
 
-        if (isShooting && System.currentTimeMillis() > shootingEndTime) {
-            this.isShooting = false;
+        if (isShooting) {
+            shootingTimeRemaining -= deltaTime;
+            if (shootingTimeRemaining <= 0) {
+                this.isShooting = false;
+                this.shootingTimeRemaining = 0;
+            }
         }
     }
 
@@ -157,7 +160,8 @@ public class Paddle extends MovableObject {
     }
 
     public void reset() {
-        setTargetX((Constants.GAMEPLAYZONE_WIDTH - width)/2);
+        setTargetX((Constants.GAMEPLAYZONE_WIDTH - width) / 2);
+        setSize(2);
     }
 
     public boolean isShooting() {
@@ -167,6 +171,6 @@ public class Paddle extends MovableObject {
     public void setShooting(boolean active, long durationMs) {
         this.isShooting = active;
 
-        this.shootingEndTime = System.currentTimeMillis() + durationMs;
+        this.shootingTimeRemaining = (double) durationMs / 1000.0;
     }
 }

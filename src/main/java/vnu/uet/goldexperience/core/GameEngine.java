@@ -433,7 +433,6 @@ public class GameEngine implements BrickListener {
 
         if (stateManager.is(GameState.TRANSITIONING)) {
             if (transitionManager.update(deltaTime)) {
-                paddle.reset();
                 loadCurrentLevel();
             }
 
@@ -516,6 +515,7 @@ public class GameEngine implements BrickListener {
             if (GameSession.getInstance().isStillAlive()) {
                 initNewPrimaryBall();
             } else {
+                SoundManager.playLoseSound();
                 stateManager.setState(GameState.GAME_OVER);
             }
         }
@@ -834,6 +834,12 @@ public class GameEngine implements BrickListener {
         }
         saveData.setBalls(ballDataList);
 
+        List<LevelSaveData.BulletData> bulletDataList = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            bulletDataList.add(new LevelSaveData.BulletData(bullet));
+        }
+        saveData.setBullets(bulletDataList);
+
         saveData.setPaddle(new LevelSaveData.PaddleData(paddle));
 
         List<LevelSaveData.BrickSaveInfo> brickInfos = new ArrayList<>();
@@ -862,13 +868,11 @@ public class GameEngine implements BrickListener {
         if (powerUpManager != null) {
             saveData.setActivePowerups(powerUpManager.captureActivePowerupsInfo());
         }
-
-        // Save to disk
         boolean success = GameDataManager.saveLevelProgress(levelNumber, saveData);
         if (success) {
-            System.out.println("✅ Game saved successfully! [" + saveData + "]");
+            System.out.println("Game saved");
         } else {
-            System.out.println("❌ Failed to save game!");
+            System.out.println("Failed save, dcm loi l");
         }
     }
 
@@ -890,7 +894,11 @@ public class GameEngine implements BrickListener {
             ball.refreshEffects();
             this.balls.add(ball);
         }
-
+        this.bullets.clear();
+        for (LevelSaveData.BulletData bulletData : saveData.getBullets()) {
+            Bullet bullet = bulletData.toBullet();
+            this.bullets.add(bullet);
+        }
         this.bricks = new ArrayList<>();
         for (LevelSaveData.BrickSaveInfo info : saveData.getBricks()) {
             BrickType type = BrickType.fromString(info.getType());
@@ -912,7 +920,6 @@ public class GameEngine implements BrickListener {
         for (LevelSaveData.ActivePowerupInfo info : saveData.getActivePowerups()) {
             powerUpManager.restoreActivePowerup(info.getType(), info.getRemainingDuration());
         }
-
         if (uiCallback != null) {
             uiCallback.onLivesChanged(GameSession.getInstance().getLives());
             uiCallback.onScoreChanged(GameSession.getInstance().getScore());
@@ -920,7 +927,6 @@ public class GameEngine implements BrickListener {
 
         soundForExplosionChains.clear();
         levelCompleteSoundPlayed = false;
-        bullets.clear();
 
         return true;
     }
@@ -928,16 +934,6 @@ public class GameEngine implements BrickListener {
 
     public boolean hasLevelSave(int levelNumber) {
         return GameDataManager.hasLevelSave(levelNumber);
-    }
-
-
-    public void setupAutoSave() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (mode.equals(GameSession.GameMode.STORY) &&
-                    (stateManager.is(GameState.PLAYING) || stateManager.is(GameState.PAUSED))) {
-                saveCurrentGame();
-            }
-        }));
     }
 
     public void refreshMode() {

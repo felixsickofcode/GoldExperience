@@ -58,7 +58,9 @@ public class Ball extends MovableObject {
         reset = false;
         attachedPaddle = null;
     }
-
+    public void setSpeedScale(double speedScale) {
+        this.speedScale = speedScale;
+    }
     public void applySpeedScale(double factor) {
         if (factor == 1.0) {
             return;
