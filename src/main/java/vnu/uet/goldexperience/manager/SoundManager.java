@@ -76,32 +76,59 @@ public class SoundManager {
     }
 
     public static void playClickSound() {
-        playSound(clickSound, "click", false);
+//        playSound(clickSound, "click", false);
+        audioExecutor.submit(() -> {
+            synchronized (playLock) {
+                long now = System.currentTimeMillis();
+
+                if (now - lastPlayTime < MIN_PLAY_INTERVAL) {
+                    return;
+                }
+
+                lastPlayTime = now;
+            }
+
+            if (clickSound != null) {
+                clickSound.play();
+            }
+        });
     }
 
 
     public static void playHitBrickSound() {
-        playSound(hitBrickSound, "hitBrick", true);
+//        playSound(hitBrickSound, "hitBrick", true);
+        playSound(hitBrickSound);
     }
 
     public static void playHitWallSound() {
-        playSound(hitWallSound, "hitWall", true);
+//        playSound(hitWallSound, "hitWall", true);
+        playSound(hitWallSound);
     }
 
     public static void playHitPaddleSound() {
-        playSound(hitPaddleSound, "hitPaddle", true);
+//        playSound(hitPaddleSound, "hitPaddle", true);
+        playSound(hitPaddleSound);
     }
 
     public static void playLoseSound() {
-        playSound(loseSound, "lose", false);
+//        playSound(loseSound, "lose", false);
+        playSound(loseSound);
     }
 
     public static void playBreakBrickSound() {
-        playSound(breakBrickSound, "breakBrick", false);
+//        playSound(breakBrickSound, "breakBrick", false);
+        playSound(breakBrickSound);
     }
 
     public static void playExplosionSound() {
-        playSound(explosionSound, "explosion", false);
+//        playSound(explosionSound, "explosion", false);
+        playSound(explosionSound);
+    }
+
+    private static void playSound(AudioClip clip) {
+        if (clip != null) {
+            audioExecutor.submit(() -> clip.play());
+        }
     }
 
     private static void playSound(AudioClip clip, String soundName, boolean checkCooldown) {
