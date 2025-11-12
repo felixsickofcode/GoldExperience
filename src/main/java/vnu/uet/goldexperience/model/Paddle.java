@@ -167,8 +167,6 @@ public class Paddle extends MovableObject {
     public void setShooting(boolean active, long durationMs) {
         this.isShooting = active;
 
-        if (active) {
-            this.shootingEndTime = System.currentTimeMillis() + durationMs;
-        }
+        this.shootingEndTime = System.currentTimeMillis() + durationMs;
     }
 }
