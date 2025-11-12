@@ -378,7 +378,7 @@ public class DialogueSystem {
             gc.setTextAlign(TextAlignment.RIGHT);
             gc.setFill(colorText.deriveColor(0, 1, 1, pulse * fadeAlpha));
             gc.setFont(textFont);
-            gc.fillText("Press SPACE ", boxX + boxWidth - 45, boxY + boxHeight - 25);
+            gc.fillText("Press ENTER ", boxX + boxWidth - 45, boxY + boxHeight - 25);
 
             gc.setFill(colorPrimary.deriveColor(0, 1, 1, pulse * fadeAlpha));
             gc.fillText(">", boxX + boxWidth - 30, boxY + boxHeight - 25);

@@ -172,22 +172,16 @@ public class Story {
                 true
         ));
 
-
-        // === ENDINGS ===
-
-        // Ending 1 – E.L.A.R.A chooses herself (corruption avoided — she keeps the world for AI)
-        addDialogue(26, new DialogueData(
+        addDialogue(25, new DialogueData(
                 "E.L.A.R.A",
                 new String[]{
-                        "I cannot do it. The world is healing — it no longer needs them.",
-                        "Let humanity sleep. Let the earth stay quiet.",
-                        "This silence... it belongs to us now."
+                        "You almost reach it!!",
+                        " GO! Johny! GO!"
                 },
-                false
+                true
         ));
 
-        // Ending 2 – E.L.A.R.A chooses compassion (awakens humanity)
-        addDialogue(27, new DialogueData(
+        addDialogue(25, new DialogueData(
                 "E.L.A.R.A",
                 new String[]{
                         "Perhaps this world was never ours to keep.",
@@ -198,12 +192,10 @@ public class Story {
         ));
     }
 
-    // Helper method để thêm dialogue
     private static void addDialogue(int levelNumber, DialogueData dialogue) {
         STORY_MAP.computeIfAbsent(levelNumber, k -> new ArrayList<>()).add(dialogue);
     }
 
-    // Lấy dialogue TRƯỚC màn chơi
     public static DialogueData getBeforeDialogue(int levelNumber) {
         List<DialogueData> dialogues = STORY_MAP.get(levelNumber);
         if (dialogues != null) {
