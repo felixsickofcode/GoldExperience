@@ -8,63 +8,57 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-/* APPLY STRATEGY PATTERN */
+/* APPLY STRATEGY PATTERN - ngon! */
 public enum PowerUpType {
     THREE_BALLS(
             (context) -> {
                 List<Ball> balls = context.balls();
+                Ball highestBall = null;
 
-                // Danh sách list tạm để tránh lỗi vừa thêm vừa duyệt
-                List<Ball> newBallsToAdd = new ArrayList<>();
-
-                // Nhân bản cho tất cả các bóng xuất hiện trong game
                 for (Ball ball : balls) {
                     if (!ball.isReset()) {
-                        // Lấy bóng hiện tại
-                        double currentDx = ball.getDx();
-                        double currentDy = ball.getDy();
-                        double speed = Math.hypot(currentDx, currentDy);
-
-                        if (speed == 0) {
-                            continue;
+                        if (highestBall == null || ball.getY() < highestBall.getY()) {
+                            highestBall = ball;
                         }
-                        
-                        // Calculate current angle
-                        double currentAngle = Math.atan2(currentDy, currentDx);
-                        
-                        // Góc tự phóng mới cho 2 quả phân thân: 30/2 = 15 độ mỗi quả
-                        double angleSpread = Math.toRadians(15);
-                        double angle1 = currentAngle - angleSpread;
-                        double angle2 = currentAngle + angleSpread;
-
-                        Ball newBall1 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
-                        Ball newBall2 = new Ball(ball.getX(), ball.getY(), ball.getRadius());
-                        
-                        // Sao chép tốc độ dx, dy của bóng gốc
-                        newBall1.applySpeedScale(ball.getSpeedScale());
-                        newBall2.applySpeedScale(ball.getSpeedScale());
-                        
-                        // Bóng tự phóng từ 2 góc mới
-                        newBall1.setDx(speed * Math.cos(angle1));
-                        newBall1.setDy(speed * Math.sin(angle1));
-                        
-                        newBall2.setDx(speed * Math.cos(angle2));
-                        newBall2.setDy(speed * Math.sin(angle2));
-
-                        newBall1.setReset(false);
-                        newBall2.setReset(false);
-                        
-                        // Thêm vào danh sách tạm (cho vào Balls là bay màu)
-                        newBallsToAdd.add(newBall1);
-                        newBallsToAdd.add(newBall2);
-
-                        break;
                     }
                 }
 
-                if (!newBallsToAdd.isEmpty()) {
-                    balls.addAll(newBallsToAdd);
+                if (highestBall == null) {
+                    return;
                 }
+
+                double speed = Math.hypot(highestBall.getDx(), highestBall.getDy());
+
+                if (speed == 0) {
+                    speed = 400;
+                }
+
+                Ball newBall1 = new Ball(
+                        highestBall.getX(), highestBall.getY(),
+                        highestBall.getRadius()
+                );
+                Ball newBall2 = new Ball(
+                        highestBall.getX(), highestBall.getY(),
+                        highestBall.getRadius()
+                );
+
+                newBall1.applySpeedScale(highestBall.getSpeedScale());
+                newBall2.applySpeedScale(highestBall.getSpeedScale());
+
+                double angle1 = Math.toRadians(-60);
+                double angle2 = Math.toRadians(-120);
+
+                newBall1.setDx(speed * Math.cos(angle1));
+                newBall1.setDy(speed * Math.sin(angle1));
+
+                newBall2.setDx(speed * Math.cos(angle2));
+                newBall2.setDy(speed * Math.sin(angle2));
+
+                newBall1.setReset(false);
+                newBall2.setReset(false);
+
+                balls.add(newBall1);
+                balls.add(newBall2);
             },
             null,
             "images/3ball.png",
@@ -126,12 +120,8 @@ public enum PowerUpType {
     ),
 
     BULLETS(
-            (context) -> {
-                context.paddle().setShooting(true, Constants.BULLETS_DURATION);
-            },
-            (context) -> {
-                context.paddle().setShooting(false, 0);
-            },
+            (context) -> context.paddle().setShooting(true, Constants.BULLETS_DURATION),
+            (context) -> context.paddle().setShooting(false, 0),
             "images/bullet.png",
             true
     );

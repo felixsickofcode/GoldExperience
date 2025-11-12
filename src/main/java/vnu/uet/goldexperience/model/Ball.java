@@ -92,6 +92,7 @@ public class Ball extends MovableObject {
 
     public boolean bounceOffWithPaddle(Paddle paddle) {
         long now = System.currentTimeMillis();
+
         if (paddle != null && checkCollision(paddle) && now - getLastCollisionTime() > 200) {
 
             double overlapTop = getCenterY() + radius - paddle.getY();
@@ -143,12 +144,14 @@ public class Ball extends MovableObject {
         if (minOverlap == overlapLeft && getDx() > 0) {
             setDx(-Math.abs(getDx()));
             setX(brick.getX() - 2 * radius - 0.5);
+
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
         } else if (minOverlap == overlapRight && getDx() < 0) {
             setDx(Math.abs(getDx()));
             setX(brick.getX() + brick.getWidth() + 0.5);
+
             if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             }
@@ -176,6 +179,7 @@ public class Ball extends MovableObject {
 
     private void normalizeSpeed(double maxSpeed) {
         double s = Math.hypot(getDx(), getDy());
+
         if (s > maxSpeed) {
             setDx(getDx() / s * maxSpeed);
             setDy(getDy() / s * maxSpeed);
@@ -184,6 +188,7 @@ public class Ball extends MovableObject {
 
     private void increaseSpeedPercent(double percent) {
         double s = Math.hypot(getDx(), getDy());
+
         if (s > 0) {
             double newSpeed = s * (1 + percent / 100.0);
             setDx(getDx() / s * newSpeed);
@@ -192,14 +197,17 @@ public class Ball extends MovableObject {
     }
 
     public void handleBallEdgeCollision() {
-
         if (x <= 0) {
             setX(0);
             setDx(Math.abs(getDx()));
-            if (Math.abs(getDy()) < minDy)
+
+            if (Math.abs(getDy()) < minDy) {
                 setDy(getDy() >= 0 ? minDy : -minDy);
+            }
+
             GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.LEFT);
         }
+
         if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
             setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
@@ -207,6 +215,7 @@ public class Ball extends MovableObject {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.RIGHT);
         }
+
         if (getY() <= 0) {
             setY(0);
             setDy(Math.abs(getDy()));
