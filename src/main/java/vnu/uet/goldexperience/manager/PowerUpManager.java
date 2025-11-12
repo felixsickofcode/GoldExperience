@@ -68,7 +68,8 @@ public class PowerUpManager {
 
             if (bulletSpawnTimer <= 0.0) {
                 PowerUpStats stats = GameDataManager.getPowerUpStatsFor(PowerUpType.BULLETS);
-                bulletSpawnTimer = stats.value()/1000.0;
+                bulletSpawnTimer = stats.value() / 1000.0;
+
                 spawnBullet();
             }
         }
@@ -76,12 +77,14 @@ public class PowerUpManager {
 
     public List<LevelSaveData.ActivePowerupInfo> captureActivePowerupsInfo() {
         List<LevelSaveData.ActivePowerupInfo> infos = new ArrayList<>();
+
         for (ActivePowerUp ap : activePowerUps) {
             infos.add(new LevelSaveData.ActivePowerupInfo(
                     ap.getPowerUp().getType().name(),
                     ap.getRemainingTime()
             ));
         }
+
         return infos;
     }
 
@@ -105,8 +108,7 @@ public class PowerUpManager {
     }
 
     private PowerUp createPowerUpByType(PowerUpType type) {
-        return new PowerUp(0, 0, 30, 30, type) {
-        };
+        return new PowerUp(0, 0, 30, 30, type) {};
     }
 
     private void spawnBullet() {

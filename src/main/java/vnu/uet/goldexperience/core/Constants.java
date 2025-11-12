@@ -14,7 +14,6 @@ public class Constants {
     public static final double LARGE_PADDLE_WIDTH = 120;
     public static final double BIG_PADDLE_WIDTH = 144;
     public static final double PADDLE_HEIGHT = 14;
-    public static final double SMALL_BALL_SIZE = 6;
     public static final double NORMAL_BALL_SIZE = 8;
     public static final double NORMAL_BRICK_WIDTH = 48;
     public static final double NORMAL_BRICK_HEIGHT = 24;
@@ -42,7 +41,7 @@ public class Constants {
     public static final double BULLET_HEIGHT = 14;
 
     // Power up constants
-    public static final double DROP_CHANCE = 0.35;
+    public static final double DROP_CHANCE = 0.25;
     public static final double POWER_UP_ITEM_WIDTH = 48;
     public static final double POWER_UP_ITEM_HEIGHT = 33;
     public static final double POWER_UP_DROP_SPEED = 100;

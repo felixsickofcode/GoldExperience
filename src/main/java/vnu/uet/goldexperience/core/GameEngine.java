@@ -50,10 +50,10 @@ public class GameEngine implements BrickListener {
     private final Set<Brick> soundForExplosionChains = new HashSet<>();
 
     /**
-     * saveload
+     * save/load
      */
 
-    private boolean PointAdd = false;
+    private boolean pointAdd = false;
 
     public GameEngine(Canvas canvas, InputManager input) {
         this.canvas = canvas;
@@ -92,7 +92,7 @@ public class GameEngine implements BrickListener {
 
     private void loadCurrentLevel() {
         comboCount = 0;
-        PointAdd = false;
+        pointAdd = false;
         int levelNumber = GameSession.getInstance().getLevelNumber();
         System.out.println("Loading level: " + levelNumber +
                 " (Chapter " + GameSession.getInstance().getCurrentChapter() +
@@ -108,7 +108,7 @@ public class GameEngine implements BrickListener {
             bricks = levelManager.loadLevel(randomValue);
         }
 
-        // roi moi them listner
+        // roi moi them listener
         if (bricks != null) {
             for (Brick brick : bricks) {
                 brick.addListener(this);
@@ -706,13 +706,14 @@ public class GameEngine implements BrickListener {
     }
 
     private void handleLevelComplete() {
-        if (!PointAdd) {
+        if (!pointAdd) {
             GameDataManager.completeLevel(
                     GameSession.getInstance().getLevelNumber(),
                     GameSession.getInstance().getScore()
             );
-            PointAdd = true;
+            pointAdd = true;
         }
+
         boolean hasUnbreakableBricks = false;
 
         for (Brick brick : bricks) {
@@ -739,6 +740,7 @@ public class GameEngine implements BrickListener {
                 checkAndShowAfterDialogue();
             } else {
                 boolean hasNext = GameSession.getInstance().nextLevel();
+
                 if (hasNext) {
                     stateManager.setState(GameState.TRANSITIONING);
                 } else {
@@ -757,9 +759,11 @@ public class GameEngine implements BrickListener {
                 if (((UnbreakableBrick) brick).getDestructionEffect() != null && !((UnbreakableBrick) brick).getDestructionEffect().isFinished()) {
                     return false;
                 }
+
             if (brick.getExplosionEffect() != null && brick.getExplosionEffect().isActive()) {
                 return false;
             }
+
             if (brick.getBreakEffect() != null && !brick.getBreakEffect().isFinished()) {
                 return false;
             }
@@ -821,6 +825,7 @@ public class GameEngine implements BrickListener {
             System.out.println("⚠️ Endless mode does not support save/load");
             return;
         }
+
         if (!stateManager.is(GameState.PLAYING) && !stateManager.is(GameState.PAUSED)) {
             System.out.println("⚠️ Can only save during gameplay");
             return;
@@ -834,9 +839,11 @@ public class GameEngine implements BrickListener {
         saveData.setLives(GameSession.getInstance().getLives());
 
         List<LevelSaveData.BallData> ballDataList = new ArrayList<>();
+
         for (Ball ball : balls) {
             ballDataList.add(new LevelSaveData.BallData(ball));
         }
+
         saveData.setBalls(ballDataList);
 
         List<LevelSaveData.BulletData> bulletDataList = new ArrayList<>();
