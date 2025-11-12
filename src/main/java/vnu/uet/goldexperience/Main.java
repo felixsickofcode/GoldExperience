@@ -97,7 +97,7 @@ public class Main extends Application {
         stage.setTitle("Gold Experience");
         stage.show();
 
-        sceneManager.switchTo("menu");
+        sceneManager.switchTo("login");
     }
 
     @Override

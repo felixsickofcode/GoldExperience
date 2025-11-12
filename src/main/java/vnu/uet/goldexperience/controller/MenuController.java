@@ -65,6 +65,8 @@ public class MenuController {
     }
 
     private void handle2PlayerMode() {
+        SoundManager.playChapterMusic(6);
+
         System.out.println("2 Player Mode clicked");
         GameSession.getInstance().setMode(GameSession.GameMode.ENDLESS);
         GameSession.getInstance().resetLives();

@@ -202,7 +202,7 @@ public class Ball extends MovableObject {
                 setDy(getDy() >= 0 ? minDy : -minDy);
             GameSession.getInstance().notifyBallHitWall(GameSession.HitSide.LEFT);
         }
-        if (x + radius >= Constants.GAMEPLAYZONE_WIDTH) {
+        if (x + radius * 2 >= Constants.GAMEPLAYZONE_WIDTH) {
             setX(Constants.GAMEPLAYZONE_WIDTH - 2 * radius);
             setDx(-Math.abs(getDx()));
             if (Math.abs(getDy()) < minDy)

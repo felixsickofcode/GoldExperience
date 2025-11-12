@@ -82,7 +82,7 @@ public class GameController implements GameSessionListener {
     }
 
     private void setupBackground() {
-        background = new GameBackground(Constants.GAMEPLAYZONE_WIDTH, Constants.GAMEPLAYZONE_HEIGHT, rootGamePane);
+        background = new GameBackground(Constants.GAMEPLAYZONE_WIDTH + 10, Constants.GAMEPLAYZONE_HEIGHT + 10, rootGamePane);
         rootGamePane.getChildren().add(0, background.getCanvas());
     }
 

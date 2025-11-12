@@ -42,30 +42,35 @@ public class SelectLevelController {
     @FXML
     private void handleLevel1(ActionEvent event) {
         SoundManager.playClickSound();
+        SoundManager.playChapterMusic(GameSession.getInstance().getCurrentChapter());
         playLevel(1);
     }
 
     @FXML
     private void handleLevel2(ActionEvent event) {
         SoundManager.playClickSound();
+        SoundManager.playChapterMusic(GameSession.getInstance().getCurrentChapter());
         playLevel(2);
     }
 
     @FXML
     private void handleLevel3(ActionEvent event) {
         SoundManager.playClickSound();
+        SoundManager.playChapterMusic(GameSession.getInstance().getCurrentChapter());
         playLevel(3);
     }
 
     @FXML
     private void handleLevel4(ActionEvent event) {
         SoundManager.playClickSound();
+        SoundManager.playChapterMusic(GameSession.getInstance().getCurrentChapter());
         playLevel(4);
     }
 
     @FXML
     private void handleLevel5(ActionEvent event) {
         SoundManager.playClickSound();
+        SoundManager.playChapterMusic(GameSession.getInstance().getCurrentChapter());
         playLevel(5);
     }
 
