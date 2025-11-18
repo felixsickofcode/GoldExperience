@@ -22,7 +22,7 @@ public class Ball extends MovableObject {
         super(x, y, radius * 2, radius * 2, 0, 0);
         this.radius = radius;
         this.image = AssetsManager.balls.getFirst();
-        this.effect = BallEffect.getInstance();
+        this.effect = new BallEffect();
     }
 
     public void refreshEffects() {
